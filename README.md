@@ -38,7 +38,6 @@ responde con base en una base de conocimiento propia.
 | Autenticación | Firebase Auth (Google + Email/Password) |
 | IA | Firebase AI Logic — backend Google AI (Gemini) |
 | Hosting | Firebase Hosting (sirve `vtr-web/dist`) |
-| Netplay | Node.js + Express + Socket.IO (Google Cloud Run) |
 | Analítica | Firebase Analytics |
 
 ---
