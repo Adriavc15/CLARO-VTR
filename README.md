@@ -21,7 +21,6 @@ responde con base en una base de conocimiento propia.
 | [docs/04-cloud-functions.md](docs/04-cloud-functions.md) | Cloud Functions for Firebase |
 | [docs/05-firestore.md](docs/05-firestore.md) | Modelo de datos y colecciones |
 | [docs/06-asistente-apex.md](docs/06-asistente-apex.md) | Asistente de IA, RAG y aprendizaje continuo |
-| [docs/07-juegos-netplay.md](docs/07-juegos-netplay.md) | Módulo de juegos y servidor de netplay |
 | [docs/08-integraciones.md](docs/08-integraciones.md) | Servicios externos integrados |
 | [docs/09-despliegue.md](docs/09-despliegue.md) | Instalación, build y despliegue |
 | [docs/10-scripts.md](docs/10-scripts.md) | Scripts de scraping, datos y assets |
@@ -55,7 +54,6 @@ vtr/
 │  │  ├─ FormulariosPage.jsx# Formulario de migraciones (/formularios)
 │  │  ├─ components/        # Componentes de UI (chat, simuladores, etc.)
 │  │  ├─ asistente/         # Motor del asistente de IA + corpus de conocimiento
-│  │  ├─ juegos/            # Módulo de juegos (/juego)
 │  │  ├─ hooks/             # Hooks de React
 │  │  └─ *Store.js          # Stores de Firestore (asesores, tipificaciones, …)
 │  ├─ public/               # Assets estáticos servidos por la web
@@ -63,7 +61,6 @@ vtr/
 │  └─ index.html            # Punto de entrada de Vite
 ├─ functions/               # Cloud Functions (TypeScript)
 │  └─ src/index.ts          # Funciones HTTP (noticias, comunicados, fastTargets)
-├─ netplay-server/          # Servidor de señalización WebRTC para juegos online
 ├─ IA PARA VTR/             # Base de conocimiento y datasets del asistente
 ├─ firebase.json            # Configuración de Hosting, Functions, Firestore y Auth
 ├─ firestore.rules          # Reglas de seguridad de Firestore
@@ -91,7 +88,6 @@ vtr/
 - **Asistente "Apex"** — chatbot con Gemini + RAG sobre la base de conocimiento del portal.
 - **Simuladores** — Genesys (escritorio de agente), ANDES/Siebel (CRM) y Android TV.
 - **Medidor de velocidad** — test de velocidad usando los objetivos de Fast.com (Netflix).
-- **Juegos retro** — hub estilo PS5 con juegos en navegador y emulador SNES con netplay.
 
 ---
 
@@ -126,15 +122,7 @@ npm install
 npm run build                # compila TypeScript a lib/
 ```
 
-### 3. Servidor de netplay (opcional, para juegos online)
-
-```bash
-cd netplay-server
-npm install
-npm start                    # escucha en el puerto 3000 (o $PORT)
-```
-
-### 4. Despliegue
+### 3. Despliegue
 
 ```bash
 firebase login
@@ -169,7 +157,6 @@ La configuración de Firebase está embebida en el código del cliente
 | `/` | Portal principal (`App.jsx`) |
 | `/admin` | Panel de administración (`AdminPage.jsx`) |
 | `/formularios` | Formulario de migraciones (`FormulariosPage.jsx`) |
-| `/juego` | Hub de juegos (`juegos/JuegosPage.jsx`) |
 
 El enrutado es manual, por `pathname`/`hash`, en `vtr-web/src/main.jsx`.
 
