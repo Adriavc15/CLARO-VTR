@@ -5,19 +5,18 @@ Iconos con `lucide-react` y visor 3D con `@google/model-viewer`.
 
 ## Punto de entrada y rutas
 
-`vtr-web/src/main.jsx` monta una de cuatro páginas según la URL (enrutado manual, sin
+`vtr-web/src/main.tsx` monta una de tres páginas según la URL (enrutado manual, sin
 React Router). Las páginas se cargan con `React.lazy` + `Suspense`.
 
 | Ruta | Página | Archivo |
 |---|---|---|
-| `/` | Portal principal | `src/App.jsx` |
-| `/admin` | Panel de administración | `src/AdminPage.jsx` |
-| `/formularios` | Formulario de migraciones | `src/FormulariosPage.jsx` |
-| `/juego` | Hub de juegos | `src/juegos/JuegosPage.jsx` |
+| `/` | Portal principal | `src/App.tsx` |
+| `/admin` | Panel de administración | `src/AdminPage.tsx` |
+| `/formularios` | Formulario de migraciones | `src/FormulariosPage.tsx` |
 
-Se aceptan tanto `pathname` como `hash` (`#admin`, `#juego`, `#formularios`).
+Se aceptan tanto `pathname` como `hash` (`#admin`, `#formularios`).
 
-## `App.jsx` — shell del portal
+## `App.tsx` — shell del portal
 
 Es el archivo más grande (miles de líneas). Contiene:
 
@@ -96,13 +95,6 @@ Contiene el motor del asistente y toda la base de conocimiento. Incluye:
   `catalogoPlanesStreaming.js`.
 
 Detalle completo en [06-asistente-apex.md](06-asistente-apex.md).
-
-## Juegos (`src/juegos/`)
-
-Hub estilo PS5 (`JuegosPage.jsx`, `BibliotecaJuegos.jsx`), emulador SNES
-(`SnesEmulator.jsx`, `ZamnEmulator.jsx`) y juegos propios (`ZumaDeluxe.jsx`,
-`PurblePlace.jsx`, `GeometryDash.jsx`, `ZombiesAteMyNeighbors.jsx`). Detalle en
-[07-juegos-netplay.md](07-juegos-netplay.md).
 
 ## Hooks
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Image, Loader2, Upload } from 'lucide-react'
-import { subirImagenImgbb } from '../App.jsx'
+import { subirImagenImgbb } from '../App.tsx'
 import {
   SHOWCASE_SEED,
   suscribirShowcaseStreaming,
