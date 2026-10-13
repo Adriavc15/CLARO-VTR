@@ -1,0 +1,1095 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.dark body {
+  background-color: #0a0a0a;
+  color: #e5e5e5;
+}
+
+/* Oculta la barra de scroll pero mantiene el desplazamiento */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Overrides modo oscuro: grises neutros (sin tinte azul/slate) */
+.dark .bg-white { background-color: #1a1a1a !important; }
+.dark .bg-gray-50 { background-color: #0a0a0a !important; }
+.dark .bg-gray-100 { background-color: #141414 !important; }
+.dark .bg-gray-200 { background-color: #262626 !important; }
+.dark .bg-gray-700 { background-color: #2a2a2a !important; }
+.dark .bg-gray-800 { background-color: #1a1a1a !important; }
+.dark .bg-gray-900 { background-color: #0a0a0a !important; }
+.dark .dark\:bg-gray-700 { background-color: #2a2a2a !important; }
+.dark .dark\:bg-gray-800 { background-color: #1a1a1a !important; }
+.dark .dark\:bg-gray-900 { background-color: #0a0a0a !important; }
+.dark .dark\:bg-gray-900\/90 { background-color: rgba(10, 10, 10, 0.9) !important; }
+.dark .dark\:bg-gray-800\/60 { background-color: rgba(26, 26, 26, 0.6) !important; }
+.dark .dark\:bg-gray-700\/50 { background-color: rgba(42, 42, 42, 0.5) !important; }
+.dark .dark\:bg-gray-900\/40 { background-color: rgba(10, 10, 10, 0.4) !important; }
+
+/* Botón de Google. Por identidad de marca va en NEGRO con texto blanco en
+   claro y en BLANCO con texto oscuro en oscuro. No puede usar `bg-white`
+   directamente: el shim de arriba lo convierte en #1a1a1a, y entonces el texto
+   `text-[#1f1f1f]` quedaba negro sobre negro. Al vivir en CSS y no en un ternario
+   con `darkMode`, el mismo botón sirve en el messenger y en Tipificaciones. */
+.boton-google {
+  background-color: #1f1f1f !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+.boton-google:hover:not(:disabled) {
+  background-color: #000000 !important;
+}
+.dark .boton-google {
+  background-color: #ffffff !important;
+  color: #1f1f1f !important;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+}
+.dark .boton-google:hover:not(:disabled) {
+  background-color: #e5e5e5 !important;
+}
+
+/* Mensajes tipo cápsula / Toasts con alto contraste en tema claro y oscuro */
+.toast-capsule {
+  background-color: #111827 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35), 0 8px 10px -6px rgba(0, 0, 0, 0.35) !important;
+}
+.toast-capsule p {
+  color: #ffffff !important;
+}
+.dark .toast-capsule {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 255, 255, 0.15) !important;
+}
+.dark .toast-capsule p {
+  color: #0f172a !important;
+}
+
+.dark .text-gray-900 { color: #f5f5f5 !important; }
+.dark .text-gray-800 { color: #e5e5e5 !important; }
+.dark .text-gray-700 { color: #e5e5e5 !important; }
+.dark .text-gray-600 { color: #d4d4d4 !important; }
+.dark .text-gray-500 { color: #a3a3a3 !important; }
+.dark .text-gray-400 { color: #a3a3a3 !important; }
+.dark .text-gray-300 { color: #d4d4d4 !important; }
+.dark .text-gray-200 { color: #e5e5e5 !important; }
+.dark .text-gray-100 { color: #f5f5f5 !important; }
+
+/* dark:text-* debe ganar a text-gray-* en oscuro (si no, las etiquetas quedan apagadas) */
+.dark .dark\:text-white { color: #ffffff !important; }
+.dark .dark\:text-gray-100 { color: #f5f5f5 !important; }
+.dark .dark\:text-gray-200 { color: #e5e5e5 !important; }
+.dark .dark\:text-gray-300 { color: #d4d4d4 !important; }
+.dark .dark\:text-gray-400 { color: #a3a3a3 !important; }
+.dark .dark\:text-emerald-300 { color: #6ee7b7 !important; }
+.dark .dark\:text-emerald-400 { color: #34d399 !important; }
+.dark .dark\:text-teal-300 { color: #5eead4 !important; }
+.dark .dark\:text-teal-400 { color: #2dd4bf !important; }
+
+.dark .border-gray-200 { border-color: #2a2a2a !important; }
+.dark .dark\:border-gray-700 { border-color: #2a2a2a !important; }
+
+.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #2a2a2a !important;
+}
+
+.dark .hover\:bg-gray-100:hover { background-color: #222222 !important; }
+.dark .hover\:bg-gray-200:hover { background-color: #2a2a2a !important; }
+.dark .dark\:hover\:bg-gray-700:hover { background-color: #2a2a2a !important; }
+.dark .dark\:hover\:bg-gray-800:hover { background-color: #222222 !important; }
+
+/* X de cerrar sobre modales: en oscuro no usar bg-gray-900 (el override lo deja negro) */
+.btn-cerrar {
+  background-color: #111827 !important;
+  color: #ffffff !important;
+}
+.dark .btn-cerrar {
+  background-color: #f4f4f5 !important;
+  color: #111827 !important;
+}
+
+/* Brand: degradado naranja ↔ teal del chatbot, con cruce animado */
+.btn-cyan-hover {
+  position: relative;
+  isolation: isolate;
+  transform: translateZ(0);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-cyan-hover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  background-image: linear-gradient(145deg, #14b8a6 0%, #0f766e 55%, #064e3b 100%);
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-cyan-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+  background: linear-gradient(
+    110deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 65%
+  );
+  background-size: 220% 100%;
+  background-position: 160% 0;
+  transition: background-position 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-cyan-hover:hover:not(.nav-side-btn),
+.btn-cyan-hover:active:not(.nav-side-btn) {
+  transform: translateZ(0) scale(1.045);
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+.btn-cyan-hover:hover::before,
+.btn-cyan-hover:active::before {
+  opacity: 1;
+}
+.btn-cyan-hover:hover:not(.nav-side-btn)::after,
+.btn-cyan-hover:active:not(.nav-side-btn)::after {
+  background-position: -60% 0;
+}
+.btn-cyan-hover:hover:not(.nav-side-btn) span,
+.btn-cyan-hover:active:not(.nav-side-btn) span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+.btn-cyan-hover:hover:not(.nav-side-btn) .nav-icon,
+.btn-cyan-hover:hover:not(.nav-side-btn) .dark-nav-icon,
+.btn-cyan-hover:hover:not(.nav-side-btn) .nav-icon-soft,
+.btn-cyan-hover:hover:not(.nav-side-btn) .nav-icon-dbox,
+.btn-cyan-hover:hover:not(.nav-side-btn) img {
+  filter: brightness(0) invert(1) !important;
+}
+
+.btn-cyan-hover.bg-\[\#f69100\] {
+  background-color: transparent !important;
+  background-image: linear-gradient(145deg, #f69100 0%, #c2410c 55%, #7c2d12 100%) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+.btn-cyan-hover.bg-\[\#f69100\] span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+.btn-cyan-hover.bg-\[\#f69100\] .nav-icon,
+.btn-cyan-hover.bg-\[\#f69100\] .dark-nav-icon,
+.btn-cyan-hover.bg-\[\#f69100\] .nav-icon-soft,
+.btn-cyan-hover.bg-\[\#f69100\] .nav-icon-dbox,
+.btn-cyan-hover.bg-\[\#f69100\] img {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* Oscuro: intercambia los dos degradados. El fondo solo va en el botón. */
+.dark .btn-cyan-hover.bg-\[\#f69100\] {
+  background-image: linear-gradient(145deg, #14b8a6 0%, #0f766e 55%, #064e3b 100%) !important;
+}
+.dark .btn-cyan-hover::before {
+  background-image: linear-gradient(145deg, #f69100 0%, #c2410c 55%, #7c2d12 100%);
+}
+.dark .btn-cyan-hover:hover:not(.nav-side-btn),
+.dark .btn-cyan-hover:active:not(.nav-side-btn) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+.dark .btn-cyan-hover:hover:not(.nav-side-btn) span,
+.dark .btn-cyan-hover:active:not(.nav-side-btn) span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+.dark .btn-cyan-hover:hover:not(.nav-side-btn) .nav-icon,
+.dark .btn-cyan-hover:hover:not(.nav-side-btn) .dark-nav-icon,
+.dark .btn-cyan-hover:hover:not(.nav-side-btn) .nav-icon-soft,
+.dark .btn-cyan-hover:hover:not(.nav-side-btn) .nav-icon-dbox,
+.dark .btn-cyan-hover:hover:not(.nav-side-btn) img {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* Sidebar: hover transparente. Naranja (claro) / cian (oscuro) solo en el activo. */
+.btn-cyan-hover.nav-side-btn::before,
+.dark .btn-cyan-hover.nav-side-btn::before {
+  background-image: none !important;
+  background-color: rgba(0, 0, 0, 0.07);
+}
+.dark .btn-cyan-hover.nav-side-btn::before {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+.btn-cyan-hover.nav-side-btn:hover,
+.btn-cyan-hover.nav-side-btn:active {
+  transform: none;
+}
+.btn-cyan-hover.nav-side-btn.bg-\[\#f69100\]:hover::before,
+.btn-cyan-hover.nav-side-btn.bg-\[\#f69100\]:active::before,
+.dark .btn-cyan-hover.nav-side-btn.bg-\[\#f69100\]:hover::before,
+.dark .btn-cyan-hover.nav-side-btn.bg-\[\#f69100\]:active::before {
+  background-image: none !important;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Planes: hover de tarjetas, totalmente negro en claro / totalmente blanco en oscuro */
+.plan-hover:hover { background-color: #000000 !important; border-color: #000000 !important; }
+.plan-hover:hover, .plan-hover:hover * { color: #ffffff !important; }
+.dark .plan-hover:hover { background-color: #ffffff !important; border-color: #ffffff !important; }
+.dark .plan-hover:hover, .dark .plan-hover:hover * { color: #111111 !important; }
+/* El pill de precio "Normal" mantiene su estilo asignado */
+.plan-hover:hover .plan-normal-pill { color: #111827 !important; background-color: #f3f4f6 !important; }
+.dark .plan-hover:hover .plan-normal-pill { color: #111111 !important; background-color: #e5e5e5 !important; }
+/* Pills de meta (canales / HD) legibles en hover */
+.plan-hover:hover .plan-meta-pill { color: #111827 !important; background-color: #f3f4f6 !important; }
+.dark .plan-hover:hover .plan-meta-pill { color: #111111 !important; background-color: #e5e5e5 !important; }
+.plan-hover:hover .plan-hd-pill { color: #1e40af !important; background-color: #dbeafe !important; }
+.dark .plan-hover:hover .plan-hd-pill { color: #1e3a8a !important; background-color: #bfdbfe !important; }
+/* El pill de "Promo" en tema claro se mantiene en negro */
+.plan-hover:hover .plan-promo-pill { color: #111827 !important; background-color: #d1fae5 !important; }
+.dark .plan-hover:hover .plan-promo-pill { color: #065f46 !important; background-color: #a7f3d0 !important; }
+
+/* D-BOX / MODEM - gradientes claros -> oscuros neutros (sin azul) */
+.dark .from-emerald-50 { --tw-gradient-from: #1a1a1a !important; }
+.dark .to-blue-50 { --tw-gradient-to: #0a0a0a !important; }
+.dark .from-blue-50 { --tw-gradient-from: #1a1a1a !important; }
+.dark .to-indigo-50 { --tw-gradient-to: #0a0a0a !important; }
+.dark .from-orange-50 { --tw-gradient-from: #7c2d12 !important; }
+.dark .to-red-50 { --tw-gradient-to: #7f1d1d !important; }
+.dark .from-green-50 { --tw-gradient-from: #14532d !important; }
+.dark .to-emerald-50 { --tw-gradient-to: #064e3b !important; }
+.dark .from-red-50 { --tw-gradient-from: #7f1d1d !important; }
+.dark .to-orange-50 { --tw-gradient-to: #7c2d12 !important; }
+.dark .from-gray-50 { --tw-gradient-from: #1a1a1a !important; }
+.dark .to-gray-100 { --tw-gradient-to: #0a0a0a !important; }
+.dark .dark\:from-gray-800 { --tw-gradient-from: #1a1a1a !important; }
+.dark .dark\:to-gray-900 { --tw-gradient-to: #0a0a0a !important; }
+
+.dark .text-emerald-800 { color: #6ee7b7 !important; }
+.dark .text-orange-800 { color: #fdba74 !important; }
+.dark .text-green-800 { color: #86efac !important; }
+.dark .text-red-800 { color: #fca5a5 !important; }
+
+.dark .border-emerald-200 { border-color: #065f46 !important; }
+.dark .border-orange-200 { border-color: #9a3412 !important; }
+.dark .border-green-200 { border-color: #166534 !important; }
+.dark .border-red-200 { border-color: #991b1b !important; }
+
+/* Información Importante - tarjetas de colores claros -> oscuros */
+.dark .bg-red-50 { background-color: #450a0a !important; }
+.dark .bg-emerald-50 { background-color: #022c22 !important; }
+.dark .bg-purple-50 { background-color: #2e1065 !important; }
+.dark .text-red-600 { color: #f87171 !important; }
+.dark .text-emerald-600 { color: #34d399 !important; }
+.dark .text-purple-600 { color: #c084fc !important; }
+.dark .text-purple-800 { color: #d8b4fe !important; }
+
+/* Iconos de silueta en navegación: claros en modo oscuro */
+.dark .dark-nav-icon {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* Logos en navegación: negro en claro, blanco en oscuro */
+.nav-icon {
+  filter: brightness(0);
+}
+.dark .nav-icon {
+  filter: brightness(0) invert(1);
+}
+
+/* Íconos con tono más suave en navegación: gris en claro, menos blanco en oscuro */
+.nav-icon-soft {
+  filter: brightness(0.4);
+}
+.dark .nav-icon-soft {
+  filter: brightness(0) invert(0.7);
+}
+
+/* Icono D-BOX: color natural en claro, tono suave en oscuro */
+.nav-icon-dbox {
+  filter: brightness(0.7);
+}
+.dark .nav-icon-dbox {
+  filter: brightness(0) invert(0.7);
+}
+
+/* Logo VTR (header/sidebar): blanco en tema oscuro */
+.dark .nav-logo {
+  filter: brightness(0) invert(1);
+}
+
+/* Logos sobre botones oscuros: siempre blancos en claro, negros en oscuro */
+.quick-icon {
+  filter: brightness(0) invert(1);
+}
+.dark .quick-icon {
+  filter: brightness(0);
+}
+
+/* Logos sobre fondos de color: siempre blancos */
+.always-white-icon {
+  filter: brightness(0) invert(1);
+}
+
+/* Logo TNT Sports: negro en tema claro, blanco en tema oscuro */
+.tnt-logo {
+  filter: brightness(0);
+}
+.dark .tnt-logo {
+  filter: brightness(0) invert(1);
+}
+
+/* Logo Apex en pantalla de carga (sin giro) */
+@keyframes apex-loader-breathe {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+.apex-loader-logo {
+  animation: apex-loader-breathe 1.4s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* Logos Claro / VTR: solo un realce suave al pasar el cursor (sin rebote) */
+.marca-logo {
+  transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
+  transform-origin: center;
+}
+.marca-logo:hover,
+.marca-logo:focus-visible {
+  transform: scale(1.06);
+  opacity: 1;
+}
+.marca-logo-claro:hover,
+.marca-logo-claro:focus-visible {
+  filter: drop-shadow(0 2px 5px rgba(226, 0, 26, 0.35));
+}
+.marca-logo-vtr:hover,
+.marca-logo-vtr:focus-visible {
+  filter: drop-shadow(0 2px 5px rgba(29, 78, 216, 0.35));
+}
+.marca-logo:active {
+  transform: scale(1.01);
+}
+@media (prefers-reduced-motion: reduce) {
+  .marca-logo,
+  .marca-logo:hover,
+  .marca-logo:focus-visible,
+  .marca-logo:active {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Animación de zoom al navegar entre secciones */
+@keyframes section-zoom-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.section-zoom {
+  animation: section-zoom-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Chatbot: puntos “escribiendo…” */
+@keyframes chat-typing-dot {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  30% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+.chat-typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: rgba(15, 118, 110, 0.55);
+  animation: chat-typing-dot 1.1s ease-in-out infinite;
+}
+.dark .chat-typing-dot {
+  background: rgba(255, 255, 255, 0.65);
+}
+.chat-typing-dot:nth-child(2) {
+  animation-delay: 0.18s;
+}
+.chat-typing-dot:nth-child(3) {
+  animation-delay: 0.36s;
+}
+
+/* Messenger: sin recorte circular, icono completo */
+.messenger-avatar-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  object-fit: contain;
+  object-position: center;
+  pointer-events: none;
+  background: transparent !important;
+}
+
+/* Messenger: scroll unificado — oculto hasta hover (claro y oscuro) */
+.vtr-msg-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  overscroll-behavior: contain;
+}
+.vtr-msg-scroll:hover,
+.vtr-msg-scroll:focus-within,
+.vtr-msg-scroll:active {
+  scrollbar-color: #00806999 transparent;
+}
+.vtr-msg-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.vtr-msg-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 4px 0;
+}
+.vtr-msg-scroll::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.18s ease;
+}
+.vtr-msg-scroll:hover::-webkit-scrollbar-thumb,
+.vtr-msg-scroll:focus-within::-webkit-scrollbar-thumb,
+.vtr-msg-scroll:active::-webkit-scrollbar-thumb {
+  background-color: #00806999;
+}
+.vtr-msg-scroll:hover::-webkit-scrollbar-thumb:hover,
+.vtr-msg-scroll:focus-within::-webkit-scrollbar-thumb:hover {
+  background-color: #008069cc;
+}
+.dark .vtr-msg-scroll {
+  scrollbar-color: transparent transparent;
+}
+.dark .vtr-msg-scroll:hover,
+.dark .vtr-msg-scroll:focus-within,
+.dark .vtr-msg-scroll:active {
+  scrollbar-color: #00806999 transparent;
+}
+.dark .vtr-msg-scroll::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+.dark .vtr-msg-scroll:hover::-webkit-scrollbar-thumb,
+.dark .vtr-msg-scroll:focus-within::-webkit-scrollbar-thumb,
+.dark .vtr-msg-scroll:active::-webkit-scrollbar-thumb {
+  background-color: #00806999;
+}
+.dark .vtr-msg-scroll:hover::-webkit-scrollbar-thumb:hover,
+.dark .vtr-msg-scroll:focus-within::-webkit-scrollbar-thumb:hover {
+  background-color: #008069cc;
+}
+
+/* Mensajes Apex: entrada, carga y recepción */
+@keyframes vtr-msg-in-mine {
+  from {
+    opacity: 0;
+    transform: translate3d(12px, 10px, 0) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+@keyframes vtr-msg-in-theirs {
+  from {
+    opacity: 0;
+    transform: translate3d(-12px, 10px, 0) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+@keyframes vtr-msg-skeleton {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+@keyframes vtr-msg-chip-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.vtr-msg-enter-mine {
+  animation: vtr-msg-in-mine 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.vtr-msg-enter-theirs {
+  animation: vtr-msg-in-theirs 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.vtr-msg-pending {
+  opacity: 0.78;
+  filter: saturate(0.92);
+}
+.vtr-msg-bubble {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.vtr-msg-bubble:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+.vtr-msg-day {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.65rem auto;
+  padding: 0.28rem 0.7rem;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #54656f;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 1px 3px rgba(11, 20, 26, 0.08);
+}
+.dark .vtr-msg-day {
+  color: #aebac1;
+  background: rgba(31, 41, 55, 0.92);
+}
+.vtr-msg-img-skeleton {
+  background: linear-gradient(90deg, #e5e7eb 0%, #f3f4f6 45%, #e5e7eb 90%);
+  background-size: 200% 100%;
+  animation: vtr-msg-skeleton 1.15s ease-in-out infinite;
+}
+.dark .vtr-msg-img-skeleton {
+  background: linear-gradient(90deg, #1f2937 0%, #374151 45%, #1f2937 90%);
+  background-size: 200% 100%;
+}
+.vtr-msg-nuevos {
+  animation: vtr-msg-chip-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.vtr-msg-lista-loading .vtr-msg-skel-line {
+  height: 2.6rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.04));
+  background-size: 200% 100%;
+  animation: vtr-msg-skeleton 1.2s ease-in-out infinite;
+}
+.dark .vtr-msg-lista-loading .vtr-msg-skel-line {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+  background-size: 200% 100%;
+  animation: vtr-msg-skeleton 1.2s ease-in-out infinite;
+}
+
+/* Fila activa de las listas del messenger: mismo degradado que el boton activo del
+   sidebar, pero sin forzar el color de los hijos (evita texto blanco al hover). */
+.vtr-row-active {
+  background-color: transparent !important;
+  background-image: linear-gradient(145deg, #f69100 0%, #c2410c 55%, #7c2d12 100%) !important;
+  border-left-color: transparent !important;
+}
+.dark .vtr-row-active {
+  background-image: linear-gradient(145deg, #14b8a6 0%, #0f766e 55%, #064e3b 100%) !important;
+}
+
+/* Un solo color por tema: el hover usa el mismo degradado que el relleno activo,
+   en vez de alternar entre cian y naranja. */
+.vtr-msg-btn::before {
+  background-image: linear-gradient(145deg, #f69100 0%, #c2410c 55%, #7c2d12 100%) !important;
+}
+.dark .vtr-msg-btn::before {
+  background-image: linear-gradient(145deg, #14b8a6 0%, #0f766e 55%, #064e3b 100%) !important;
+}
+
+/* Relleno degradado de los avatares con inicial. */
+.vtr-avatar-fill {
+  background-color: transparent !important;
+  background-image: linear-gradient(145deg, #f69100 0%, #c2410c 55%, #7c2d12 100%) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+.dark .vtr-avatar-fill {
+  background-image: linear-gradient(145deg, #14b8a6 0%, #0f766e 55%, #064e3b 100%) !important;
+}
+
+/* ==========================================================================
+   ESTILO CRISTALINO FRUTIGER AERO (AERO GLASS) - MENSAJERÍA APEX
+   Fondos translúcidos con reflejos de luz especular, biseles brillantes,
+   fondos aurora y profundidad tridimensional para temas claro y oscuro.
+   ========================================================================== */
+
+/* Contenedor principal con marco de cristal pulido */
+.vtr-aero-glass-container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(240, 249, 255, 0.72) 45%, rgba(224, 245, 255, 0.8) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: 0 20px 48px rgba(14, 116, 144, 0.16);
+  border: none;
+  position: relative;
+}
+.dark .vtr-aero-glass-container {
+  background: linear-gradient(135deg, rgba(14, 22, 26, 0.84) 0%, rgba(9, 16, 19, 0.88) 50%, rgba(6, 11, 14, 0.92) 100%);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
+  border: none;
+}
+
+/* Panel lateral (Aside) de cristal esmerilado */
+.vtr-aero-sidebar {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(242, 248, 253, 0.65) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(186, 220, 240, 0.35);
+}
+.dark .vtr-aero-sidebar {
+  background: linear-gradient(180deg, rgba(16, 25, 28, 0.78) 0%, rgba(10, 17, 20, 0.84) 100%);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Cabeceras con bisel de luz superior (efecto cristal pulido) */
+.vtr-aero-header {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(238, 247, 255, 0.82) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(186, 230, 253, 0.65);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    0 3px 12px rgba(14, 165, 233, 0.08);
+}
+.dark .vtr-aero-header {
+  background: linear-gradient(180deg, rgba(24, 40, 42, 0.86) 0%, rgba(13, 24, 26, 0.84) 100%);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border-bottom: 1px solid rgba(45, 212, 191, 0.25);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.22),
+    0 4px 18px rgba(0, 0, 0, 0.5);
+}
+
+/* Barra de búsqueda estilo cristal cóncavo (inset glass) */
+.vtr-aero-search-input {
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(186, 220, 245, 0.5) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  color: #0f172a !important;
+  transition: all 0.2s ease;
+}
+.vtr-aero-search-input:focus {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: #38bdf8 !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.04),
+    0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+}
+.dark .vtr-aero-search-input {
+  background: rgba(0, 0, 0, 0.38) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5) !important;
+  color: #f1f5f9 !important;
+}
+.dark .vtr-aero-search-input:focus {
+  background: rgba(0, 0, 0, 0.55) !important;
+  border-color: #2dd4bf !important;
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.6),
+    0 0 0 3px rgba(45, 212, 191, 0.2) !important;
+}
+
+/* Pestañas de cristal estilo Aero */
+.vtr-aero-tabs-bar {
+  background: rgba(240, 247, 253, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(186, 220, 240, 0.3);
+  box-shadow: inset 0 -1px 0 rgba(14, 165, 233, 0.06);
+}
+.dark .vtr-aero-tabs-bar {
+  background: rgba(10, 16, 19, 0.75);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 -1px 0 rgba(45, 212, 191, 0.08);
+}
+
+/* Eliminar todo borde/outline en botones de pestañas en CUALQUIER estado */
+.vtr-aero-tabs-bar button,
+.vtr-aero-tabs-bar button:focus,
+.vtr-aero-tabs-bar button:focus-visible,
+.vtr-aero-tabs-bar button:active,
+.vtr-aero-tabs-bar button:hover {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none;
+}
+.vtr-aero-tabs-bar button.vtr-aero-tab-btn-active,
+.vtr-aero-tabs-bar button.vtr-aero-tab-btn-active:focus,
+.vtr-aero-tabs-bar button.vtr-aero-tab-btn-active:hover {
+  box-shadow: 0 3px 10px rgba(14, 165, 233, 0.28) !important;
+}
+.dark .vtr-aero-tabs-bar button.vtr-aero-tab-btn-active,
+.dark .vtr-aero-tabs-bar button.vtr-aero-tab-btn-active:focus,
+.dark .vtr-aero-tabs-bar button.vtr-aero-tab-btn-active:hover {
+  box-shadow: 0 3px 12px rgba(20, 184, 166, 0.28) !important;
+}
+
+.vtr-aero-tab-btn-active {
+  background: linear-gradient(180deg,
+    rgba(56,189,248,0.9) 0%,
+    #0ea5e9 55%,
+    #0369a1 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: 0 3px 10px rgba(14, 165, 233, 0.28) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+.vtr-aero-tab-btn-active:focus {
+  outline: none !important;
+  box-shadow: 0 3px 10px rgba(14, 165, 233, 0.28) !important;
+}
+.dark .vtr-aero-tab-btn-active {
+  background: linear-gradient(180deg,
+    rgba(20,184,166,0.9) 0%,
+    #0f766e 55%,
+    #064e3b 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: 0 3px 12px rgba(20, 184, 166, 0.28) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+.dark .vtr-aero-tab-btn-active:focus {
+  outline: none !important;
+  box-shadow: 0 3px 12px rgba(20, 184, 166, 0.28) !important;
+}
+
+/* Fondo atmosférico Frutiger Aero (Aurora & Water Glow) para el chat activo */
+.vtr-aero-chat-wallpaper {
+  background-color: #f0f7fb;
+  background-image:
+    radial-gradient(circle at 88% 12%, rgba(56, 189, 248, 0.25) 0%, transparent 48%),
+    radial-gradient(circle at 12% 88%, rgba(52, 211, 153, 0.20) 0%, transparent 52%),
+    radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.7) 0%, transparent 65%),
+    linear-gradient(165deg, #e3f2fd 0%, #e0f2fe 35%, #ecfeff 65%, #f0fdfa 100%);
+  background-attachment: local;
+  position: relative;
+}
+.vtr-aero-chat-wallpaper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.5) 0%, transparent 70%);
+  opacity: 0.8;
+}
+
+.dark .vtr-aero-chat-wallpaper {
+  background-color: #060c0e;
+  background-image:
+    radial-gradient(circle at 88% 12%, rgba(14, 165, 233, 0.22) 0%, transparent 48%),
+    radial-gradient(circle at 12% 88%, rgba(20, 184, 166, 0.22) 0%, transparent 52%),
+    radial-gradient(circle at 50% 45%, rgba(16, 185, 129, 0.12) 0%, transparent 65%),
+    linear-gradient(165deg, #0b1518 0%, #070e10 40%, #050a0c 70%, #030607 100%);
+  background-attachment: local;
+}
+.dark .vtr-aero-chat-wallpaper::before {
+  background: radial-gradient(ellipse at 50% 0%, rgba(45, 212, 191, 0.12) 0%, transparent 70%);
+  opacity: 0.6;
+}
+
+/* Ítems de la lista de chats / contactos estilo cristal */
+.vtr-aero-list-item {
+  position: relative;
+  transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: transparent;
+}
+.vtr-aero-list-item:hover {
+  background: rgba(255, 255, 255, 0.62) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 2px 8px rgba(14, 165, 233, 0.08);
+}
+.dark .vtr-aero-list-item:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.vtr-aero-list-item-active {
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.22) 0%, rgba(56, 189, 248, 0.10) 100%) !important;
+  border-left: 4px solid #0284c7 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 2px 8px rgba(14, 165, 233, 0.14) !important;
+}
+.dark .vtr-aero-list-item-active {
+  background: linear-gradient(90deg, rgba(20, 184, 166, 0.24) 0%, rgba(20, 184, 166, 0.08) 100%) !important;
+  border-left: 4px solid #2dd4bf !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 2px 10px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Burbujas Frutiger Aero Aqua / Glass (Mensajes propios) */
+.vtr-aero-bubble-mine {
+  background: linear-gradient(160deg,
+    rgba(56,189,248,0.95) 0%,
+    #0ea5e9 45%,
+    #0284c7 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow:
+    inset 0 1px 5px rgba(255, 255, 255, 0.4),
+    0 4px 14px rgba(2, 132, 199, 0.25) !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+}
+.dark .vtr-aero-bubble-mine {
+  background: linear-gradient(160deg,
+    rgba(20,184,166,0.95) 0%,
+    #0f766e 45%,
+    #064e3b 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow:
+    inset 0 1px 5px rgba(255, 255, 255, 0.3),
+    0 4px 16px rgba(13, 148, 136, 0.35) !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+
+/* Burbujas de cristal translúcido (Mensajes recibidos) */
+.vtr-aero-bubble-theirs {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(240, 248, 255, 0.82) 100%) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #0f172a !important;
+  border: 1px solid rgba(186, 225, 248, 0.45) !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07) !important;
+}
+.dark .vtr-aero-bubble-theirs {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #f1f5f9 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Pastilla de fecha flotante de cristal */
+.vtr-aero-day-chip {
+  background: rgba(240, 248, 255, 0.88) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(186, 225, 248, 0.4) !important;
+  box-shadow: 0 3px 10px rgba(14, 165, 233, 0.08) !important;
+  color: #0369a1 !important;
+}
+.dark .vtr-aero-day-chip {
+  background: rgba(16, 28, 30, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(45, 212, 191, 0.2) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+  color: #5eead4 !important;
+}
+
+/* Barra inferior de entrada de texto de cristal */
+.vtr-aero-input-bar {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(240, 248, 255, 0.82) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(186, 220, 240, 0.35);
+  box-shadow: 0 -4px 16px rgba(14, 165, 233, 0.05);
+}
+.dark .vtr-aero-input-bar {
+  background: linear-gradient(180deg, rgba(20, 32, 34, 0.88) 0%, rgba(11, 20, 22, 0.92) 100%);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Textarea cóncava de cristal */
+.vtr-aero-textarea {
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(186, 220, 245, 0.5) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04) !important;
+  color: #0f172a !important;
+  transition: all 0.2s ease;
+}
+.vtr-aero-textarea:focus {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: #38bdf8 !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.04),
+    0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+}
+.dark .vtr-aero-textarea {
+  background: rgba(0, 0, 0, 0.42) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5) !important;
+  color: #f1f5f9 !important;
+}
+.dark .vtr-aero-textarea:focus {
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-color: #2dd4bf !important;
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.6),
+    0 0 0 3px rgba(45, 212, 191, 0.2) !important;
+}
+
+/* Botón enviar y botones de acción tipo gema 3D Frutiger Aero */
+.vtr-aero-btn-action {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(230, 242, 250, 0.75) 100%);
+  border: 1px solid rgba(186, 220, 245, 0.5);
+  box-shadow: 0 2px 6px rgba(14, 165, 233, 0.1);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.vtr-aero-btn-action:hover {
+  background: linear-gradient(180deg, #ffffff 0%, rgba(220, 238, 250, 0.9) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(14, 165, 233, 0.18);
+}
+.vtr-aero-btn-action:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.dark .vtr-aero-btn-action {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.35);
+}
+.dark .vtr-aero-btn-action:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.08) 100%);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Botón de enviar tipo gema aqua brillante */
+.vtr-aero-send-btn {
+  background: linear-gradient(160deg,
+    rgba(56,189,248,0.95) 0%,
+    #0ea5e9 50%,
+    #0284c7 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow:
+    inset 0 1px 5px rgba(255, 255, 255, 0.35),
+    0 4px 12px rgba(2, 132, 199, 0.3) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.vtr-aero-send-btn:hover:not(:disabled) {
+  transform: translateY(-1px) scale(1.04);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.45) !important;
+}
+.vtr-aero-send-btn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.97);
+  filter: brightness(0.92);
+}
+.dark .vtr-aero-send-btn {
+  background: linear-gradient(160deg,
+    rgba(20,184,166,0.95) 0%,
+    #0f766e 50%,
+    #064e3b 100%) !important;
+  border: none !important;
+  box-shadow:
+    inset 0 1px 5px rgba(255, 255, 255, 0.25),
+    0 4px 14px rgba(20, 184, 166, 0.35) !important;
+}
+.dark .vtr-aero-send-btn:hover:not(:disabled) {
+  filter: brightness(1.12);
+  box-shadow: 0 6px 20px rgba(20, 184, 166, 0.5) !important;
+}
+
+/* Gema de estado 3D MSN Messenger (punto en línea con destello) */
+.vtr-aero-gem-online {
+  background: radial-gradient(circle at 35% 35%, #86efac 0%, #22c55e 50%, #15803d 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    0 0 8px rgba(34, 197, 94, 0.6);
+}
+.dark .vtr-aero-gem-online {
+  background: radial-gradient(circle at 35% 35%, #5eead4 0%, #14b8a6 50%, #0f766e 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    0 0 10px rgba(45, 212, 191, 0.7);
+}
+
+/* Modal y ventanas flotantes de cristal Frutiger Aero */
+.vtr-aero-modal-window {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(240, 248, 255, 0.88) 100%);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 1),
+    0 24px 60px rgba(14, 116, 144, 0.22);
+}
+.dark .vtr-aero-modal-window {
+  background: linear-gradient(135deg, rgba(16, 26, 30, 0.92) 0%, rgba(10, 18, 21, 0.95) 100%);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    0 28px 70px rgba(0, 0, 0, 0.8);
+}
+
+
+
+
+

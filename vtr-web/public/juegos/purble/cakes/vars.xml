@@ -1,0 +1,124 @@
+﻿<Root>
+
+    <!--
+    VARIABLES TO ADJUST THE DIFFICULTY SETTINGS
+    -->
+
+    <!-- Number of cakes needed to win the round. -->
+    <BeginnerCakesNeeded>5</BeginnerCakesNeeded>
+
+    <!-- Number of missed cakes allowed before the game is lost. -->
+    <BeginnerMissedCakesAllowed>3</BeginnerMissedCakesAllowed>
+
+    <!-- Number of seconds between times the belt slides. -->
+    <BeginnerBeltSlideTime>4.0</BeginnerBeltSlideTime>
+
+    <!-- Number of belt automatic slides between a cake being added. -->
+    <BeginnerNumSlidesToAddCake>5</BeginnerNumSlidesToAddCake>
+
+    <!-- Defines the minimum and maximum number of layers the correct cake
+         will be generated with.  If min is set to 1, and max is set to 1,
+         then at this difficulty there would only ever be 1 layer cakes. -->
+    <BeginnerMinLayers>1</BeginnerMinLayers>
+    <BeginnerMaxLayers>1</BeginnerMaxLayers>
+
+    <!-- Sets the minimum and maximum number of toppings.  Right now the only
+         value that gets used is the max number which sets the total. -->
+    <BeginnerMinToppings>2</BeginnerMinToppings>
+    <BeginnerMaxToppings>2</BeginnerMaxToppings>
+
+    <!-- Sets whether the base cake can be rotated.  This is one way to make
+         the cakes more difficult. -->
+    <BeginnerRotateBase>false</BeginnerRotateBase>
+    <!-- Sets whether the decoration topping can be rotated on top of the
+         correct cake.  This is an additional way to make the cakes more
+         difficult. -->
+    <BeginnerRotateToppings>false</BeginnerRotateToppings>
+
+    <!-- Settings for time attack mode -->
+    <BeginnerNumTimeToAddCake>1.0</BeginnerNumTimeToAddCake>
+    <BeginnerNumAccelerationToAddCakeTime>1.0</BeginnerNumAccelerationToAddCakeTime>
+    <BeginnerNumMinTimeToAddCake>1.0</BeginnerNumMinTimeToAddCake>
+    <BeginnerTimeAttackAllowed>false</BeginnerTimeAttackAllowed>
+
+    <!-- Number of cakes needed to win the round. -->
+    <IntermediateCakesNeeded>5</IntermediateCakesNeeded>
+
+    <!-- Number of missed cakes allowed before the game is lost. -->
+    <IntermediateMissedCakesAllowed>3</IntermediateMissedCakesAllowed>
+
+    <!-- Number of seconds between times the belt slides. -->
+    <IntermediateBeltSlideTime>4.0</IntermediateBeltSlideTime>
+
+    <!-- Number of belt automatic slides between a cake being added. -->
+    <IntermediateNumSlidesToAddCake>4</IntermediateNumSlidesToAddCake>
+
+    <!-- Defines the minimum and maximum number of layers the correct cake
+         will be generated with.  If min is set to 1, and max is set to 1,
+         then at this difficulty there would only ever be 1 layer cakes. -->
+    <IntermediateMinLayers>2</IntermediateMinLayers>
+    <IntermediateMaxLayers>2</IntermediateMaxLayers>
+
+    <!-- Sets the minimum and maximum number of toppings.  Right now the only
+         value that gets used is the max number which sets the total.
+         For a max of 1 - Only frosting on top.
+         For a max of 2 - Frosting and a decoration.
+         For a max of 3 - Frosting, a decoration, and a final touch. -->
+    <IntermediateMinToppings>3</IntermediateMinToppings>
+    <IntermediateMaxToppings>3</IntermediateMaxToppings>
+
+    <!-- Sets whether the base cake can be rotated.  This is one way to make
+         the cakes more difficult. -->
+    <IntermediateRotateBase>false</IntermediateRotateBase>
+    <!-- Sets whether the decoration topping can be rotated on top of the
+         correct cake.  This is an additional way to make the cakes more
+         difficult. -->
+    <IntermediateRotateToppings>false</IntermediateRotateToppings>
+
+    <!-- Settings for time attack mode -->
+    <IntermediateNumTimeToAddCake>16.0</IntermediateNumTimeToAddCake>
+    <IntermediateNumAccelerationToAddCakeTime>1.0</IntermediateNumAccelerationToAddCakeTime>
+    <IntermediateNumMinTimeToAddCake>8.0</IntermediateNumMinTimeToAddCake>
+    <IntermediateTimeAttackAllowed>true</IntermediateTimeAttackAllowed>
+
+    <!-- Number of cakes needed to win the round. -->
+    <ExpertCakesNeeded>8</ExpertCakesNeeded>
+
+    <!-- Number of missed cakes allowed before the game is lost. -->
+    <ExpertMissedCakesAllowed>2</ExpertMissedCakesAllowed>
+
+    <!-- Number of seconds between times the belt slides. -->
+    <ExpertBeltSlideTime>4.0</ExpertBeltSlideTime>
+
+    <!-- Number of belt automatic slides between a cake being added. -->
+    <ExpertNumSlidesToAddCake>6</ExpertNumSlidesToAddCake>
+
+    <!-- Defines the minimum and maximum number of layers the correct cake
+         will be generated with.  If min is set to 1, and max is set to 1,
+         then at this difficulty there would only ever be 1 layer cakes. -->
+    <ExpertMinLayers>3</ExpertMinLayers>
+    <ExpertMaxLayers>3</ExpertMaxLayers>
+
+    <!-- Sets the minimum and maximum number of toppings.  Right now the only
+         value that gets used is the max number which sets the total.
+         For a max of 1 - Only frosting on top.
+         For a max of 2 - Frosting and a decoration.
+         For a max of 3 - Frosting, a decoration, and a final touch. -->
+    <ExpertMinToppings>3</ExpertMinToppings>
+    <ExpertMaxToppings>3</ExpertMaxToppings>
+
+    <!-- Sets whether the base cake can be rotated.  This is one way to make
+         the cakes more difficult. -->
+    <ExpertRotateBase>true</ExpertRotateBase>
+    <!-- Sets whether the decoration topping can be rotated on top of the
+         correct cake.  This is an additional way to make the cakes more
+         difficult. -->
+    <ExpertRotateToppings>true</ExpertRotateToppings>
+
+    <!-- Settings for time attack mode -->
+    <ExpertNumTimeToAddCake>8.0</ExpertNumTimeToAddCake>
+    <ExpertNumAccelerationToAddCakeTime>1.0</ExpertNumAccelerationToAddCakeTime>
+    <ExpertNumMinTimeToAddCake>4.0</ExpertNumMinTimeToAddCake>
+    <ExpertTimeAttackAllowed>true</ExpertTimeAttackAllowed>
+
+</Root>

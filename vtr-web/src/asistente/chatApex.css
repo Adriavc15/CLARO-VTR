@@ -1,0 +1,920 @@
+/* Chat flotante Apex — presentación */
+
+.apex-chat-fab {
+  position: fixed;
+  right: 1rem;
+  bottom: 5rem;
+  z-index: 90;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: linear-gradient(145deg, #14b8a6 0%, #0f766e 55%, #064e3b 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    0 12px 28px rgba(15, 118, 110, 0.45),
+    0 0 0 0 rgba(45, 212, 191, 0.35);
+  animation: apex-fab-breathe 2.8s ease-in-out infinite;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.apex-chat-fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 16px 36px rgba(15, 118, 110, 0.55);
+}
+.apex-chat-fab:active {
+  transform: scale(0.96);
+}
+@media (min-width: 1024px) {
+  .apex-chat-fab {
+    right: 1.5rem;
+    bottom: 1.5rem;
+  }
+}
+
+@keyframes apex-fab-breathe {
+  0%,
+  100% {
+    box-shadow:
+      0 12px 28px rgba(15, 118, 110, 0.45),
+      0 0 0 0 rgba(45, 212, 191, 0.28);
+  }
+  50% {
+    box-shadow:
+      0 12px 28px rgba(15, 118, 110, 0.45),
+      0 0 0 10px rgba(45, 212, 191, 0);
+  }
+}
+
+.apex-chat-panel {
+  --apex-ink: #f4faf9;
+  --apex-muted: rgba(244, 250, 249, 0.62);
+  --apex-line: rgba(255, 255, 255, 0.1);
+  --apex-teal: #2dd4bf;
+  position: fixed;
+  z-index: 90;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 5rem;
+  display: flex;
+  flex-direction: column;
+  max-height: min(78vh, 760px);
+  height: min(78vh, 760px);
+  border-radius: 22px;
+  overflow: hidden;
+  color: var(--apex-ink);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(165deg, #1a1a1a 0%, #141414 48%, #0a0a0a 100%);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55);
+  animation: apex-panel-in 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (min-width: 640px) {
+  .apex-chat-panel {
+    left: auto;
+    right: 1.5rem;
+    width: 520px;
+  }
+}
+@media (min-width: 1024px) {
+  .apex-chat-panel {
+    bottom: 1.5rem;
+    width: 560px;
+  }
+}
+
+.apex-chat-panel--embebido {
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  animation: none !important;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+.apex-chat-panel--embebido .apex-chat-messages {
+  flex: 1;
+  min-height: 0;
+}
+
+@keyframes apex-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.apex-chat-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--apex-line);
+  background: linear-gradient(90deg, rgba(13, 148, 136, 0.35), rgba(6, 95, 70, 0.18));
+}
+
+.apex-chat-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.apex-chat-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 2.85rem;
+  height: 2.85rem;
+}
+.apex-chat-avatar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.85rem;
+  height: 2.85rem;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent !important;
+  cursor: pointer;
+  border-radius: 0;
+  line-height: 0;
+  overflow: visible;
+}
+.apex-chat-avatar-btn:hover {
+  opacity: 0.92;
+}
+.apex-chat-avatar-wrap::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: #34d399;
+  border: 2px solid #141414;
+  box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55);
+  animation: apex-online-pulse 2s ease-out infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Avatares unificados bot / usuario */
+.apex-face {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+.apex-face--bot,
+.apex-face--user {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+.apex-face--photo {
+  object-fit: cover;
+  border-radius: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+}
+.apex-face--fallback {
+  border-radius: 0;
+  overflow: visible;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  border: 0;
+}
+.apex-face-messenger {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  pointer-events: none;
+  background: transparent;
+}
+.apex-face--swatch {
+  width: 100% !important;
+  height: 100% !important;
+  background: transparent;
+  border: 0;
+}
+.apex-chat-color-picker {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 20;
+  width: 11.5rem;
+  padding: 0.65rem 0.7rem 0.75rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #151a18;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+}
+.apex-chat-color-picker-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(244, 250, 249, 0.7);
+}
+.apex-chat-color-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+}
+.apex-chat-color-swatch {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  background: transparent !important;
+}
+.apex-chat-color-swatch img,
+.apex-chat-color-swatch .apex-face-messenger {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  background: transparent;
+}
+.apex-chat-color-swatch.is-active {
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 1px rgba(45, 212, 191, 0.4);
+}
+.apex-chat-color-swatch:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+@keyframes apex-online-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(52, 211, 153, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
+  }
+}
+
+.apex-chat-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fff;
+  line-height: 1.15;
+}
+.apex-chat-sub {
+  margin: 0.15rem 0 0;
+  font-size: 0.68rem;
+  color: var(--apex-muted);
+  line-height: 1.25;
+}
+
+.apex-chat-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+.apex-chat-btn-ghost {
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  border-radius: 0.65rem;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  transition: background 0.15s, color 0.15s;
+}
+.apex-chat-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+.apex-chat-btn-icon {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.apex-chat-btn-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.apex-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.9rem 0.85rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  mask-image: none;
+}
+
+.apex-chat-row {
+  display: flex;
+  gap: 0.55rem;
+  align-items: flex-end;
+  animation: apex-msg-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.apex-chat-row--user {
+  justify-content: flex-end;
+}
+.apex-chat-row--bot {
+  justify-content: flex-start;
+}
+
+@keyframes apex-msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.apex-chat-bubble {
+  max-width: calc(100% - 3.35rem);
+  width: fit-content;
+  min-width: 0;
+  padding: 0.75rem 0.95rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  border-radius: 1.1rem;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.apex-chat-bubble--user {
+  background: linear-gradient(145deg, #0d9488, #0f766e);
+  color: #fff;
+  border-bottom-right-radius: 0.35rem;
+  white-space: pre-wrap;
+  box-shadow: 0 8px 18px rgba(13, 148, 136, 0.25);
+}
+.apex-chat-bubble--bot {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom-left-radius: 0.35rem;
+  overflow: hidden;
+}
+
+.apex-chat-options {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.apex-chat-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  text-align: left;
+  width: 100%;
+  border: 1px solid rgba(45, 212, 191, 0.28);
+  background: rgba(45, 212, 191, 0.08);
+  color: #ccfbf1;
+  border-radius: 0.85rem;
+  padding: 0.55rem 0.65rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+.apex-chat-option:hover:not(:disabled) {
+  background: rgba(45, 212, 191, 0.16);
+  border-color: rgba(45, 212, 191, 0.5);
+  transform: translateX(2px);
+}
+.apex-chat-option:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.apex-chat-option-num {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background: rgba(45, 212, 191, 0.22);
+  border: 1px solid rgba(45, 212, 191, 0.4);
+  color: #99f6e4;
+  font-size: 0.62rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.05rem;
+}
+
+.apex-chat-fuentes {
+  margin-top: 0.65rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.apex-chat-imgs {
+  margin: 0.5rem 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+  width: 100%;
+}
+.apex-chat-imgs:last-child {
+  margin-bottom: 0;
+}
+.apex-chat-imgs:not(:last-child) {
+  margin-bottom: 0.35rem;
+}
+.apex-chat-img-btn {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0.35rem;
+  background: transparent;
+  line-height: 0;
+  cursor: zoom-in;
+  overflow: hidden;
+  width: 100%;
+  text-align: left;
+}
+.apex-chat-img-btn:hover {
+  opacity: 0.92;
+}
+.apex-chat-img {
+  display: block;
+  width: 100%;
+  height: 88px;
+  object-fit: cover;
+  background: transparent;
+  border: 0;
+  border-radius: 0.35rem;
+}
+.apex-chat-imgs .apex-chat-img-btn:only-child {
+  grid-column: 1 / -1;
+}
+.apex-chat-imgs .apex-chat-img-btn:only-child .apex-chat-img {
+  height: auto;
+  max-height: 120px;
+  object-fit: contain;
+  object-position: left center;
+}
+.apex-chat-plats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.32rem;
+  margin: 0.5rem 0 0;
+}
+.apex-chat-plat {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border-radius: 0.4rem;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.apex-chat-plat img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+}
+/* Lightbox */
+.apex-chat-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: apex-panel-in 0.18s ease;
+}
+.apex-chat-lightbox-img {
+  max-width: min(96vw, 920px);
+  max-height: min(88vh, 900px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 0.4rem;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+}
+.apex-chat-lightbox-close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.apex-chat-lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+.apex-chat-fuente {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.65rem;
+  color: #5eead4;
+  text-decoration: none;
+}
+.apex-chat-fuente:hover {
+  color: #99f6e4;
+}
+.apex-chat-fuente-local {
+  margin: 0;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.apex-chat-suggestions {
+  flex-shrink: 0;
+  padding: 0 0.85rem 0.55rem;
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.apex-chat-suggestions::-webkit-scrollbar {
+  display: none;
+}
+.apex-chat-chip {
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.72);
+  border-radius: 9999px;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.apex-chat-chip:hover {
+  background: rgba(45, 212, 191, 0.12);
+  border-color: rgba(45, 212, 191, 0.35);
+  color: #fff;
+}
+
+.apex-chat-composer-wrap {
+  flex-shrink: 0;
+  position: relative;
+  border-top: 1px solid var(--apex-line);
+  background: rgba(0, 0, 0, 0.22);
+}
+.apex-chat-predict {
+  list-style: none;
+  margin: 0;
+  padding: 0.45rem 0.55rem 0.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  max-height: 11rem;
+  overflow-y: auto;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.apex-chat-predict-item {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-radius: 0.55rem;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.75rem;
+  line-height: 1.35;
+  padding: 0.42rem 0.55rem;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.apex-chat-predict-item:hover,
+.apex-chat-predict-item.is-active {
+  background: rgba(45, 212, 191, 0.14);
+  color: #fff;
+}
+.apex-chat-predict-hint {
+  padding: 0.15rem 0.55rem 0.35rem;
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+}
+.apex-chat-composer {
+  flex-shrink: 0;
+  padding: 0.7rem 0.85rem 0.85rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+.apex-chat-input-wrap {
+  flex: 1;
+  position: relative;
+  min-width: 0;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.07);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.apex-chat-input-wrap:focus-within {
+  border-color: rgba(255, 255, 255, 0.32);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+.apex-chat-ghost {
+  position: absolute;
+  inset: 0;
+  padding: 0.7rem 1.1rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.apex-chat-ghost-typed {
+  color: transparent;
+}
+.apex-chat-ghost-rest {
+  color: rgba(255, 255, 255, 0.28);
+}
+.apex-chat-input {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  resize: none;
+  border-radius: 9999px;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  padding: 0.7rem 1.1rem;
+  max-height: 6rem;
+  outline: none;
+  caret-color: #5eead4;
+}
+.apex-chat-input::placeholder {
+  color: rgba(255, 255, 255, 0.38);
+}
+.apex-chat-input:focus {
+  outline: none;
+}
+.apex-chat-send {
+  width: 2.65rem;
+  height: 2.65rem;
+  border: 0;
+  border-radius: 0.95rem;
+  background: linear-gradient(145deg, #14b8a6, #0f766e);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s, opacity 0.15s, filter 0.15s;
+}
+.apex-chat-send:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+.apex-chat-send:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.apex-chat-typing {
+  display: flex;
+  gap: 0.55rem;
+  align-items: flex-end;
+}
+.apex-chat-typing-bubble {
+  border-radius: 1.1rem;
+  border-bottom-left-radius: 0.35rem;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.apex-chat-typing .chat-typing-dot {
+  background: rgba(45, 212, 191, 0.85);
+}
+
+/* —— Tema claro: mismos componentes, paleta del portal —— */
+html:not(.dark) .apex-chat-panel {
+  --apex-ink: #111827;
+  --apex-muted: #6b7280;
+  --apex-line: rgba(17, 24, 39, 0.1);
+  --apex-teal: #0f766e;
+  color: #111827;
+  border-color: rgba(17, 24, 39, 0.1);
+  background:
+    radial-gradient(120% 80% at 100% 0%, rgba(20, 184, 166, 0.12), transparent 55%),
+    radial-gradient(90% 70% at 0% 100%, rgba(246, 145, 0, 0.08), transparent 50%),
+    linear-gradient(165deg, #ffffff 0%, #f7faf9 48%, #f3f6f5 100%);
+  box-shadow: 0 28px 70px rgba(15, 23, 42, 0.16);
+}
+html:not(.dark) .apex-chat-header {
+  background: linear-gradient(90deg, rgba(20, 184, 166, 0.18), rgba(246, 145, 0, 0.1));
+  border-bottom-color: rgba(17, 24, 39, 0.08);
+}
+html:not(.dark) .apex-chat-avatar-wrap::after {
+  border-color: #ffffff;
+}
+html:not(.dark) .apex-chat-title {
+  color: #111827;
+}
+html:not(.dark) .apex-chat-sub {
+  color: #6b7280;
+}
+html:not(.dark) .apex-chat-btn-ghost,
+html:not(.dark) .apex-chat-btn-icon {
+  color: rgba(17, 24, 39, 0.5);
+}
+html:not(.dark) .apex-chat-btn-ghost:hover,
+html:not(.dark) .apex-chat-btn-icon:hover {
+  background: rgba(17, 24, 39, 0.06);
+  color: #111827;
+}
+html:not(.dark) .apex-chat-messages {
+  scrollbar-color: rgba(17, 24, 39, 0.22) transparent;
+}
+html:not(.dark) .apex-chat-bubble--bot,
+html:not(.dark) .apex-chat-typing-bubble {
+  background: #f3f4f6;
+  color: #1f2937;
+  border-color: rgba(17, 24, 39, 0.08);
+}
+html:not(.dark) .apex-face--bot,
+html:not(.dark) .apex-face--user {
+  background: transparent;
+  border: 0;
+}
+html:not(.dark) .apex-face--photo {
+  border: 0;
+  background: transparent;
+}
+html:not(.dark) .apex-face--fallback {
+  background: transparent;
+  color: #374151;
+  border: 0;
+}
+html:not(.dark) .apex-chat-color-picker {
+  background: #fff;
+  border-color: rgba(17, 24, 39, 0.12);
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.14);
+}
+html:not(.dark) .apex-chat-color-picker-title {
+  color: #6b7280;
+}
+html:not(.dark) .apex-chat-color-swatch {
+  border-color: rgba(17, 24, 39, 0.12);
+}
+html:not(.dark) .apex-chat-color-swatch.is-active {
+  border-color: #0f766e;
+}
+html:not(.dark) .apex-chat-option {
+  border-color: rgba(15, 118, 110, 0.28);
+  background: rgba(20, 184, 166, 0.08);
+  color: #115e59;
+}
+html:not(.dark) .apex-chat-option:hover:not(:disabled) {
+  background: rgba(20, 184, 166, 0.16);
+  border-color: rgba(15, 118, 110, 0.45);
+}
+html:not(.dark) .apex-chat-option-num {
+  background: rgba(20, 184, 166, 0.18);
+  border-color: rgba(15, 118, 110, 0.35);
+  color: #0f766e;
+}
+html:not(.dark) .apex-chat-fuentes {
+  border-top-color: rgba(17, 24, 39, 0.08);
+}
+html:not(.dark) .apex-chat-fuente {
+  color: #0f766e;
+}
+html:not(.dark) .apex-chat-fuente:hover {
+  color: #0d9488;
+}
+html:not(.dark) .apex-chat-fuente-local {
+  color: #6b7280;
+}
+html:not(.dark) .apex-chat-plat {
+  background: rgba(17, 24, 39, 0.06);
+}
+html:not(.dark) .apex-chat-chip {
+  border-color: rgba(17, 24, 39, 0.1);
+  background: rgba(17, 24, 39, 0.04);
+  color: #374151;
+}
+html:not(.dark) .apex-chat-chip:hover {
+  background: rgba(20, 184, 166, 0.12);
+  border-color: rgba(15, 118, 110, 0.35);
+  color: #0f766e;
+}
+html:not(.dark) .apex-chat-composer-wrap {
+  background: #f8fafc;
+  border-top-color: rgba(17, 24, 39, 0.08);
+}
+html:not(.dark) .apex-chat-predict {
+  border-bottom-color: rgba(17, 24, 39, 0.08);
+}
+html:not(.dark) .apex-chat-predict-item {
+  color: #1f2937;
+}
+html:not(.dark) .apex-chat-predict-item:hover,
+html:not(.dark) .apex-chat-predict-item.is-active {
+  background: rgba(20, 184, 166, 0.12);
+  color: #0f766e;
+}
+html:not(.dark) .apex-chat-predict-hint {
+  color: #9ca3af;
+}
+html:not(.dark) .apex-chat-input-wrap {
+  border-color: rgba(17, 24, 39, 0.12);
+  background: #ffffff;
+}
+html:not(.dark) .apex-chat-input-wrap:focus-within {
+  border-color: rgba(17, 24, 39, 0.35);
+  box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+}
+html:not(.dark) .apex-chat-ghost-rest {
+  color: rgba(17, 24, 39, 0.35);
+}
+html:not(.dark) .apex-chat-input {
+  color: #111827;
+  caret-color: #0d9488;
+}
+html:not(.dark) .apex-chat-input::placeholder {
+  color: #9ca3af;
+}
+html:not(.dark) .apex-chat-typing .chat-typing-dot {
+  background: rgba(15, 118, 110, 0.7);
+}
+html:not(.dark) .apex-chat-lightbox {
+  background: rgba(15, 23, 42, 0.45);
+}
+html:not(.dark) .apex-chat-bubble--bot [class*="text-white"] {
+  color: #1f2937 !important;
+}

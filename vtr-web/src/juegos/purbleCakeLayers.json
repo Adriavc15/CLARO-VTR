@@ -1,0 +1,345 @@
+{
+  "BatterChocolateHeart": {
+    "w": 100,
+    "h": 75,
+    "rx": 40,
+    "ry": 36,
+    "delta": -19
+  },
+  "BatterChocolateRectangle": {
+    "w": 113,
+    "h": 73,
+    "rx": 52,
+    "ry": 41,
+    "delta": -23
+  },
+  "BatterChocolateRound": {
+    "w": 100,
+    "h": 75,
+    "rx": 52,
+    "ry": 48,
+    "delta": -23
+  },
+  "BatterStrawberryHeart": {
+    "w": 100,
+    "h": 75,
+    "rx": 40,
+    "ry": 36,
+    "delta": -19
+  },
+  "BatterStrawberryRectangle": {
+    "w": 113,
+    "h": 73,
+    "rx": 52,
+    "ry": 41,
+    "delta": -23
+  },
+  "BatterStrawberryRound": {
+    "w": 100,
+    "h": 75,
+    "rx": 44,
+    "ry": 44,
+    "delta": -23
+  },
+  "BatterVanillaHeart": {
+    "w": 100,
+    "h": 75,
+    "rx": 40,
+    "ry": 36,
+    "delta": -19
+  },
+  "BatterVanillaRectangle": {
+    "w": 113,
+    "h": 73,
+    "rx": 52,
+    "ry": 41,
+    "delta": -23
+  },
+  "BatterVanillaRound": {
+    "w": 100,
+    "h": 75,
+    "rx": 44,
+    "ry": 44,
+    "delta": -23
+  },
+  "DecorationGumdrop": {
+    "w": 22,
+    "h": 22,
+    "rx": 11,
+    "ry": 11,
+    "delta": 0
+  },
+  "DecorationHeart": {
+    "w": 30,
+    "h": 16,
+    "rx": 15,
+    "ry": 8,
+    "delta": 0
+  },
+  "DecorationShamrock": {
+    "w": 25,
+    "h": 25,
+    "rx": 12,
+    "ry": 12,
+    "delta": 0
+  },
+  "DecorationSmiley": {
+    "w": 23,
+    "h": 17,
+    "rx": 11,
+    "ry": 8,
+    "delta": 0
+  },
+  "FillingChocolateRound": {
+    "w": 90,
+    "h": 55,
+    "rx": 45,
+    "ry": 24,
+    "delta": 0
+  },
+  "FillingFudgeHeart": {
+    "w": 110,
+    "h": 75,
+    "rx": 44,
+    "ry": 28,
+    "delta": -4
+  },
+  "FillingFudgeRectangle": {
+    "w": 110,
+    "h": 50,
+    "rx": 57,
+    "ry": 21,
+    "delta": -4
+  },
+  "FillingFudgeRound": {
+    "w": 91,
+    "h": 55,
+    "rx": 48,
+    "ry": 24,
+    "delta": -4
+  },
+  "FillingRaspberryHeart": {
+    "w": 110,
+    "h": 75,
+    "rx": 44,
+    "ry": 28,
+    "delta": -4
+  },
+  "FillingRaspberryRectangle": {
+    "w": 110,
+    "h": 50,
+    "rx": 57,
+    "ry": 21,
+    "delta": -4
+  },
+  "FillingRaspberryRound": {
+    "w": 91,
+    "h": 55,
+    "rx": 48,
+    "ry": 24,
+    "delta": -4
+  },
+  "FillingStrawberryRound": {
+    "w": 90,
+    "h": 55,
+    "rx": 45,
+    "ry": 24,
+    "delta": 0
+  },
+  "FillingVanillaHeart": {
+    "w": 110,
+    "h": 75,
+    "rx": 44,
+    "ry": 28,
+    "delta": -4
+  },
+  "FillingVanillaRectangle": {
+    "w": 110,
+    "h": 50,
+    "rx": 57,
+    "ry": 21,
+    "delta": -4
+  },
+  "FillingVanillaRound": {
+    "w": 91,
+    "h": 55,
+    "rx": 48,
+    "ry": 24,
+    "delta": -4
+  },
+  "FinalTouchBurntGlazeChocolateHeart": {
+    "w": 110,
+    "h": 75,
+    "rx": 42,
+    "ry": 23,
+    "delta": 0
+  },
+  "FinalTouchBurntGlazeChocolateRectangle": {
+    "w": 110,
+    "h": 75,
+    "rx": 53,
+    "ry": 30,
+    "delta": 0
+  },
+  "FinalTouchBurntGlazeChocolateRound": {
+    "w": 86,
+    "h": 61,
+    "rx": 44,
+    "ry": 26,
+    "delta": 0
+  },
+  "FinalTouchBurntGlazeStrawberryHeart": {
+    "w": 110,
+    "h": 75,
+    "rx": 42,
+    "ry": 20,
+    "delta": 0
+  },
+  "FinalTouchBurntGlazeStrawberryRectangle": {
+    "w": 110,
+    "h": 75,
+    "rx": 53,
+    "ry": 20,
+    "delta": 0
+  },
+  "FinalTouchBurntGlazeStrawberryRound": {
+    "w": 86,
+    "h": 61,
+    "rx": 45,
+    "ry": 26,
+    "delta": 0
+  },
+  "FinalTouchBurntGlazeVanillaHeart": {
+    "w": 110,
+    "h": 75,
+    "rx": 42,
+    "ry": 20,
+    "delta": 0
+  },
+  "FinalTouchBurntGlazeVanillaRectangle": {
+    "w": 110,
+    "h": 75,
+    "rx": 53,
+    "ry": 20,
+    "delta": 0
+  },
+  "FinalTouchBurntGlazeVanillaRound": {
+    "w": 86,
+    "h": 61,
+    "rx": 44,
+    "ry": 26,
+    "delta": 0
+  },
+  "FinalTouchSugarHeart": {
+    "w": 100,
+    "h": 50,
+    "rx": 37,
+    "ry": 17,
+    "delta": 0
+  },
+  "FinalTouchSugarRectangle": {
+    "w": 100,
+    "h": 50,
+    "rx": 50,
+    "ry": 17,
+    "delta": 0
+  },
+  "FinalTouchSugarRound": {
+    "w": 79,
+    "h": 41,
+    "rx": 40,
+    "ry": 21,
+    "delta": 0
+  },
+  "FinalTouchSugar": {
+    "w": 100,
+    "h": 27,
+    "rx": 50,
+    "ry": 13,
+    "delta": 0
+  },
+  "IcingChocolateHeart": {
+    "w": 100,
+    "h": 75,
+    "rx": 40,
+    "ry": 22,
+    "delta": -4
+  },
+  "IcingChocolateRectangle": {
+    "w": 105,
+    "h": 75,
+    "rx": 54,
+    "ry": 20,
+    "delta": -4
+  },
+  "IcingChocolateRound": {
+    "w": 83,
+    "h": 53,
+    "rx": 44,
+    "ry": 26,
+    "delta": -4
+  },
+  "IcingStrawberryHeart": {
+    "w": 100,
+    "h": 75,
+    "rx": 42,
+    "ry": 22,
+    "delta": -4
+  },
+  "IcingStrawberryRectangle": {
+    "w": 105,
+    "h": 75,
+    "rx": 54,
+    "ry": 20,
+    "delta": -4
+  },
+  "IcingStrawberryRound": {
+    "w": 83,
+    "h": 53,
+    "rx": 44,
+    "ry": 26,
+    "delta": -4
+  },
+  "IcingVanillaHeart": {
+    "w": 100,
+    "h": 75,
+    "rx": 40,
+    "ry": 24,
+    "delta": -4
+  },
+  "IcingVanillaRectangle": {
+    "w": 105,
+    "h": 75,
+    "rx": 54,
+    "ry": 20,
+    "delta": -4
+  },
+  "IcingVanillaRound": {
+    "w": 83,
+    "h": 53,
+    "rx": 44,
+    "ry": 26,
+    "delta": -4
+  },
+  "PanHeart": {
+    "w": 96,
+    "h": 69,
+    "rx": 40,
+    "ry": 36,
+    "delta": -4
+  },
+  "PanRectangle": {
+    "w": 103,
+    "h": 63,
+    "rx": 52,
+    "ry": 41,
+    "delta": -4
+  },
+  "PanRound": {
+    "w": 84,
+    "h": 68,
+    "rx": 42,
+    "ry": 44,
+    "delta": -4
+  }
+}

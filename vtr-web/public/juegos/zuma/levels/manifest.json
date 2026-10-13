@@ -1,0 +1,130 @@
+{
+  "levels": [
+    {
+      "id": "spiral",
+      "name": "Espiral del destino",
+      "bg": "spiral.jpg",
+      "dual": false
+    },
+    {
+      "id": "claw",
+      "name": "Garra de Osprey",
+      "bg": "claw.jpg",
+      "dual": false
+    },
+    {
+      "id": "riverbed",
+      "name": "Mosaico de la ribera",
+      "bg": "riverbed.jpg",
+      "dual": false
+    },
+    {
+      "id": "targetglyph",
+      "name": "Aliento de Ehecatl",
+      "bg": "targetglyph.jpg",
+      "dual": false
+    },
+    {
+      "id": "blackswirley",
+      "name": "Vórtice oscuro",
+      "bg": "blackswirley.jpg",
+      "dual": true
+    },
+    {
+      "id": "turnaround",
+      "name": "Serpenteo",
+      "bg": "turnaround.jpg",
+      "dual": false
+    },
+    {
+      "id": "longrange",
+      "name": "Largo alcance",
+      "bg": "longrange.jpg",
+      "dual": false
+    },
+    {
+      "id": "tiltspiral",
+      "name": "El ataque de las espirales",
+      "bg": "tiltspiral.jpg",
+      "dual": false
+    },
+    {
+      "id": "underover",
+      "name": "Guerra en el barro",
+      "bg": "underover.jpg",
+      "dual": false
+    },
+    {
+      "id": "warshak",
+      "name": "Rorschach",
+      "bg": "warshak.jpg",
+      "dual": false
+    },
+    {
+      "id": "loopy",
+      "name": "Boca de Centeotl",
+      "bg": "loopy.jpg",
+      "dual": false
+    },
+    {
+      "id": "snakepit",
+      "name": "Nido de serpientes",
+      "bg": "snakepit.jpg",
+      "dual": true
+    },
+    {
+      "id": "groovefest",
+      "name": "Jardín de arena",
+      "bg": "groovefest.jpg",
+      "dual": false
+    },
+    {
+      "id": "spaceinvaders",
+      "name": "Guarida de la serpiente de barro",
+      "bg": "spaceinvaders.jpg",
+      "dual": false
+    },
+    {
+      "id": "triangle",
+      "name": "Plataforma de aterrizaje",
+      "bg": "triangle.jpg",
+      "dual": false
+    },
+    {
+      "id": "coaster",
+      "name": "Altar de Tlaloc",
+      "bg": "coaster.jpg",
+      "dual": false
+    },
+    {
+      "id": "squaresville",
+      "name": "Código de Mixtec",
+      "bg": "squaresville.jpg",
+      "dual": false
+    },
+    {
+      "id": "tunnellevel",
+      "name": "Santuario de Quetzalcoatl",
+      "bg": "tunnellevel.jpg",
+      "dual": false
+    },
+    {
+      "id": "serpents",
+      "name": "Serpiente espejo",
+      "bg": "serpents.jpg",
+      "dual": true
+    },
+    {
+      "id": "overunder",
+      "name": "Piedra solar",
+      "bg": "overunder.jpg",
+      "dual": false
+    },
+    {
+      "id": "inversespiral",
+      "name": "Éxodo zumaico",
+      "bg": "inversespiral.jpg",
+      "dual": false
+    }
+  ]
+}

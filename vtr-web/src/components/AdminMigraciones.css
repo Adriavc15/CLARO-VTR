@@ -1,0 +1,52 @@
+/* Animaciones de los gráficos del panel de migraciones */
+@keyframes mfa-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes mfa-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes mfa-draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes mfa-grow {
+  from { width: 0; }
+}
+@keyframes mfa-pop {
+  0%   { opacity: 0; transform: scale(0); }
+  70%  { transform: scale(1.25); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes mfa-donut {
+  from { opacity: 0; transform: rotate(-90deg) scale(0.82); }
+  to   { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+
+.mfa-fade-up { animation: mfa-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.mfa-fade    { animation: mfa-fade 0.9s ease-out both; }
+.mfa-grow    { animation: mfa-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.mfa-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: mfa-draw 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.mfa-pop {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mfa-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+.mfa-donut {
+  transform-origin: center;
+  animation: mfa-donut 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mfa-fade-up, .mfa-fade, .mfa-grow, .mfa-pop, .mfa-donut {
+    animation: none !important;
+  }
+  .mfa-draw {
+    stroke-dashoffset: 0 !important;
+    animation: none !important;
+  }
+}

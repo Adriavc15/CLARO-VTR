@@ -1,0 +1,368 @@
+/**
+ * Bloque 12 — Preguntas abiertas + respuestas inesperadas (sarcasmo, coqueteo, seco, drama, absurdo, typos).
+ */
+
+function pair(id, cat, estilo, a, b) {
+  return { id, categoria: cat, estilo, bloque: '12', turnos: [{ rol: 'A', texto: a }, { rol: 'B', texto: b }] }
+}
+function multi(id, cat, estilo, turnos) {
+  return { id, categoria: cat, estilo, bloque: '12', turnos }
+}
+function pack(list, prefix, cat, estilo) {
+  return list.map(([a, b], i) => pair(`${prefix}-${String(i + 1).padStart(2, '0')}`, cat, estilo, a, b))
+}
+
+const PREG_ABIERTAS = [
+  '¿Qué necesitas?',
+  '¿Qué quieres?',
+  '¿Qué buscas?',
+  '¿Qué te hace falta?',
+  '¿Qué quieres que haga?',
+  '¿Qué necesitas de mí?',
+  '¿Qué quieres de mí?',
+  '¿Qué se te antoja?',
+  '¿Qué te gustaría?',
+  '¿Qué te puedo dar?',
+  '¿Qué tienes en mente?',
+  '¿Qué quieres ahora?',
+  '¿Qué necesitas ahorita?',
+  '¿Qué te falta?',
+  '¿Qué te haría feliz?',
+  '¿Qué deseas?',
+  '¿Qué te provoca?',
+  '¿Qué quieres que te dé?',
+  '¿Qué quieres que haga por ti?',
+  '¿Qué necesitas para ser feliz?',
+]
+
+const SARC = [
+  'Tu amor, obviamente 🙄',
+  'Tu cariño, pero ya vi que no hay.',
+  'Que me mantengas 😂',
+  'Un depósito urgente.',
+  'Que me transfieras 500.',
+  'Una herencia.',
+  'Un milagro.',
+  'Que me resuelvas la vida.',
+  'Que me saques de aquí.',
+  'Que me adoptes.',
+  'Un patrocinador.',
+  'Un sugar 😭',
+  'Que seas millonario.',
+  'Que compartas tu fortuna.',
+  'Tu contraseña 👀',
+  'Tu tarjeta por cinco minutos.',
+  'Una nueva identidad.',
+  'Un abogado.',
+  'Un buen abogado, mejor.',
+  'Que alguien me salve.',
+  'Que alguien me explique qué hago con mi vida.',
+  'Una máquina del tiempo.',
+  'Volver al lunes y no venir.',
+  'Que el día tenga 40 horas.',
+  'Un botón para desaparecer.',
+  'Reiniciar el día.',
+  'Reiniciar mi vida 💀',
+  'Un cerebro nuevo.',
+  'Paciencia, pero en cantidades industriales.',
+  'Café intravenoso.',
+  'Vacaciones de seis meses.',
+  'Dormir hasta el 2030.',
+  'Que me paguen por existir.',
+  'Un aumento.',
+  'Un sueldo digno JAJAJA.',
+  'Que me caiga plata del cielo.',
+  'La lotería.',
+  'Un golpe de suerte.',
+  'Un descanso de esta existencia.',
+  'Cinco minutos de paz.',
+  'Que nadie me hable.',
+  'Silencio absoluto.',
+  'Que me dejen tranquilo.',
+  'Que desaparezca el grupo de WhatsApp.',
+  'Que cancelen mañana.',
+  'Que sea feriado.',
+  'Que hoy no exista.',
+  'Que llegue el viernes.',
+  'Que ya sea fin de mes.',
+  'Que me adelanten el sueldo 😭',
+]
+
+const COQUETA = [
+  'Tu amor ❤️',
+  'A ti.',
+  'Un abrazo tuyo.',
+  'Que me abraces.',
+  'Tu atención.',
+  'Un poquito de cariño.',
+  'Que me quieras.',
+  'Que me hagas caso.',
+  'Una cita contigo.',
+  'Que me invites a salir.',
+  'Verte.',
+  'Tu compañía.',
+  'Que te quedes conmigo.',
+  'Tus besos 👀',
+  'Un mensaje tuyo.',
+  'Que me hables bonito.',
+  'Que me consientas.',
+  'Que me mimes.',
+  'Tu tiempo.',
+  'Que me mires así otra vez.',
+  'Adivina 😏',
+  'Lo que tú me quieras dar.',
+  'Algo que tienes tú.',
+  'A ti, pero no te emociones.',
+  'Nada… bueno, quizá tú.',
+  'Tu corazón, si no lo estás usando.',
+  'Que seas mío por cinco minutos 😂',
+  'Una oportunidad contigo.',
+  'Que me invites un café.',
+]
+
+const SECA = [
+  'Nada.',
+  'Nada ya.',
+  'Olvídalo.',
+  'No importa.',
+  'Ya fue.',
+  'Déjalo.',
+  'Estoy bien.',
+  'Nada, tranqui.',
+  'Era broma.',
+  'Curiosidad nomás.',
+  'Ya lo resolví.',
+  'No necesito nada.',
+  'Después te digo.',
+  'Mejor no.',
+  'No te preocupes.',
+  'Nada de nada.',
+  'Ya pasó.',
+  'Todo bien.',
+  'Estoy viendo.',
+  'No sé.',
+  'Lo que sea.',
+  'Nada urgente.',
+  'Luego.',
+  'Ya no.',
+  'Me arrepentí de preguntar.',
+]
+
+const DRAMA = [
+  'Una nueva vida.',
+  'Un milagro financiero.',
+  'Que me rescaten.',
+  'Que alguien me lleve lejos.',
+  'Que termine este día.',
+  'Que el universo me dé una señal.',
+  'Que aparezca mi salvador.',
+  'Que Dios se apiade de mí.',
+  'Una razón para seguir 😭',
+  'Un mes sin problemas.',
+  'Una semana sin estrés.',
+  'Que mi cerebro vuelva a funcionar.',
+  'Que mis decisiones dejen de perseguirme.',
+  'Que el pasado deje de cobrarme intereses.',
+  'Un botón de reinicio.',
+  'Una intervención divina.',
+  'Un descanso de la realidad.',
+  'Que alguien me diga que todo estará bien.',
+  'Una cama y ocho horas de sueño.',
+  'Que mañana sea otra persona.',
+]
+
+const ABSURDA = [
+  'Un dinosaurio.',
+  'Un pollo.',
+  'Una empanada.',
+  'Un avión privado.',
+  'Una mansión.',
+  'Un Lamborghini.',
+  'Un caballo.',
+  'Un mapa.',
+  'Una pizza familiar.',
+  'Dos kilos de arroz.',
+  'Un cargador.',
+  'WiFi.',
+  'Una batería al 100%.',
+  'Un mouse nuevo.',
+  'Un teclado.',
+  'Un servidor que funcione.',
+  'Que vuelva el internet.',
+  'Un control nuevo.',
+  'Una PC gamer.',
+  'Una PS5.',
+  'Un millón de Robux 💀',
+  'Que me devuelvan mi infancia.',
+  'Una máquina para hacer plata.',
+  'Un clon.',
+  'Un portal.',
+  'Teletransportación.',
+  'Un botón de “deshacer”.',
+  'Una excusa convincente.',
+  'Una coartada.',
+  'Que nadie se entere.',
+]
+
+const TYPO = [
+  'tu amor ps',
+  'tu amor xd',
+  'q me quieras 😭',
+  'una ayudita',
+  'plata xd',
+  'q me transfieras',
+  'q me rescates',
+  'dormir nomas',
+  'paz mental p',
+  'q nadie me joda',
+  'un milagro urgente',
+  'no c bro',
+  'ni idea',
+  'na',
+  'naca',
+  'nadaa',
+  'tu atencion 😔',
+  'a ti ps',
+  'un abracito',
+  'q me hagas caso',
+  'lo q sea mano',
+  'una vida nueva xd',
+  'plata porfa',
+  'q sea viernes ya',
+  'q se acabe esto',
+  'q me dejen dormir',
+  'un cafecito',
+  'vacaciones eternas 😭',
+  'no se q necesito',
+  'ni yo se',
+  'necesito existir menos',
+  'q me rescaten p',
+  'olvidalo jaja',
+  'era bait',
+  'nada era webeo',
+  'era joda 😂',
+  'tu amorcito',
+  'tu cariño ps',
+  'una transferencia JAJAJA',
+]
+
+const INESPERADAS = [
+  ['¿Qué haces?', 'Sobrevivo.'],
+  ['¿Qué haces?', 'Nada productivo.'],
+  ['¿Qué haces?', 'Tomando malas decisiones.'],
+  ['¿Qué haces?', 'Existiendo nomás 💀'],
+  ['¿Cómo estás?', 'Físicamente aquí.'],
+  ['¿Cómo estás?', 'Pregunta complicada.'],
+  ['¿Cómo estás?', 'Pregúntame mañana.'],
+  ['¿Cómo estás?', 'En oferta.'],
+  ['¿Dónde estás?', 'En problemas.'],
+  ['¿Dónde estás?', 'Lejos de mis responsabilidades.'],
+  ['¿Dónde estás?', 'En mi casa ps.'],
+  ['¿Dónde estás?', 'Mentalmente en otro país.'],
+  ['¿Qué pasó?', 'La vida.'],
+  ['¿Qué pasó?', 'Larga historia.'],
+  ['¿Qué pasó?', 'No preguntes.'],
+  ['¿Qué pasó?', 'Yo tampoco sé.'],
+  ['¿Por qué?', 'Porque sí.'],
+  ['¿Por qué?', 'Porque puedo.'],
+  ['¿Por qué?', 'Pregunta al universo.'],
+  ['¿Por qué?', 'No tengo explicación 😭'],
+  ['¿Para qué?', 'Para sobrevivir.'],
+  ['¿Para qué?', 'Para complicarme la vida.'],
+  ['¿Para qué?', 'Buena pregunta.'],
+  ['¿Para qué?', 'No sé, sonaba buena idea.'],
+]
+
+const COTIDIANAS = [
+  ['¿Ya comiste?', 'Sobreviviendo a base de café.'],
+  ['¿Tienes sueño?', 'Estoy en modo zombie.'],
+  ['¿Estás ocupado?', 'Ocupado existiendo.'],
+  ['¿Todo bien?', 'Define “bien”.'],
+  ['¿Por qué no respondes?', 'Estaba negociando con la vida.'],
+  ['¿Me estás ignorando?', 'No, estaba en otra dimensión.'],
+  ['¿Vas a salir?', 'Solo si aparece un milagro.'],
+  ['¿Qué planes tienes?', 'Ninguno productivo.'],
+]
+
+const CORTAS = [
+  ['¿Y tú?', 'Aquí ando.'],
+  ['¿Y?', 'Nada pe.'],
+  ['¿Entonces?', 'Ya fue.'],
+  ['¿En serio?', 'Más o menos.'],
+  ['¿De verdad?', 'Ojalá no.'],
+  ['¿Qué fue?', 'La vida otra vez.'],
+  ['¿Qué onda?', 'Sobreviviendo.'],
+  ['¿Qué fue mano?', 'Nada, drama interno.'],
+  ['¿Seguro?', 'Nunca.'],
+  ['¿Ya?', 'Todavía no.'],
+  ['¿Listo?', 'Casi nunca.'],
+]
+
+const SARCASTICAS_Q = [
+  ['¿Y tú quién eres? 😂', 'Tu crisis existencial.'],
+  ['¿Eso era todo?', 'Por ahora.'],
+  ['¿Me estás tomando el pelo?', 'Un poquito.'],
+  ['¿Me ves cara de millonario?', 'Ojalá.'],
+  ['¿Y yo qué hago con esa información?', 'Sobrevivir con ella.'],
+  ['¿Ahora qué quieres?', 'Tu amor, obviamente 🙄'],
+  ['¿Qué necesitas esta vez? 😑', 'Paz mental p'],
+  ['¿Quién te preguntó? xd', 'Nadie, pero igual.'],
+]
+
+const ABSURDAS_Q = [
+  ['Si pudieras pedir cualquier cosa, ¿qué pedirías?', 'Un botón de deshacer.'],
+  ['Si te regalo algo, ¿qué quieres?', 'Una pizza familiar.'],
+  ['Si tuvieras un millón, ¿qué compras?', 'Paz mental y WiFi eterno.'],
+  ['¿Qué superpoder escogerías?', 'Teletransportación a la cama.'],
+  ['¿Qué animal serías?', 'Un koala con sueño eterno.'],
+  ['¿Qué llevarías a una isla desierta?', 'Un cargador y esperanza.'],
+]
+
+function cruzar(pregs, resps, prefix, estilo) {
+  const out = []
+  resps.forEach((r, i) => {
+    out.push(pair(`${prefix}-${String(i + 1).padStart(2, '0')}`, 'pregunta_abierta', estilo, pregs[i % pregs.length], r))
+  })
+  return out
+}
+
+export const BLOQUE_12_ABIERTAS = [
+  ...cruzar(PREG_ABIERTAS, SARC, 'b12-sarc', 'sarcastico'),
+  ...cruzar(PREG_ABIERTAS, COQUETA, 'b12-coq', 'coqueto'),
+  ...cruzar(PREG_ABIERTAS, SECA, 'b12-seca', 'seco'),
+  ...cruzar(PREG_ABIERTAS, DRAMA, 'b12-dra', 'dramatico'),
+  ...cruzar(PREG_ABIERTAS, ABSURDA, 'b12-abs', 'absurdo'),
+  ...cruzar(PREG_ABIERTAS, TYPO, 'b12-typ', 'typo'),
+  ...pack(INESPERADAS, 'b12-ines', 'inesperado', 'chat'),
+  ...pack(COTIDIANAS, 'b12-cot', 'cotidiano', 'inesperado'),
+  ...pack(CORTAS, 'b12-corto', 'micro', 'inesperado'),
+  ...pack(SARCASTICAS_Q, 'b12-qsarc', 'sarcasmo', 'pregunta'),
+  ...pack(ABSURDAS_Q, 'b12-qabs', 'absurdo', 'hipotetica'),
+  multi('b12-ctx-1', 'pregunta_abierta', 'mixto', [
+    { rol: 'A', texto: '¿Qué quieres de mí?' },
+    { rol: 'B', texto: 'Tu amor ❤️' },
+    { rol: 'A', texto: 'Jajaja en serio.' },
+    { rol: 'B', texto: 'Y café. En ese orden.' },
+  ]),
+  multi('b12-ctx-2', 'pregunta_abierta', 'seco', [
+    { rol: 'A', texto: '¿Qué necesitas?' },
+    { rol: 'B', texto: 'Nada.' },
+    { rol: 'A', texto: '¿Seguro?' },
+    { rol: 'B', texto: 'Ya fue.' },
+  ]),
+  multi('b12-ctx-3', 'inesperado', 'chat', [
+    { rol: 'A', texto: '¿Qué haces?' },
+    { rol: 'B', texto: 'Existiendo nomás 💀' },
+    { rol: 'A', texto: 'Mood.' },
+    { rol: 'B', texto: 'Tal cual.' },
+  ]),
+]
+
+export function formatearAbiertasParaPrompt() {
+  return `
+PREGUNTAS ABIERTAS (bloque 12):
+- “¿qué necesitas/quieres/buscas/te hace falta/te puedo dar?” admiten literal, sarcástico, coqueto, seco, dramático o absurdo.
+- Cotidianas (“¿qué haces?”, “¿dónde estás?”, “¿cómo estás?”) también pueden responderse inesperadas (“sobreviviendo”, “en problemas”).
+- Typos chat: “tu amor ps”, “plata xd”, “na”, “era bait” — entiende intención, no corrijas.
+`.trim()
+}
