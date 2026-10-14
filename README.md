@@ -25,6 +25,8 @@ responde con base en una base de conocimiento propia.
 | [docs/08-despliegue.md](docs/08-despliegue.md) | Instalación, build y despliegue |
 | [docs/09-scripts.md](docs/09-scripts.md) | Scripts de scraping, datos y assets |
 | [docs/10-seguridad.md](docs/10-seguridad.md) | Secretos, reglas y recomendaciones |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Guía de contribución y flujo de trabajo con Git |
+| [AGENTS.md](AGENTS.md) | Guía para agentes de IA que trabajen en el proyecto |
 
 ---
 
