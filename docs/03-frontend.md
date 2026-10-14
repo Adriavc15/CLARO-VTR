@@ -12,7 +12,7 @@ React Router). Las páginas se cargan con `React.lazy` + `Suspense`.
 |---|---|---|
 | `/` | Portal principal | `src/App.tsx` |
 | `/admin` | Panel de administración | `src/AdminPage.tsx` |
-| `/formularios` | Formulario de migraciones | `src/FormulariosPage.tsx` |
+| `/formularios` | Formularios (migraciones y "no acepta fibra") | `src/FormulariosPage.tsx` |
 
 Se aceptan tanto `pathname` como `hash` (`#admin`, `#formularios`).
 
@@ -51,13 +51,30 @@ Secciones principales (`activeSection`): `dashboard`, `noticias`, `simuladores`
 | `AvatarPerfilPicker.jsx` | Selector/subida de foto de perfil |
 | `BotonGoogle.jsx` | Botón "Continuar con Google" |
 | `IconoAndroid.jsx` | Icono de Android (SVG) |
+| `MigracionesTabs.jsx` | Pestañas `Migraciones \| No acepta fibra` (reutilizado por `/admin` y "Mis registros") |
+| `RegistrosNoAceptaFibra.jsx` | Dashboard + tabla de registros de "no acepta fibra" (KPIs, tendencia, ranking, donut por motivo) |
 | `Admin*` | Paneles de administración (ver más abajo) |
+
+### Formularios (`/formularios`)
+
+`FormulariosPage.tsx` ofrece dos formularios (nav lateral `FORM_NAV`):
+
+- **Migraciones** → `guardarMigracion` (`migracionesStore.js`).
+- **No acepta fibra** → `guardarNoAceptaFibra` (`noAceptaFibraStore.js`), para clientes que
+  rechazan el cambio a fibra (campos FECHA, ASESOR, RUT CLIENTE y MOTIVO NO ACEPTA).
+
+La sección **"Mis registros"** usa `MigracionesTabs` con `esUsuario` para mostrar solo los
+registros del correo logueado (`vtr-lector-email`).
 
 ### Componentes de administración (`Admin*`)
 
 `AdminAsesores`, `AdminSupervisores`, `AdminListaNombres`, `AdminAdminsAutorizados`,
 `AdminConocimientoIA`, `AdminAprendizajeContinuo`, `AdminTipificaciones`, `AdminPlanes`,
 `AdminStreamingShowcase`, `AdminIdsClave`, `AdminMigraciones` (+ `AdminMigraciones.css`).
+
+En `/admin`, la sección **Migraciones** (`AdminMigraciones`) incluye la tabla con la columna
+**Motivo** (detalle del error / tipificación) y, mediante `MigracionesTabs`, la pestaña
+**No acepta fibra** (`RegistrosNoAceptaFibra`) con el mismo dashboard en modo administrador.
 
 ## Stores y módulos de estado (raíz de `src/`)
 
@@ -72,6 +89,7 @@ Secciones principales (`activeSection`): `dashboard`, `noticias`, `simuladores`
 | `tipificacionesStore.js` | `tipificaciones_bloc` |
 | `tipificacionesCatalogo.js` | Catálogo estático de tipificaciones |
 | `migracionesStore.js` | `migraciones` |
+| `noAceptaFibraStore.js` | `no_acepta_fibra` (clientes que no aceptan el cambio a fibra) |
 | `aplicacionesCatalogo.js` | Catálogo de aplicaciones internas/externas |
 
 ## Asistente (`src/asistente/`)

@@ -70,7 +70,7 @@ export const LABELS_MIGRACION = {
   rutCliente: 'RUT del cliente',
   nPedido: 'N° de pedido',
   estado: 'Estado',
-  detalleError: 'Detalle / Tipificación de error',
+  detalleError: 'Motivo',
   fechaAgendamiento: 'Fecha de agendamiento',
   rangoHorario: 'Rango de horario',
 }

@@ -84,8 +84,9 @@ Así el portal funciona incluso sin haber "sembrado" la base de datos.
 
 1. El **administrador** edita un catálogo en `/admin` → se escribe en Firestore.
 2. El frontend suscrito (`onSnapshot`) recibe el cambio → la UI se actualiza sin recargar.
-3. Un **formulario** público/interno envía datos a una Cloud Function o a un **Apps Script**
-   (Google Sheets) para registros.
+3. Un **formulario** interno (`/formularios`) registra gestiones en Firestore
+   (`migraciones`, `no_acepta_fibra`) o genera registros en una Cloud Function / **Apps Script**
+   (Google Sheets).
 4. Los **comunicados** se listan desde Google Drive a través de la función `comunicados`.
 5. El **asistente** consulta la colección `conocimiento_portal` (más el corpus local) para
    generar respuestas y registrar su aprendizaje.

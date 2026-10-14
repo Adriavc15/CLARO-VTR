@@ -16,6 +16,7 @@ que la mayoría de cambios se reflejan sin recargar la página.
 | `supervisores` | `supervisoresStore.js` | Lista de supervisores |
 | `tipificaciones_bloc` | `tipificacionesStore.js` | Tipificaciones personales por correo |
 | `migraciones` | `migracionesStore.js` | Registros del formulario de migraciones |
+| `no_acepta_fibra` | `noAceptaFibraStore.js` | Registros de clientes que no aceptan el cambio a fibra |
 | `messenger_chats` (+ `mensajes`) | `messengerStore.js`, `MessengerApex.jsx` | Chats internos y sus mensajes |
 | `mis_stickers` | `messengerStickers.js` | Stickers del chat |
 | `messenger_stickers` | `messengerStickers.js` | Stickers compartidos |
@@ -75,7 +76,7 @@ sin haber cargado datos en Firestore.
 
 - **Panel `/admin`** → escribe catálogos y configuración (planes, streaming, IDs Clave,
   conocimiento de IA, usuarios).
-- **Formularios** → `migraciones` (y `tipificaciones_bloc`).
+- **Formularios** → `migraciones` y `no_acepta_fibra` (además de `tipificaciones_bloc`).
 - **Cloud Function `importarNoticias`** → `noticias` (desde Google Sheets, sin duplicar).
 - **Scripts** (`vtr-web/scripts/*.mjs`) → siembran colecciones como `apex_aprendizaje`,
   `conocimiento_portal`, `training_examples`.

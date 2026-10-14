@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef, useMemo, memo } from 'react'
 import { createPortal } from 'react-dom'
-import { Phone, PhoneCall, Mail, Lock, User, Link, Image, Calendar, AlertCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, LayoutDashboard, Settings, Users, Database, Globe, Monitor, Shield, CreditCard, Search, Menu, X, Home, Zap, Moon, Sun, GraduationCap, Coins, ClipboardList, Copy, Save, CheckCircle2, AlertTriangle, Truck, Unplug, Plug, Server, Cable, Eye, ListChecks, Bell, Trash2, Upload, ExternalLink, Pencil, Receipt, FileText, Wifi, Download, RefreshCw, MessageSquare, ListOrdered, EyeOff, Tv } from 'lucide-react'
+import { Phone, PhoneCall, Mail, Lock, User, Link, Image, Calendar, AlertCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, LayoutDashboard, Settings, Users, Database, Globe, Monitor, Shield, CreditCard, Search, Menu, X, Home, Zap, Moon, Sun, GraduationCap, Coins, ClipboardList, Copy, Save, CheckCircle2, AlertTriangle, Truck, Unplug, Plug, Server, Cable, Eye, ListChecks, Bell, Trash2, Upload, ExternalLink, Pencil, Receipt, FileText, Wifi, Download, RefreshCw, MessageSquare, ListOrdered, Router, EyeOff, Tv } from 'lucide-react'
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
 import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, updateDoc, doc, getDoc, query, orderBy, setDoc, serverTimestamp, writeBatch } from 'firebase/firestore'
@@ -2471,15 +2471,6 @@ const MobileNavigation = ({ navigationItems, activeSection, setActiveSection }) 
                 e.target.style.display = 'none'
               }}
             />
-          ) : item.id === 'modem' ? (
-            <img
-              src="/ba57a81434707.png"
-              alt="Modem"
-              className="w-4 h-4 object-contain dark-nav-icon"
-              onError={(e) => {
-                e.target.style.display = 'none'
-              }}
-            />
           ) : (
             <item.icon size={18} />
           )}
@@ -2722,15 +2713,6 @@ const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActi
                       src="/enlaces.png"
                       alt="Enlaces"
                       className="w-6 h-6 object-contain nav-icon-soft"
-                      onError={(e) => {
-                        e.target.style.display = 'none'
-                      }}
-                    />
-                  ) : item.id === 'modem' ? (
-                    <img
-                      src="/ba57a81434707.png"
-                      alt="Modem"
-                      className="w-6 h-6 object-contain dark-nav-icon"
                       onError={(e) => {
                         e.target.style.display = 'none'
                       }}
@@ -5115,6 +5097,102 @@ const UsuariosSection = ({ noticias = [], onToast }) => {
   )
 }
 
+/** Pasos del video tutorial ZTETUTO.mp4 — gestión del equipo (ONT/router ZTE) en SCP */
+const ZTE_SCP_VIDEO_PASOS = [
+  {
+    titulo: 'Inicio en el dashboard principal',
+    items: [
+      'Se muestra la pantalla de inicio de SCP | CPE (Device Management) con estadísticas generales: controladores online/offline, agentes, modos de red y cobertura Wi-Fi.',
+      'Haz clic en la pestaña Device Management.',
+    ],
+  },
+  {
+    titulo: 'Búsqueda del dispositivo (primer intento fallido)',
+    items: [
+      'Entra a la sección de consulta de dispositivos.',
+      'Escribe el SN 5A54454TD82AA3C6 y pulsa Query.',
+      'Aparece el mensaje de error: "The device does not exist. Check the query conditions."',
+    ],
+  },
+  {
+    titulo: 'Búsqueda correcta del dispositivo',
+    items: [
+      'Borra el SN anterior y escribe 5A54454TD823F1FF. Al consultar, el dispositivo aparece correctamente.',
+    ],
+    detalle: [
+      'Estado: Online / Connected',
+      'Modelo: F6600P (ZTE)',
+      'MAC: 58D312B57824',
+      'Versión: V9.0.10P9N31B',
+      'IP: 10.255.248.1',
+      'Alias: ZTE-F6600P',
+      'Tiempo de encendido: más de 1 día',
+    ],
+  },
+  {
+    titulo: 'Cambio breve a otro sistema (Andes / Claro)',
+    items: [
+      'Se cambia momentáneamente a la plataforma Andes (portal de cliente Claro).',
+      'Se ve el perfil del cliente, productos instalados (banda ancha, TV, etc.), actividades, pedidos y solicitudes de servicio.',
+      'Se observa una dirección MAC distinta (DCA633F3D6FB) y datos de facturación.',
+      'Luego se regresa al sistema SCP.',
+    ],
+  },
+  {
+    titulo: 'Revisión de parámetros Wi-Fi',
+    items: [
+      'De vuelta en el dispositivo 5A54454TD823F1FF, entra a la pestaña Wi-Fi Parameters.',
+      'Wi-Fi Standard: Bandsteering desactivado.',
+      '2.4G: SSID VTR-6470989, cifrado WPA3-PSK-AES, canal 11, ancho de banda 20 MHz.',
+      '5G: SSID VTR-6470989 5G, mismo cifrado, canal 48, ancho de banda 80 MHz.',
+      'Revisa también las opciones de One-click Optimization (inicialmente sin datos).',
+    ],
+  },
+  {
+    titulo: 'Exploración de configuración avanzada de Wi-Fi',
+    items: [
+      'Expande las secciones de canal, potencia de transmisión (100 %), estándares Wi-Fi mixtos y optimización de un clic.',
+      'Más adelante se muestran resultados de optimización (canales 11 en 2.4G y 48→161 en 5G).',
+    ],
+  },
+  {
+    titulo: 'Cambio de contraseña de acceso web del router',
+    items: [
+      'Ve a la pestaña Password Modification.',
+      'Aparece el formulario para modificar la contraseña de login web del dispositivo (campos "New Password" y "New Password Confirmation").',
+      'El cursor se posiciona sobre el botón Submit.',
+    ],
+  },
+]
+
+/** Causas de la alerta LOS en rojo (fibra óptica) — se muestran como selector */
+const FIBRA_CAUSAS = [
+  {
+    Icon: Unplug,
+    titulo: 'El cable se rompió',
+    subtitulo: 'Corte del cable exterior',
+    texto: 'Es la causa más común en la calle. Un camión alto que enganchó el cable, la caída de una rama o un roedor que lo mordió pueden romper el hilo de vidrio. Al romperse, la luz se escapa y el flujo se detiene por completo.',
+  },
+  {
+    Icon: Cable,
+    titulo: 'El cable se dobló o se pisó',
+    subtitulo: 'Estrangulamiento del cable',
+    texto: 'Aunque el cable es flexible, si se dobla en un ángulo muy cerrado (por ejemplo, aplastado por un mueble o doblado a la fuerza en una esquina de la pared), la luz ya no puede rebotar para seguir avanzando. Es el equivalente exacto a pisar una manguera de agua en el jardín.',
+  },
+  {
+    Icon: Plug,
+    titulo: 'El conector está sucio o flojo',
+    subtitulo: 'Conector afectado',
+    texto: 'El cable que se conecta detrás de tu router tiene una punta plástica. Si se desenganchó un poco o si le entró una mota diminuta de polvo, ese obstáculo bloqueará el rayo de luz por completo, impidiendo que entre al router.',
+  },
+  {
+    Icon: Server,
+    titulo: 'Se cerró la llave de paso principal',
+    subtitulo: 'Problema en la central',
+    texto: 'A veces tu cable doméstico está impecable, pero los equipos de la empresa de internet sufrieron un apagón o están en mantenimiento. Al no haber un LÁSER emitiendo luz desde la central, tu router detecta que la línea quedó "oscura" y enciende la alarma roja.',
+  },
+]
+
 const App = () => {
   const isMobile = useIsMobile()
   const [activeSection, setActiveSection] = useState('dashboard')
@@ -5125,6 +5203,7 @@ const App = () => {
   const [modalImage, setModalImage] = useState(null)
   const [modalSize, setModalSize] = useState('large')
   const [modalDisableZoom, setModalDisableZoom] = useState(false)
+  const [fibraCausaSel, setFibraCausaSel] = useState(0)
   const [contratacionSeleccion, setContratacionSeleccion] = useState(null)
   const [dboxContratacionSeleccion, setDboxContratacionSeleccion] = useState(null)
   const [plantillaSeleccion, setPlantillaSeleccion] = useState('general')
@@ -5516,7 +5595,7 @@ const App = () => {
     { id: 'images', label: 'App Vtr', icon: Image },
     { id: 'streaming', label: 'Streaming', icon: Monitor },
     { id: 'planes', label: 'Planes', icon: Coins },
-    { id: 'modem', label: 'Modem', icon: Settings },
+    { id: 'modem', label: 'Modem', icon: Router },
     { id: 'n1q', label: 'Plantillas', icon: ClipboardList },
     { id: 'mensajes', label: 'Mensajes', icon: MessageSquare },
     { id: 'pasos', label: 'Pasos', icon: ListChecks },
@@ -5976,12 +6055,12 @@ const App = () => {
           {activeSection === 'modem' && (
             <ModernCard>
               <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-[#1a1a1a] dark:to-[#0a0a0a] rounded-2xl p-4 lg:p-6 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                <div className="rounded-2xl p-4 lg:p-6">
                   <h4 className="text-sm lg:text-lg font-bold text-gray-800 dark:text-gray-100 mb-2 lg:mb-3 flex items-center gap-2">
                     <div className="w-3 h-3 bg-gray-500 dark:bg-gray-400 rounded-full"></div>
                     MÓDEM PRINCIPAL | EXTENSOR MESH
                   </h4>
-                  <div className="mb-3 lg:mb-4 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-3 lg:p-4">
+                  <div className="mb-3 lg:mb-4">
                     <p className="font-bold text-red-600 dark:text-red-400">ALERTA: SEÑAL DÉBIL</p>
                     <p className="text-xs lg:text-sm text-gray-700 dark:text-gray-300 mt-1">
                       El extensor está muy lejos del módem. Acércalo para mejorar la cobertura y velocidad.
@@ -6022,12 +6101,12 @@ const App = () => {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-[#1a1a1a] dark:to-[#0a0a0a] rounded-2xl p-4 lg:p-6 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                <div className="rounded-2xl p-4 lg:p-6">
                   <h4 className="text-sm lg:text-lg font-bold text-gray-800 dark:text-gray-100 mb-2 lg:mb-3 flex items-center gap-2">
                     <div className="w-3 h-3 bg-gray-500 dark:bg-gray-400 rounded-full"></div>
                     ONT
                   </h4>
-                  <div className="mb-3 lg:mb-4 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-3 lg:p-4">
+                  <div className="mb-3 lg:mb-4">
                     <p className="font-bold text-red-600 dark:text-red-400">ALERTA: LOS EN ROJO</p>
                     <p className="text-xs lg:text-sm text-gray-700 dark:text-gray-300 mt-1">
                       Indica que la ONT no está recibiendo señal óptica.
@@ -6066,7 +6145,7 @@ const App = () => {
                   </div>
                   <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <p className="font-semibold text-xs lg:text-sm text-gray-800 dark:text-gray-100 mb-2">LUCES NORMALES EXCEPTO LOS EN ROJO</p>
-                    <p className="font-mono text-[10px] lg:text-xs text-gray-700 dark:text-gray-300 mb-3 bg-gray-100 dark:bg-gray-900 rounded-lg py-2 px-3 flex flex-wrap gap-x-2">
+                    <p className="font-mono text-[10px] lg:text-xs text-gray-700 dark:text-gray-300 mb-3 flex flex-wrap gap-x-2">
                       <span>POWER</span><span>|</span><span>PON</span><span>|</span><span>LOS</span><span>|</span><span>LAN1</span><span>|</span><span>LAN2</span><span>|</span><span>LAN3</span><span>|</span><span>LAN4</span><span>|</span><span>TEL</span><span>|</span><span>USB</span><span>|</span><span>WLAN</span><span>|</span><span>WPS</span>
                     </p>
                     <ul className="space-y-1.5 text-xs lg:text-sm text-gray-700 dark:text-gray-300">
@@ -6082,12 +6161,12 @@ const App = () => {
                   </div>
                 </div>
               </div>
-              <div className="mt-6 overflow-hidden rounded-xl border border-amber-200 dark:border-amber-800">
-                <div className="bg-gradient-to-r from-amber-500 to-orange-600 flex items-center gap-2 px-4 py-3">
+              <div className="mt-6 overflow-hidden rounded-xl">
+                <div className="bg-gray-900 dark:bg-gray-950 flex items-center gap-2 px-4 py-3">
                   <Zap size={18} className="text-white shrink-0" />
                   <p className="text-xs lg:text-base font-bold text-white">INFORMACIÓN ADICIONAL: FIBRA ÓPTICA Y LOS EN ROJO</p>
                 </div>
-                <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-3 lg:p-6">
+                <div className="bg-white dark:bg-[#141414] p-3 lg:p-6">
                   <p className="text-xs lg:text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-3">
                     La fibra óptica funciona enviando pulsos de luz a través de cables de plástico o vidrio muy delgados, actuando como una
                     <strong> "manguera de agua" pero para la luz</strong>. En lugar de transportar electricidad como los cables de cobre, transporta
@@ -6100,60 +6179,97 @@ const App = () => {
                   <p className="text-xs lg:text-base text-gray-800 dark:text-gray-100 font-semibold mb-3">
                     Para que esta alerta roja aparezca en el router, debe ocurrir alguna de las siguientes situaciones:
                   </p>
-                  <div className="grid md:grid-cols-2 gap-3 lg:gap-4">
-                    <div className="rounded-xl bg-white dark:bg-[#141414] border border-red-200 dark:border-red-800 p-3 lg:p-4">
-                      <div className="flex items-center gap-2 mb-1 lg:mb-1">
-                        <div className="w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center shrink-0">
-                          <Unplug size={16} className="text-red-600 dark:text-red-400" />
+
+                  {/* Acordeón de situaciones */}
+                  <div className="divide-y divide-neutral-200 dark:divide-neutral-800">
+                    {FIBRA_CAUSAS.map((causa, i) => {
+                      const Icon = causa.Icon
+                      const abierto = fibraCausaSel === i
+                      return (
+                        <div key={causa.titulo}>
+                          <button
+                            type="button"
+                            onClick={() => setFibraCausaSel(abierto ? -1 : i)}
+                            aria-expanded={abierto}
+                            className="w-full flex items-center gap-2 lg:gap-3 py-3 text-left cursor-pointer focus:outline-none"
+                          >
+                            <Icon size={16} className="shrink-0 text-neutral-400 dark:text-neutral-500" />
+                            <span className="flex-1 text-xs lg:text-sm font-semibold text-neutral-800 dark:text-neutral-100">
+                              {causa.titulo}
+                            </span>
+                            <ChevronDown
+                              size={16}
+                              className={`shrink-0 text-neutral-400 dark:text-neutral-500 transition-transform ${abierto ? 'rotate-180' : ''}`}
+                            />
+                          </button>
+                          {abierto && (
+                            <div className="pb-3 pl-6 lg:pl-7 pr-2 lg:pr-4">
+                              <p className="text-[10px] lg:text-xs text-neutral-400 dark:text-neutral-500 font-medium uppercase tracking-wide mb-1">
+                                {causa.subtitulo}
+                              </p>
+                              <p className="text-xs lg:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                                {causa.texto}
+                              </p>
+                            </div>
+                          )}
                         </div>
-                        <p className="text-xs lg:text-sm font-bold text-gray-800 dark:text-gray-100">El cable se rompió</p>
-                      </div>
-                      <p className="text-[10px] lg:text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-1 lg:mb-2">Corte del cable exterior</p>
-                      <p className="text-xs lg:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                        Es la causa más común en la calle. Un camión alto que enganchó el cable, la caída de una rama o un roedor que lo mordió
-                        pueden romper el hilo de vidrio. Al romperse, la luz se escapa y el flujo se detiene por completo.
-                      </p>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Video tutorial: gestión del equipo (ZTE) en SCP */}
+              <div className="mt-6 overflow-hidden rounded-2xl">
+                <div className="bg-gray-900 dark:bg-gray-950 flex items-center gap-2 px-4 lg:px-5 py-3.5">
+                  <Monitor size={18} className="text-white shrink-0" />
+                  <div>
+                    <p className="text-xs lg:text-base font-bold text-white leading-tight">Video tutorial: gestión del equipo en SCP (ZTE)</p>
+                    <p className="text-[10px] lg:text-xs text-neutral-400">Consulta y gestión en SCP | CPE (Device Management)</p>
+                  </div>
+                </div>
+                <div className="bg-white dark:bg-[#141414] p-4 lg:p-6">
+                  {/* Reproductor — ancho completo para que se vea grande */}
+                  <div className="mx-auto w-full max-w-4xl">
+                    <div className="rounded-2xl overflow-hidden bg-black">
+                      <video controls preload="metadata" playsInline className="w-full h-auto aspect-video bg-black">
+                        <source src="/ZTETUTO.mp4" type="video/mp4" />
+                        Tu navegador no soporta la reproducción de video.
+                      </video>
                     </div>
-                    <div className="rounded-xl bg-white dark:bg-[#141414] border border-amber-200 dark:border-amber-800 p-3 lg:p-4">
-                      <div className="flex items-center gap-2 mb-1 lg:mb-1">
-                        <div className="w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center shrink-0">
-                          <Cable size={16} className="text-amber-600 dark:text-amber-400" />
-                        </div>
-                        <p className="text-xs lg:text-sm font-bold text-gray-800 dark:text-gray-100">El cable se dobló o se pisó</p>
-                      </div>
-                      <p className="text-[10px] lg:text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-1 lg:mb-2">Estrangulamiento del cable</p>
-                      <p className="text-xs lg:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                        Aunque el cable es flexible, si se dobla en un ángulo muy cerrado (por ejemplo, aplastado por un mueble o doblado a la
-                        fuerza en una esquina de la pared), la luz ya no puede rebotar para seguir avanzando. Es el equivalente exacto a pisar una manguera de agua en el jardín.
-                      </p>
-                    </div>
-                    <div className="rounded-xl bg-white dark:bg-[#141414] border border-gray-200 dark:border-gray-700 p-3 lg:p-4">
-                      <div className="flex items-center gap-2 mb-1 lg:mb-1">
-                        <div className="w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center shrink-0">
-                          <Plug size={16} className="text-gray-600 dark:text-gray-300" />
-                        </div>
-                        <p className="text-xs lg:text-sm font-bold text-gray-800 dark:text-gray-100">El conector está sucio o flojo</p>
-                      </div>
-                      <p className="text-[10px] lg:text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-1 lg:mb-2">Conector afectado</p>
-                      <p className="text-xs lg:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                        El cable que se conecta detrás de tu router tiene una punta plástica. Si se desenganchó un poco o si le entró una mota
-                        diminuta de polvo, ese obstáculo bloqueará el rayo de luz por completo, impidiendo que entre al router.
-                      </p>
-                    </div>
-                    <div className="rounded-xl bg-white dark:bg-[#141414] border border-purple-200 dark:border-purple-800 p-3 lg:p-4">
-                      <div className="flex items-center gap-2 mb-1 lg:mb-1">
-                        <div className="w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center shrink-0">
-                          <Server size={16} className="text-purple-600 dark:text-purple-400" />
-                        </div>
-                        <p className="text-xs lg:text-sm font-bold text-gray-800 dark:text-gray-100">Se cerró la llave de paso principal</p>
-                      </div>
-                      <p className="text-[10px] lg:text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-1 lg:mb-2">Problema en la central</p>
-                      <p className="text-xs lg:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                        A veces tu cable doméstico está impecable, pero los equipos de la empresa de internet sufrieron un apagón o están en
-                        mantenimiento. Al no haber un LÁSER emitiendo luz desde la central, tu router detecta que la línea quedó "oscura" y
-                        enciende la alarma roja.
-                      </p>
-                    </div>
+                  </div>
+
+                  {/* Pasos */}
+                  <div className="mt-6">
+                    <ol className="grid md:grid-cols-2 gap-x-5 gap-y-3">
+                      {ZTE_SCP_VIDEO_PASOS.map((paso, i) => (
+                        <li key={i} className="flex gap-3 py-1.5">
+                          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-[11px] font-bold shrink-0">
+                            {i + 1}
+                          </span>
+                          <div className="min-w-0">
+                            <p className="text-[11px] lg:text-xs font-bold text-gray-800 dark:text-gray-100 leading-snug">{paso.titulo}</p>
+                            <ul className="mt-1 space-y-1 text-[10px] lg:text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+                              {paso.items.map((t, j) => (
+                                <li key={j} className="flex gap-1.5">
+                                  <span className="text-neutral-400 dark:text-neutral-500 shrink-0">•</span>
+                                  <span>{t}</span>
+                                </li>
+                              ))}
+                            </ul>
+                            {paso.detalle && (
+                              <div className="mt-2 grid grid-cols-2 gap-1.5">
+                                {paso.detalle.map((t, j) => (
+                                  <span key={j} className="font-mono text-[10px] text-neutral-600 dark:text-neutral-300 truncate" title={t}>
+                                    {t}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ol>
                   </div>
                 </div>
               </div>

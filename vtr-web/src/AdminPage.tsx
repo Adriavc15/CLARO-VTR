@@ -7,7 +7,7 @@ import AdminIdsClave from './components/AdminIdsClave.jsx'
 import AdminPlanes from './components/AdminPlanes.jsx'
 import AdminStreamingShowcase from './components/AdminStreamingShowcase.jsx'
 import AdminTipificaciones from './components/AdminTipificaciones.jsx'
-import AdminMigraciones from './components/AdminMigraciones.jsx'
+import MigracionesTabs from './components/MigracionesTabs.jsx'
 import AdminAsesores from './components/AdminAsesores.jsx'
 import AdminSupervisores from './components/AdminSupervisores.jsx'
 import AdminAdminsAutorizados from './components/AdminAdminsAutorizados.jsx'
@@ -916,7 +916,7 @@ const AdminPage = () => {
         ) : seccion === 'tipificaciones' ? (
           <AdminTipificaciones db={db} onToast={showToast} />
         ) : seccion === 'migraciones' ? (
-          <AdminMigraciones db={db} onToast={showToast} />
+          <MigracionesTabs db={db} onToast={showToast} />
         ) : seccion === 'asesores' ? (
           <AdminAsesores db={db} onToast={showToast} />
         ) : seccion === 'supervisores' ? (

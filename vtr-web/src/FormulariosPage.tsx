@@ -13,17 +13,37 @@ import {
   Home,
   Info,
   User,
+  UserX,
 } from 'lucide-react'
 import { db } from './App.tsx'
 import { guardarMigracion, ESTADOS_MIGRACION, ESTADO_OTROS } from './migracionesStore'
+import { guardarNoAceptaFibra, MOTIVOS_NO_ACEPTA } from './noAceptaFibraStore'
 import { ASESORES_SEED, suscribirAsesores } from './asesoresStore'
 import { SUPERVISORES_SEED, suscribirSupervisores } from './supervisoresStore'
-import AdminMigraciones from './components/AdminMigraciones'
+import MigracionesTabs from './components/MigracionesTabs'
 
 const FORM_NAV = [
   { id: 'comisiones', label: 'Migraciones', icon: Coins },
+  { id: 'noacepta', label: 'No acepta fibra', icon: UserX },
   { id: 'historial', label: 'Mis registros', icon: ClipboardList },
 ]
+
+/** Campos del formulario «Clientes que no aceptan cambio a fibra». */
+const CAMPOS_NO_ACEPTA_FORM = [
+  { key: 'fecha', label: 'Fecha', tipo: 'date', colSpan: 1 },
+  { key: 'asesor', label: 'Asesor', tipo: 'select', opciones: ASESORES_SEED, placeholder: 'Selecciona un asesor' },
+  { key: 'rutCliente', label: 'RUT cliente', tipo: 'text', placeholder: 'Ej. 12.345.678-9' },
+  {
+    key: 'motivoNoAcepta',
+    label: 'Motivo no acepta',
+    tipo: 'select',
+    opciones: MOTIVOS_NO_ACEPTA,
+    placeholder: 'Selecciona el motivo',
+    colSpan: 2,
+  },
+]
+
+const vacioNoAcepta = () => Object.fromEntries(CAMPOS_NO_ACEPTA_FORM.map((c) => [c.key, '']))
 
 const CAMPOS_FORM = [
   { key: 'fechaIngreso', label: 'Fecha ingreso de migración', tipo: 'date', colSpan: 1 },
@@ -282,8 +302,187 @@ function FormComisiones({ onToast, onGuardado }: any) {
   )
 }
 
+function FormNoAceptaFibra({ onToast, onGuardado }) {
+  const [form, setForm] = useState(vacioNoAcepta())
+  const [enviando, setEnviando] = useState(false)
+  const [exito, setExito] = useState(null)
+  const [asesores, setAsesores] = useState(() => ASESORES_SEED)
+
+  useEffect(() => {
+    const unsub = suscribirAsesores(db, (lista) => {
+      const nombres = (lista || []).map((a) => (typeof a === 'string' ? a : a.nombre)).filter(Boolean)
+      setAsesores(nombres.length ? nombres : ASESORES_SEED)
+    })
+    return () => unsub && unsub()
+  }, [])
+
+  const campos = useMemo(
+    () => CAMPOS_NO_ACEPTA_FORM.map((c) => (c.key === 'asesor' ? { ...c, opciones: asesores } : c)),
+    [asesores]
+  )
+
+  const emailLector =
+    (typeof window !== 'undefined' && window.localStorage.getItem('vtr-lector-email')) || ''
+
+  const set = (k) => (e) => {
+    const val = e.target.value
+    setForm((f) => ({ ...f, [k]: val }))
+  }
+
+  const submit = async (e) => {
+    e.preventDefault()
+    setEnviando(true)
+    const res = await guardarNoAceptaFibra({ db, campos: { ...form }, email: emailLector })
+    setEnviando(false)
+    if (res.cloud) {
+      onToast?.('Registro guardado correctamente ✅')
+    } else {
+      onToast?.('Se guardó en este equipo (sin conexión a la nube): ' + (res.cloudError || ''))
+    }
+    setExito({ ...form })
+    setForm(vacioNoAcepta())
+    onGuardado?.()
+  }
+
+  const inputBase =
+    'w-full text-sm rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2.5 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#f69100]/50 focus:border-[#f69100] transition'
+
+  const tips = [
+    'Registra correctamente el RUT y el motivo por el cual el cliente no acepta el cambio a fibra.',
+    'Selecciona al asesor que realizó la gestión.',
+    'Verifica la fecha de la gestión antes de enviar.',
+  ]
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[calc(100vh-7rem)]">
+      {/* Panel izquierdo: mensaje */}
+      <aside className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#f69100] to-amber-400 text-white p-6 sm:p-8 lg:p-10 flex flex-col justify-between shadow-lg">
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold flex items-center gap-2">
+            <UserX size={28} />
+            NO ACEPTA FIBRA
+          </h2>
+          <p className="text-sm sm:text-base text-amber-50/95 leading-relaxed mt-4">
+            ¡Equipo! Registremos a los clientes que <strong>no aceptan el cambio a fibra</strong>. Guarda el
+            motivo real de la negativa: nos ayuda a entender objeciones y mejorar la oferta.
+          </p>
+          <ul className="mt-6 space-y-3">
+            {tips.map((t) => (
+              <li key={t} className="flex items-start gap-2 text-sm text-amber-50/95">
+                <CheckCircle2 size={18} className="shrink-0 mt-0.5" />
+                <span>{t}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+
+      {/* Panel derecho: formulario / confirmación */}
+      <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 sm:p-8 flex flex-col justify-center">
+        {exito ? (
+          <div className="text-center m-auto">
+            <CheckCircle2 size={64} className="mx-auto text-[#f69100] mb-4" />
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-50">¡Registro guardado!</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+              RUT <strong>{exito.rutCliente}</strong> · Asesor <strong>{exito.asesor}</strong>
+            </p>
+            {exito.motivoNoAcepta && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Motivo: <strong>{exito.motivoNoAcepta}</strong>
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={() => setExito(null)}
+              className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#f69100] text-white text-sm font-semibold hover:bg-amber-600 transition-colors cursor-pointer"
+            >
+              <RotateCcw size={16} />
+              Registrar otro cliente
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={submit} className="space-y-5">
+            <div className="pb-4 mb-5 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <h3 className="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-gray-50">
+                  Clientes que no aceptan cambio a fibra
+                </h3>
+                <span className="inline-flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-300 rounded-full bg-gray-100 dark:bg-gray-700 px-3 py-1.5 font-medium">
+                  <User size={13} />
+                  {emailLector || 'adrian.villantoy@apexamerica.com'}
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-5">
+              {campos.map((c) => (
+                <label key={c.key} className={c.colSpan === 2 ? 'md:col-span-2 block' : 'block'}>
+                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">
+                    {c.label} <span className="text-red-500">*</span>
+                  </span>
+                  {c.tipo === 'select' ? (
+                    <select
+                      value={form[c.key]}
+                      onChange={set(c.key)}
+                      required
+                      className={`${inputBase} mt-1.5 ${form[c.key] ? '' : 'text-gray-400 dark:text-gray-500'}`}
+                    >
+                      <option value="" disabled>
+                        {c.placeholder || 'Selecciona una opción'}
+                      </option>
+                      {c.opciones.map((o) => (
+                        <option key={o} value={o} className="text-gray-800 dark:text-gray-100">
+                          {o}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type={c.tipo === 'date' ? 'date' : 'text'}
+                      value={form[c.key]}
+                      onChange={set(c.key)}
+                      required
+                      placeholder={c.placeholder}
+                      className={`${inputBase} mt-1.5`}
+                    />
+                  )}
+                </label>
+              ))}
+            </div>
+
+            <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+              <p className="text-[11px] text-gray-400 dark:text-gray-500 flex items-center gap-1.5">
+                <Info size={13} className="shrink-0" />
+                Todos los campos son obligatorios.
+              </p>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setForm(vacioNoAcepta())}
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-semibold transition-colors cursor-pointer"
+                >
+                  <RotateCcw size={16} />
+                  Limpiar
+                </button>
+                <button
+                  type="submit"
+                  disabled={enviando}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#f69100] hover:bg-amber-600 text-white text-sm font-bold shadow-lg shadow-amber-500/20 transition-colors disabled:opacity-60 cursor-pointer"
+                >
+                  {enviando ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                  {enviando ? 'Enviando…' : 'Enviar'}
+                </button>
+              </div>
+            </div>
+          </form>
+        )}
+      </section>
+    </div>
+  )
+}
+
 function MisRegistros({ onToast }) {
-  return <AdminMigraciones db={db} onToast={onToast} esUsuario />
+  return <MigracionesTabs db={db} onToast={onToast} esUsuario />
 }
 
 const FormulariosPage = () => {
@@ -426,6 +625,8 @@ const FormulariosPage = () => {
         <div className="p-4 lg:p-8">
           {seccion === 'comisiones' ? (
             <FormComisiones onToast={showToast} />
+          ) : seccion === 'noacepta' ? (
+            <FormNoAceptaFibra onToast={showToast} />
           ) : (
             <MisRegistros onToast={showToast} />
           )}

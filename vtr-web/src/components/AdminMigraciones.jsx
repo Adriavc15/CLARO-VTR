@@ -1100,7 +1100,7 @@ export default function AdminMigraciones({ db = null, onToast, esUsuario = false
       <Card>
         {tituloPanel(Wallet, 'Últimas migraciones', `${filtrados.length} registros en el filtro actual`)}
         <div className="overflow-x-auto">
-          <table className="w-full text-xs border-collapse min-w-[850px]">
+          <table className="w-full text-xs border-collapse min-w-[960px]">
             <thead>
               <tr className="bg-gray-50 dark:bg-gray-900/40 border-b border-gray-200 dark:border-gray-700">
                 {[
@@ -1110,6 +1110,7 @@ export default function AdminMigraciones({ db = null, onToast, esUsuario = false
                   'RUT cliente',
                   'N° pedido',
                   'Estado',
+                  'Motivo',
                   'Registrado',
                 ].map((h) => (
                   <th key={h} className="text-left font-bold text-gray-500 dark:text-gray-400 py-2 px-2 whitespace-nowrap">
@@ -1122,7 +1123,7 @@ export default function AdminMigraciones({ db = null, onToast, esUsuario = false
             <tbody>
               {filtrados.length === 0 && (
                 <tr>
-                  <td colSpan={esUsuario ? 7 : 8} className="text-center text-gray-400 dark:text-gray-500 py-8">
+                  <td colSpan={esUsuario ? 8 : 9} className="text-center text-gray-400 dark:text-gray-500 py-8">
                     Sin migraciones en el filtro actual
                   </td>
                 </tr>
@@ -1161,15 +1162,19 @@ export default function AdminMigraciones({ db = null, onToast, esUsuario = false
                           {m.estado}
                         </span>
                       )}
-                      {m.detalleError && (
-                        <span
-                          title={m.detalleError}
-                          className="inline-block text-[10px] text-purple-700 dark:text-purple-300 max-w-[220px] truncate font-medium bg-purple-50 dark:bg-purple-900/30 px-2 py-0.5 rounded-md border border-purple-200 dark:border-purple-800/50"
-                        >
-                          📝 {m.detalleError}
-                        </span>
-                      )}
                     </div>
+                  </td>
+                  <td className="py-2 px-2 align-top">
+                    {m.detalleError ? (
+                      <span
+                        title={m.detalleError}
+                        className="inline-block text-[11px] text-gray-700 dark:text-gray-200 max-w-[260px] truncate font-medium bg-gray-50 dark:bg-gray-900/40 px-2 py-0.5 rounded-md border border-gray-200 dark:border-gray-700"
+                      >
+                        {m.detalleError}
+                      </span>
+                    ) : (
+                      <span className="text-gray-300 dark:text-gray-600">—</span>
+                    )}
                   </td>
                   <td className="py-2 px-2 whitespace-nowrap text-gray-400 dark:text-gray-500">
                     {partesFechaHora(m.creado).fecha}

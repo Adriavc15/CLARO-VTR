@@ -49,6 +49,7 @@ No es un sitio público de autoservicio para clientes: es una **herramienta de t
 | **Asistente Apex** | Chat de IA (Gemini + RAG) sobre el conocimiento del portal |
 | **Simuladores** | Genesys, ANDES/Siebel y Android TV |
 | **Medidor de velocidad** | Test de velocidad (objetivos Fast.com) |
+| **Formularios** (`/formularios`) | Registro de migraciones por cambio de tecnología y de clientes que **no aceptan** el cambio a fibra |
 | **Admin** (`/admin`) | Gestión de catálogos, usuarios, conocimiento de IA y tipificaciones |
 
 ## Marca: VTR y Claro
