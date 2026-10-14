@@ -54,7 +54,7 @@ service cloud.firestore {
 
 ⚠️ Esto significa que **cualquier persona** con la configuración del proyecto podría leer y
 escribir en la base de datos sin autenticarse. Es un **pendiente crítico** para producción.
-Ver [11-seguridad.md](11-seguridad.md).
+Ver [10-seguridad.md](10-seguridad.md).
 
 ## Patrón semilla + en vivo
 

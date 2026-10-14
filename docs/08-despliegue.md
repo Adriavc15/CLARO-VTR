@@ -1,13 +1,12 @@
-# 09 · Instalación y despliegue
+# 08 · Instalación y despliegue
 
 ## Requisitos
 
 | Herramienta | Versión | Para |
 |---|---|---|
-| Node.js | 18+ (Functions usa 24) | web, functions, netplay |
+| Node.js | 18+ (Functions usa 24) | web, functions |
 | npm | 9+ | dependencias |
 | Firebase CLI | última | `npm i -g firebase-tools` |
-| gcloud CLI | opcional | despliegue del netplay en Cloud Run |
 | Git | — | control de versiones |
 
 ## 1. Aplicación web (`vtr-web`)
@@ -39,17 +38,7 @@ npm run build          # tsc -> lib/
 Scripts útiles: `npm run lint`, `npm run build`, `npm run serve` (emulador),
 `npm run deploy` (`firebase deploy --only functions`), `npm run logs`.
 
-## 3. Netplay (`netplay-server`) — opcional
-
-```bash
-cd netplay-server
-npm install
-npm start              # puerto 3000 (o $PORT)
-```
-
-Para exponerlo se usa `VITE_NETPLAY_SERVER` apuntando a una URL pública (HTTPS/WSS).
-
-## 4. Despliegue completo con Firebase
+## 3. Despliegue completo con Firebase
 
 Configuración en `firebase.json`:
 
@@ -82,19 +71,7 @@ firebase deploy --only firestore
 > `vtr-web/dist` debe existir antes de desplegar Hosting. Como `dist/` está en `.gitignore`,
 > hay que ejecutar `npm run build` en la máquina que despliega.
 
-## 5. Netplay en Cloud Run
-
-```bash
-cd netplay-server
-gcloud run deploy vtr-netplay \
-  --source . \
-  --region us-central1 \
-  --allow-unauthenticated
-```
-
-El `Dockerfile` expone el puerto **8080** y arranca `node server.js`.
-
-## 6. Emuladores locales (opcional)
+## 4. Emuladores locales (opcional)
 
 ```bash
 firebase emulators:start                 # Firestore, Functions, Hosting, Auth
@@ -107,17 +84,14 @@ cd functions && npm run serve            # solo functions
 2. Configurar `.env.local` en `vtr-web`.
 3. `npm run build` en `vtr-web` y en `functions`.
 4. `firebase deploy`.
-5. (Opcional) desplegar `netplay-server` y actualizar `VITE_NETPLAY_SERVER` + rebuild.
-6. (Recomendado) cerrar las reglas de Firestore. Ver [11-seguridad.md](11-seguridad.md).
+5. (Recomendado) cerrar las reglas de Firestore. Ver [10-seguridad.md](10-seguridad.md).
 
 ## Qué NO se versiona (y hay que regenerar)
 
 | Ruta ignorada | Cómo se obtiene |
 |---|---|
-| `vtr-web/node_modules/`, `functions/node_modules/`, `netplay-server/node_modules/` | `npm install` |
+| `vtr-web/node_modules/`, `functions/node_modules/` | `npm install` |
 | `vtr-web/dist/`, `functions/lib/` | `npm run build` |
 | `.firebase/` | cache local de Firebase |
 | `vtr-web/public/sc-assets/` | scripts de scraping de "Somos Clave" |
-| `vtr-web/public/juegos/geometry-dash/` | proyecto de terceros |
-| Carpetas originales de juegos y ROMs `*.sfc` | copiar/extraer localmente |
 | Archivos con credenciales (`CLARO VTR CHILE ENLACES ID*.md`, `_inbenta_knowledge.js`) | mantener en local |

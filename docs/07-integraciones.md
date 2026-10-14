@@ -1,4 +1,4 @@
-# 08 · Integraciones externas
+# 07 · Integraciones externas
 
 El portal se apoya en varios servicios externos. Esta tabla resume qué es cada uno, para qué se
 usa y dónde vive en el código.
@@ -16,8 +16,6 @@ usa y dónde vive en el código.
 | **ipapi.co** | Geolocalización aproximada | `App.jsx` |
 | **Google favicons** (`google.com/s2/favicons`) | Iconos de aplicaciones | `aplicacionesCatalogo` / `AplicacionesExcel.jsx` |
 | **TMDB** | Metadatos de películas/series (opcional) | Variables `VITE_TMDB_*` |
-| **EmulatorJS** (`cdn.emulatorjs.org`) | Emulador SNES en el navegador | `juegos/SnesEmulator.jsx` |
-| **Servidor de netplay** (Cloud Run) | Señalización WebRTC para juegos online | `netplay-server/`; variable `VITE_NETPLAY_SERVER` |
 | **mii.nxw.pw** | Assets para el creador de Mii | `Mii Creator.html` |
 | **Inbenta KM API** (vía `somosclave.cl`) | Fuente de los artículos "Somos Clave" (scraping) | `vtr-web/scripts/` |
 
@@ -45,4 +43,4 @@ Script de Google Sheets que actúa como backend ligero de formularios:
 - Varias integraciones usan claves embebidas en el cliente (imgbb, Firebase). Al ser una app
   de navegador, están expuestas; conviene restringirlas por dominio/API cuando aplique.
 - Los datos operativos sensibles (credenciales de portales internos) se mantienen fuera del
-  repositorio. Ver [11-seguridad.md](11-seguridad.md).
+  repositorio. Ver [10-seguridad.md](10-seguridad.md).

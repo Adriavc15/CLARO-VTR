@@ -2,7 +2,11 @@ import { useEffect, useRef, useState, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { Wifi, Tv, Receipt, WifiOff, Gauge, Activity, AlertTriangle, MonitorPlay, Puzzle, Keyboard, Sparkles, TrendingUp, Search, Copy, Shield, Wrench, Tags } from 'lucide-react'
 import { handleClick, handleChange, handleInput, setRenderNotifier, setToastNotifier, getHtml } from '../asistente/asistente.js'
-import { CATALOGO_TIPIFICACIONES } from '../tipificacionesCatalogo'
+import {
+  CATALOGO_TIPIFICACIONES,
+  PLANTILLAS_TIPIFICACION as PLANTILLAS_CASOS,
+  destinoCampoMotivo,
+} from '../tipificacionesCatalogo'
 import '../asistente/asistente.css'
 
 const INHIBICION_PASOS = [
@@ -108,18 +112,6 @@ const CHIP_ON =
 const CHIP_OFF =
   'border-gray-200 bg-white text-gray-600 hover:border-gray-400 hover:text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500 dark:hover:text-gray-100'
 
-/** Casos de tipificación asociados a cada plantilla del portal. */
-const PLANTILLAS_CASOS = [
-  { id: 'n1', label: 'N1 Técnico', razones: ['Atención técnica', 'General'] },
-  {
-    id: 'general',
-    label: 'Plantilla General',
-    razones: ['General', 'Atención Comercial', 'Gestión Interna'],
-  },
-  { id: 'visita', label: 'Adelanto de visita', razones: ['Atención técnica'] },
-  { id: 'genesys', label: 'Genesys', razones: ['Atención Outbound', 'Atención Retención'] },
-]
-
 export default function AsistentePasos({ onToast }) {
   const containerRef = useRef(null)
   const [html, setHtml] = useState('')
@@ -158,12 +150,20 @@ export default function AsistentePasos({ onToast }) {
           const motivo = limpio(m.motivo)
           return {
             motivo,
+            nombreAmigable: limpio(m.nombreAmigable) || motivo,
             descripcion: limpio(m.descripcion),
+            uso: limpio(m.uso),
+            destino: destinoCampoMotivo(r.razon, s.servicio, motivo),
             tentativo: m.tentativo === true,
             ruta: `${r.razon} > ${s.servicio} > ${motivo}`,
           }
         })
-        if (casos.length) servicios.push({ servicio: s.servicio, casos })
+        if (casos.length)
+          servicios.push({
+            servicio: s.servicio,
+            servicioAmigable: limpio(s.nombreAmigable) || s.servicio,
+            casos,
+          })
       }
       const total = servicios.reduce((n, s) => n + s.casos.length, 0)
       if (total) out.push({ razon: r.razon, servicios, total })
@@ -368,7 +368,7 @@ export default function AsistentePasos({ onToast }) {
                     <div key={s.servicio}>
                       <div className="mb-2.5 flex items-center gap-2 text-xs font-semibold text-gray-500 dark:text-gray-400">
                         <span className="h-3.5 w-1 rounded-full bg-emerald-500" />
-                        <span>{s.servicio}</span>
+                        <span>{s.servicioAmigable}</span>
                         <span className="font-normal text-gray-400 dark:text-gray-500">
                           ({s.casos.length})
                         </span>
@@ -380,12 +380,28 @@ export default function AsistentePasos({ onToast }) {
                             title={c.ruta}
                             className="group flex flex-col rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-emerald-400 hover:shadow-md dark:border-gray-700 dark:bg-gray-800/70 dark:hover:border-emerald-700"
                           >
-                            <div className="text-sm font-semibold leading-snug text-gray-900 dark:text-gray-100">
-                              {c.motivo}
+                            <div className="flex flex-wrap items-center gap-2">
+                              <div className="text-sm font-semibold leading-snug text-gray-900 dark:text-gray-100">
+                                {c.nombreAmigable}
+                              </div>
+                              <span
+                                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                                  c.destino === 'solucion'
+                                    ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-300'
+                                    : 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200'
+                                }`}
+                              >
+                                {c.destino === 'solucion' ? 'Solución' : 'Inconveniente'}
+                              </span>
                             </div>
                             {c.descripcion && (
                               <div className="mt-1.5 text-xs leading-relaxed text-gray-500 dark:text-gray-400">
                                 {c.descripcion}
+                              </div>
+                            )}
+                            {c.uso && (
+                              <div className="mt-1 text-[11px] italic leading-relaxed text-gray-400 dark:text-gray-500">
+                                {c.uso}
                               </div>
                             )}
                             <div className="mt-3 flex items-center justify-between gap-2 border-t border-dashed border-gray-100 pt-2.5 dark:border-gray-700/70">

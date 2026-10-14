@@ -1,4 +1,4 @@
-# 10 · Scripts y herramientas de datos
+# 09 · Scripts y herramientas de datos
 
 `vtr-web/scripts/` contiene utilidades puntuales (`.mjs`/`.cjs`) que **no** forman parte del
 build; se ejecutan manualmente para generar o mantener datos y assets. Agrupadas por propósito:
@@ -49,16 +49,7 @@ Configuración de credenciales Inbenta en `scripts/_inbenta_knowledge.js` (**no 
 
 > Estos scripts usan la configuración de Firebase embebida (proyecto `vtrclaroo-3c572`).
 
-## E. Extracción de assets de juegos (carpetas originales → `public/juegos`)
-
-| Script | Función |
-|---|---|
-| `extract-purble-assets.cjs`, `extract-purble-extra.cjs` | Extraen DDS/CAB de Purble Place y generan PNG |
-| `extract-cakes-anims.cjs`, `extract-burnt-glaze.cjs` | Animaciones y detalles de "Comfy Cakes" |
-| `fix-cakes-sprites.cjs`, `fix-cakes-ui.cjs`, `fix-cakes-visuals.cjs`, `fix-main-belt.cjs` | Correcciones visuales |
-| `extract-zuma-levels.cjs` | Convierte niveles `*.CURV` de Zuma a JSON |
-
-## F. Utilidades
+## E. Utilidades
 
 | Script | Función |
 |---|---|

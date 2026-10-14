@@ -1,4 +1,4 @@
-# 11 · Seguridad y secretos
+# 10 · Seguridad y secretos
 
 > Este documento es una guía de riesgos y recomendaciones. **No contiene credenciales.**
 
@@ -49,7 +49,6 @@ CLARO VTR CHILE ENLACES ID *.md          # credenciales de portales
 vtr-web/scripts/_inbenta_knowledge.js    # claves de la API KM de Inbenta
 vtr-web/.env.local                       # variables de entorno locales
 dist/, node_modules/, .firebase/         # salidas/build/cache
-*.sfc, *.smc                             # ROMs (derechos de autor)
 ```
 
 Si necesitas versionarlos (por ejemplo, un documento de referencia sin credenciales), crea una

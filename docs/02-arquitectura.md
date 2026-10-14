@@ -28,11 +28,6 @@
       │  Google Apps Script    │        │  Google Drive             │
       │  + Google Sheets       │        │  (comunicados, imágenes)  │
       └───────────────────────┘        └───────────────────────────┘
-
-   ┌──────────────────────────────────────────────┐
-   │  netplay-server (Cloud Run)                   │
-   │  Express + Socket.IO → señalización WebRTC    │
-   └──────────────────────────────────────────────┘
 ```
 
 ## Componentes
@@ -40,7 +35,7 @@
 ### 1. Frontend — `vtr-web/`
 Aplicación **React 18 + Vite 5** con estilos **Tailwind CSS**. Es una **SPA** sin enrutador
 externo: `main.jsx` decide qué página renderizar según `pathname`/`hash`
-(`/`, `/admin`, `/formularios`, `/juego`). Se compila a `vtr-web/dist`, que es lo que sirve
+(`/`, `/admin`, `/formularios`). Se compila a `vtr-web/dist`, que es lo que sirve
 Firebase Hosting.
 
 ### 2. Cloud Functions — `functions/`
@@ -67,11 +62,6 @@ de administración y el messenger interno. Dominios autorizados: `localhost`,
 El chatbot usa el backend **Google AI** de Firebase AI Logic (`firebase/ai`) con un modelo
 Gemini, combinado con **RAG** (búsqueda sobre la base de conocimiento del portal). Ver
 [06-asistente-apex.md](06-asistente-apex.md).
-
-### 6. Servidor de netplay — `netplay-server/`
-Servicio aparte (**Express + Socket.IO**) que señaliza las salas de juego online
-(WebRTC peer-to-peer). Pensado para desplegarse en **Cloud Run**. Ver
-[07-juegos-netplay.md](07-juegos-netplay.md).
 
 ## Patrón "semilla + en vivo" (seed + live)
 
@@ -105,5 +95,5 @@ Así el portal funciona incluso sin haber "sembrado" la base de datos.
 - **Repositorio Git:** código fuente, configuración de Firebase, documentación y assets
   seleccionados.
 - **No versionado** (ver `.gitignore`): `node_modules/`, `dist/`, `.firebase/`, assets
-  regenerables de scraping, carpetas originales de juegos, ROMs y archivos con secretos.
-- **Desplegado:** Firebase Hosting (web), Cloud Functions (backend), Cloud Run (netplay).
+  regenerables de scraping y archivos con secretos.
+- **Desplegado:** Firebase Hosting (web) y Cloud Functions (backend).

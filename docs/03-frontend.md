@@ -1,7 +1,7 @@
 # 03 · Frontend (`vtr-web`)
 
 Aplicación **React 18 + Vite 5 + Tailwind CSS 3**. Tema claro/oscuro (`darkMode: 'class'`).
-Iconos con `lucide-react` y visor 3D con `@google/model-viewer`.
+Iconos con `lucide-react`.
 
 ## Punto de entrada y rutas
 
@@ -46,7 +46,6 @@ Secciones principales (`activeSection`): `dashboard`, `noticias`, `simuladores`
 | `MedidorVelocidad.jsx` | Test de velocidad (objetivos Fast.com) |
 | `AplicacionesExcel.jsx` | Lanzador de aplicaciones (usa `aplicacionesCatalogo.js`) |
 | `TipificacionesPanel.jsx` | Panel de tipificaciones |
-| `SelectorTipificacion.jsx` | Selector en cascada RAZÓN → SERVICIO → MOTIVO |
 | `PanelMediaWhatsApp.jsx` | Panel de stickers, emojis y GIFs |
 | `ModalSomosClave.jsx` | Modal de artículo de "Somos Clave" |
 | `AvatarPerfilPicker.jsx` | Selector/subida de foto de perfil |
@@ -83,7 +82,7 @@ Contiene el motor del asistente y toda la base de conocimiento. Incluye:
   `sugerenciasPredictivas.js`, `entrenamientoApex.js`.
 - **Módulos "live" (Firestore):** `conocimientoLive.js`, `chatAprendizajeLive.js`,
   `aprendizajeContinuo.js`, `conocimientoKbAndes.js`, `contenidosSomosClave.js`,
-  `conocimientoSomosClave.js`, `idsClaveLive.js`, `planesLive.js`, `streamCatalogLive.js`,
+  `conocimientoSomosClave.js`, `idsClaveLive.js`, `planesLive.js`,
   `streamingShowcaseLive.js`.
 - **Datos del portal:** `indicePortal.js`, `guiasPortal.js`, `assetsGuias.js`, procedimientos
   (`procedimientoPago.js`, `procedimientoTraslado.js`, `procedimientoCambioTitular.js`,
@@ -95,10 +94,6 @@ Contiene el motor del asistente y toda la base de conocimiento. Incluye:
   `catalogoPlanesStreaming.js`.
 
 Detalle completo en [06-asistente-apex.md](06-asistente-apex.md).
-
-## Hooks
-
-- `src/hooks/useBodyScrollLock.js` — bloquea el scroll del `body` cuando hay modales abiertos.
 
 ## Estilos
 

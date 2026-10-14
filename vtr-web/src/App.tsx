@@ -16,12 +16,14 @@ import AplicacionesExcel from './components/AplicacionesExcel'
 import AndroidTvInterface from './components/AndroidTvInterface'
 import AndesSimulador from './components/AndesSimulador'
 import IconoAndroid from './components/IconoAndroid'
+import BuscadorTipificacion from './components/BuscadorTipificacion'
 import {
   guardarTipificacion,
   listarTipificacionesAdmin,
   exportarTipificacionesExcel,
   exportarTipificacionesCsv,
 } from './tipificacionesStore'
+import { rutaTipificacion } from './tipificacionesCatalogo'
 import {
   CONTROL_REMOTO_IMG_BASE,
   CAMBIO_PLAN_IMG_BASE,
@@ -3223,7 +3225,7 @@ const PlantillaN1 = ({ correoApex = '', onEnviado }) => {
 
   return (
     <>
-    <div className="max-w-4xl h-full flex flex-col bg-white rounded-2xl shadow-lg p-6 dark:bg-gray-800">
+    <div className="w-full flex-1 flex flex-col">
       <div className="mb-6 flex items-start gap-3 border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 rounded-r-xl px-4 py-3">
         <AlertCircle size={20} className="text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
         <p className="text-xs lg:text-base text-red-900 dark:text-red-100 font-medium">
@@ -3297,14 +3299,14 @@ const PlantillaN1 = ({ correoApex = '', onEnviado }) => {
         <button
           onClick={guardar}
           disabled={guardando}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-gray-500 text-white rounded-full hover:bg-gray-600 hover:scale-105 hover:shadow-lg transition-all duration-300 font-medium disabled:opacity-60 disabled:hover:scale-100"
+          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-lg shadow-emerald-600/20 transition-colors disabled:opacity-60 cursor-pointer"
         >
           <Save size={16} />
           {guardando ? 'Enviando...' : 'Enviar'}
         </button>
         <button
           onClick={copyTemplate}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm ml-auto bg-gray-500 text-white rounded-full hover:bg-gray-600 hover:scale-105 hover:shadow-lg transition-all duration-300 font-medium"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 ml-auto rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-semibold transition-colors cursor-pointer"
         >
           <Copy size={16} />
           Copiar plantilla
@@ -3420,7 +3422,7 @@ BLOQUE: ${form.bloqueDeseado}`
 
   return (
     <>
-    <div className="max-w-4xl h-full flex flex-col bg-white rounded-2xl shadow-lg p-6 dark:bg-gray-800">
+    <div className="w-full flex-1 flex flex-col">
       <div className="mb-6 flex items-start gap-3 border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-900/20 rounded-r-xl px-4 py-3">
         <AlertCircle size={20} className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
         <p className="text-xs lg:text-base text-amber-900 dark:text-amber-100 font-medium">
@@ -3497,14 +3499,14 @@ BLOQUE: ${form.bloqueDeseado}`
         <button
           onClick={guardar}
           disabled={guardando}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-gray-500 text-white rounded-full hover:bg-gray-600 hover:scale-105 hover:shadow-lg transition-all duration-300 font-medium disabled:opacity-60 disabled:hover:scale-100"
+          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-lg shadow-emerald-600/20 transition-colors disabled:opacity-60 cursor-pointer"
         >
           <Save size={16} />
           {guardando ? 'Enviando...' : 'Enviar'}
         </button>
         <button
           onClick={copyTemplate}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm ml-auto bg-gray-500 text-white rounded-full hover:bg-gray-600 hover:scale-105 hover:shadow-lg transition-all duration-300 font-medium"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 ml-auto rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-semibold transition-colors cursor-pointer"
         >
           <Copy size={16} />
           Copiar plantilla
@@ -3677,7 +3679,7 @@ const PlantillaGenesys = ({ correoApex = '', onEnviado }) => {
 
   return (
     <>
-    <div className="w-full h-full flex flex-col bg-white rounded-2xl shadow-lg p-4 sm:p-6 dark:bg-gray-800 overflow-hidden">
+    <div className="w-full flex-1 flex flex-col overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2 dark:text-gray-100">
           <ClipboardList size={24} className="text-emerald-600 shrink-0" />
@@ -3808,14 +3810,14 @@ const PlantillaGenesys = ({ correoApex = '', onEnviado }) => {
         <button
           onClick={guardar}
           disabled={guardando}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-gray-500 text-white rounded-full hover:bg-gray-600 hover:scale-105 hover:shadow-lg transition-all duration-300 font-medium disabled:opacity-60 disabled:hover:scale-100"
+          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-lg shadow-emerald-600/20 transition-colors disabled:opacity-60 cursor-pointer"
         >
           <Save size={16} />
           {guardando ? 'Enviando...' : 'Enviar'}
         </button>
         <button
           onClick={copyTemplate}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm ml-auto bg-gray-500 text-white rounded-full hover:bg-gray-600 hover:scale-105 hover:shadow-lg transition-all duration-300 font-medium"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 ml-auto rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-semibold transition-colors cursor-pointer"
         >
           <Copy size={16} />
           Copiar plantilla
@@ -3842,11 +3844,22 @@ const PlantillaGeneral = ({ correoApex = '', onEnviado }) => {
     correo: '',
     inconveniente: '',
     solucion: '',
+    razon: '',
+    servicioTipif: '',
+    motivo: '',
+    detalleRazon: '',
   })
   const [guardando, setGuardando] = useState(false)
   const [modal, setModal] = useState(null)
+  // Textos autocompletados desde el catálogo. Se actualizan al cambiar de
+  // tipificación, pero no se pisan si el asesor ya escribió a mano.
+  const ultimoAutoInconveniente = useRef('')
+  const ultimoAutoSolucion = useRef('')
 
   const update = (key) => (e) => setForm(prev => ({ ...prev, [key]: e.target.value }))
+
+  const rutaTipif = rutaTipificacion({ razon: form.razon, servicio: form.servicioTipif, motivo: form.motivo })
+  const lineaTipif = rutaTipif ? `\n\n🔹 TIPIFICACIÓN: ${rutaTipif}` : ''
 
   const copyTemplate = () => {
     const text = `PLANTILLA GENERAL
@@ -3856,7 +3869,7 @@ const PlantillaGeneral = ({ correoApex = '', onEnviado }) => {
 ➡️ Nombre del Cliente: ${form.cliente}
 📧 Correo: ${form.correo}
 ⚠️ Inconveniente: ${form.inconveniente}
-✅ Solución: ${form.solucion}`
+✅ Solución: ${form.solucion}${lineaTipif}`
     navigator.clipboard.writeText(text)
       .then(() => window.alert('Plantilla copiada al portapapeles'))
       .catch(() => window.alert('No se pudo copiar la plantilla'))
@@ -3875,7 +3888,7 @@ const PlantillaGeneral = ({ correoApex = '', onEnviado }) => {
 ➡️ Nombre del Cliente: ${form.cliente}
 📧 Correo: ${form.correo}
 ⚠️ Inconveniente: ${form.inconveniente}
-✅ Solución: ${form.solucion}`
+✅ Solución: ${form.solucion}${lineaTipif}`
     const ok = await enviarTipificacionPersonal({
       correoApex,
       tipo: 'Basico',
@@ -3886,6 +3899,8 @@ const PlantillaGeneral = ({ correoApex = '', onEnviado }) => {
     })
     setGuardando(false)
     if (ok) {
+      ultimoAutoInconveniente.current = ''
+      ultimoAutoSolucion.current = ''
       setForm(prev => ({
         ...prev,
         asesor: '',
@@ -3893,6 +3908,10 @@ const PlantillaGeneral = ({ correoApex = '', onEnviado }) => {
         rut: '',
         inconveniente: '',
         solucion: '',
+        razon: '',
+        servicioTipif: '',
+        motivo: '',
+        detalleRazon: '',
       }))
       setModal({ tipo: 'exito', titulo: 'Guardado', mensaje: 'Tipificación guardada en tu historial personal.' })
     }
@@ -3902,13 +3921,65 @@ const PlantillaGeneral = ({ correoApex = '', onEnviado }) => {
 
   return (
     <>
-    <div className="max-w-4xl h-full flex flex-col bg-white rounded-2xl shadow-lg p-6 dark:bg-gray-800">
+    <div className="w-full flex-1 flex flex-col">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2 dark:text-gray-100">
           <ClipboardList size={24} className="text-emerald-600 shrink-0" />
           <span>PLANTILLA GENERAL</span>
         </h3>
       </div>
+
+      <BuscadorTipificacion
+        onElegir={(fila) => setForm(prev => {
+          const texto = (fila.descripcion || '').trim() || String(fila.motivo || '').trim()
+          const destino = fila.destino === 'solucion' ? 'solucion' : 'inconveniente'
+          const otro = destino === 'solucion' ? 'inconveniente' : 'solucion'
+          const autoDest = destino === 'solucion' ? ultimoAutoSolucion : ultimoAutoInconveniente
+          const autoOtro = destino === 'solucion' ? ultimoAutoInconveniente : ultimoAutoSolucion
+          const puedeDestino = !prev[destino] || prev[destino] === autoDest.current
+          const limpiarOtro = prev[otro] === autoOtro.current
+          if (puedeDestino) autoDest.current = texto
+          if (limpiarOtro) autoOtro.current = ''
+          return {
+            ...prev,
+            razon: fila.razon,
+            servicioTipif: fila.servicio,
+            motivo: fila.motivo,
+            [destino]: puedeDestino ? texto : prev[destino],
+            [otro]: limpiarOtro ? '' : prev[otro],
+          }
+        })}
+        className="mb-4"
+      />
+
+      {rutaTipif && (
+        <div className="mb-4 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50/50 px-3 py-2 dark:border-emerald-900/60 dark:bg-emerald-950/20">
+          <CheckCircle2 size={14} className="shrink-0 text-emerald-600" />
+          <span className="break-words font-mono text-[11px] text-gray-700 dark:text-gray-300">{rutaTipif}</span>
+          <button
+            type="button"
+            onClick={() => setForm(prev => {
+              const limpiarInconveniente = prev.inconveniente === ultimoAutoInconveniente.current
+              const limpiarSolucion = prev.solucion === ultimoAutoSolucion.current
+              if (limpiarInconveniente) ultimoAutoInconveniente.current = ''
+              if (limpiarSolucion) ultimoAutoSolucion.current = ''
+              return {
+                ...prev,
+                razon: '',
+                servicioTipif: '',
+                motivo: '',
+                detalleRazon: '',
+                inconveniente: limpiarInconveniente ? '' : prev.inconveniente,
+                solucion: limpiarSolucion ? '' : prev.solucion,
+              }
+            })}
+            className="ml-auto shrink-0 cursor-pointer rounded-full p-1 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+            aria-label="Quitar tipificación"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
 
       <div className="grid sm:grid-cols-2 gap-4 flex-1 content-start">
         <FormField label="Asesor">
@@ -3937,14 +4008,14 @@ const PlantillaGeneral = ({ correoApex = '', onEnviado }) => {
         <button
           onClick={guardar}
           disabled={guardando}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-gray-500 text-white rounded-full hover:bg-gray-600 hover:scale-105 hover:shadow-lg transition-all duration-300 font-medium disabled:opacity-60 disabled:hover:scale-100"
+          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-lg shadow-emerald-600/20 transition-colors disabled:opacity-60 cursor-pointer"
         >
           <Save size={16} />
           {guardando ? 'Enviando...' : 'Enviar'}
         </button>
         <button
           onClick={copyTemplate}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm ml-auto bg-gray-500 text-white rounded-full hover:bg-gray-600 hover:scale-105 hover:shadow-lg transition-all duration-300 font-medium"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 ml-auto rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-semibold transition-colors cursor-pointer"
         >
           <Copy size={16} />
           Copiar plantilla
@@ -5056,6 +5127,7 @@ const App = () => {
   const [modalDisableZoom, setModalDisableZoom] = useState(false)
   const [contratacionSeleccion, setContratacionSeleccion] = useState(null)
   const [dboxContratacionSeleccion, setDboxContratacionSeleccion] = useState(null)
+  const [plantillaSeleccion, setPlantillaSeleccion] = useState('general')
   const [appliedIdsSearch, setAppliedIdsSearch] = useState('')
   const [idClaveVTR, setIdClaveVTR] = useState(() => IDS_CLAVE_SEED.map((x) => ({ ...x })))
   const [noticiaOpen, setNoticiaOpen] = useState(false)
@@ -5640,6 +5712,11 @@ const App = () => {
                     onClick={() => setActiveSection('mensajes')}
                   />
                   <QuickLink
+                    title="Migraciones"
+                    icon={FileText}
+                    onClick={() => window.location.href = '/formularios'}
+                  />
+                  <QuickLink
                     title="Descargar Genesys"
                     icon={Download}
                     iconType="image"
@@ -6084,35 +6161,93 @@ const App = () => {
           )}
 
           {activeSection === 'n1q' && (
-            <div className="grid lg:grid-cols-2 gap-6 items-stretch">
-              <PlantillaN1
-                correoApex={correoTipificaciones}
-                onEnviado={() => {
-                  setTipificacionesRefresh((n) => n + 1)
-                  setActiveSection('tipificaciones')
-                }}
-              />
-              <PlantillaGeneral
-                correoApex={correoTipificaciones}
-                onEnviado={() => {
-                  setTipificacionesRefresh((n) => n + 1)
-                  setActiveSection('tipificaciones')
-                }}
-              />
-              <PlantillaRequerimientoCritico
-                correoApex={correoTipificaciones}
-                onEnviado={() => {
-                  setTipificacionesRefresh((n) => n + 1)
-                  setActiveSection('tipificaciones')
-                }}
-              />
-              <PlantillaGenesys
-                correoApex={correoTipificaciones}
-                onEnviado={() => {
-                  setTipificacionesRefresh((n) => n + 1)
-                  setActiveSection('tipificaciones')
-                }}
-              />
+            <div className="w-full h-full flex flex-col rounded-2xl bg-white p-4 shadow-lg dark:bg-gray-800 sm:p-6">
+              <div className="mb-6 flex flex-wrap justify-center gap-x-6 gap-y-5 border-b border-gray-100 pb-5 dark:border-gray-700/60">
+                <button
+                  onClick={() => setPlantillaSeleccion('general')}
+                  className="flex flex-col items-center gap-2 cursor-pointer select-none group"
+                >
+                  <span className="w-14 h-14 lg:w-16 lg:h-16 rounded-full bg-gradient-to-br from-gray-800 to-gray-950 dark:from-gray-100 dark:to-gray-300 text-white dark:text-gray-900 flex items-center justify-center shadow-lg ring-1 ring-black/10 group-hover:scale-110 group-hover:shadow-xl transition-all duration-300 mx-auto">
+                    <FileText size={24} className="shrink-0" />
+                  </span>
+                  <span className="max-w-24 text-[11px] lg:text-xs font-medium text-gray-700 dark:text-gray-300 text-center leading-tight">
+                    Plantilla General
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setPlantillaSeleccion('n1')}
+                  className="flex flex-col items-center gap-2 cursor-pointer select-none group"
+                >
+                  <span className="w-14 h-14 lg:w-16 lg:h-16 rounded-full bg-gradient-to-br from-gray-800 to-gray-950 dark:from-gray-100 dark:to-gray-300 text-white dark:text-gray-900 flex items-center justify-center shadow-lg ring-1 ring-black/10 group-hover:scale-110 group-hover:shadow-xl transition-all duration-300 mx-auto">
+                    <ClipboardList size={24} className="shrink-0" />
+                  </span>
+                  <span className="max-w-24 text-[11px] lg:text-xs font-medium text-gray-700 dark:text-gray-300 text-center leading-tight">
+                    N1 Técnico
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setPlantillaSeleccion('visita')}
+                  className="flex flex-col items-center gap-2 cursor-pointer select-none group"
+                >
+                  <span className="w-14 h-14 lg:w-16 lg:h-16 rounded-full bg-gradient-to-br from-gray-800 to-gray-950 dark:from-gray-100 dark:to-gray-300 text-white dark:text-gray-900 flex items-center justify-center shadow-lg ring-1 ring-black/10 group-hover:scale-110 group-hover:shadow-xl transition-all duration-300 mx-auto">
+                    <Calendar size={24} className="shrink-0" />
+                  </span>
+                  <span className="max-w-24 text-[11px] lg:text-xs font-medium text-gray-700 dark:text-gray-300 text-center leading-tight">
+                    Adelanto de Visita
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setPlantillaSeleccion('genesys')}
+                  className="flex flex-col items-center gap-2 cursor-pointer select-none group"
+                >
+                  <span className="w-14 h-14 lg:w-16 lg:h-16 rounded-full bg-gradient-to-br from-gray-800 to-gray-950 dark:from-gray-100 dark:to-gray-300 text-white dark:text-gray-900 flex items-center justify-center shadow-lg ring-1 ring-black/10 group-hover:scale-110 group-hover:shadow-xl transition-all duration-300 mx-auto">
+                    <PhoneCall size={24} className="shrink-0" />
+                  </span>
+                  <span className="max-w-24 text-[11px] lg:text-xs font-medium text-gray-700 dark:text-gray-300 text-center leading-tight">
+                    Registro Llamada Genesys
+                  </span>
+                </button>
+              </div>
+
+              {plantillaSeleccion === 'n1' && (
+                <PlantillaN1
+                  correoApex={correoTipificaciones}
+                  onEnviado={() => {
+                    setTipificacionesRefresh((n) => n + 1)
+                    setActiveSection('tipificaciones')
+                  }}
+                />
+              )}
+              {plantillaSeleccion === 'general' && (
+                <PlantillaGeneral
+                  correoApex={correoTipificaciones}
+                  onEnviado={() => {
+                    setTipificacionesRefresh((n) => n + 1)
+                    setActiveSection('tipificaciones')
+                  }}
+                />
+              )}
+              {plantillaSeleccion === 'visita' && (
+                <PlantillaRequerimientoCritico
+                  correoApex={correoTipificaciones}
+                  onEnviado={() => {
+                    setTipificacionesRefresh((n) => n + 1)
+                    setActiveSection('tipificaciones')
+                  }}
+                />
+              )}
+              {plantillaSeleccion === 'genesys' && (
+                <PlantillaGenesys
+                  correoApex={correoTipificaciones}
+                  onEnviado={() => {
+                    setTipificacionesRefresh((n) => n + 1)
+                    setActiveSection('tipificaciones')
+                  }}
+                />
+              )}
             </div>
           )}
 

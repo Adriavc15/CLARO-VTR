@@ -96,4 +96,4 @@ colecciones de Firestore.
 
 El corpus grande se genera con `vtr-web/scripts/generarCorpus1000.mjs`, que produce
 `corpus_dialogos_naturales_1000.{json,jsonl,txt}` en `src/asistente/data/` y el módulo
-`corpusBloqueGenerado1000.js`. Ver [10-scripts.md](10-scripts.md).
+`corpusBloqueGenerado1000.js`. Ver [09-scripts.md](09-scripts.md).

@@ -49,7 +49,6 @@ No es un sitio público de autoservicio para clientes: es una **herramienta de t
 | **Asistente Apex** | Chat de IA (Gemini + RAG) sobre el conocimiento del portal |
 | **Simuladores** | Genesys, ANDES/Siebel y Android TV |
 | **Medidor de velocidad** | Test de velocidad (objetivos Fast.com) |
-| **Juegos** | Hub estilo PS5 con juegos en navegador y emulador SNES + netplay |
 | **Admin** (`/admin`) | Gestión de catálogos, usuarios, conocimiento de IA y tipificaciones |
 
 ## Marca: VTR y Claro

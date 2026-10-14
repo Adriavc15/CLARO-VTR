@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
 
-const App = lazy(() => import('./App.jsx'))
+const App = lazy(() => import('./App.tsx'))
 const AdminPage = lazy(() => import('./AdminPage.tsx'))
 const JuegosPage = lazy(() => import('./juegos/JuegosPage.jsx'))
 const FormulariosPage = lazy(() => import('./FormulariosPage.tsx'))
