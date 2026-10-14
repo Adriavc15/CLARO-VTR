@@ -57,3 +57,55 @@ El portal atiende las dos marcas. El código incluye un **filtro de marca**
 (`vtr-web/src/asistente/filtroMarca.js`) que normaliza y separa el contenido de VTR y de
 Claro, además de catálogos de planes distintos (`planesSeed.js` para VTR, `planesClaro.js`
 para Claro) y dos bloques de activación de streaming (VTR y Claro).
+
+## Capturas de pantalla
+
+### Dashboard / Inicio
+![Dashboard](/screenshots/dashboard.png)
+
+### Comunicados / Noticias
+![Noticias](/screenshots/noticias.png)
+
+### Planes
+![Planes](/screenshots/planes.png)
+
+### Streaming
+![Streaming](/screenshots/streaming.png)
+
+### Grilla de canales
+![Grilla](/screenshots/grilla.png)
+
+### Modem / Red
+![Modem](/screenshots/modem.png)
+
+### Pasos / Contrataciones
+![Pasos](/screenshots/pasos.png)
+
+### IDs Clave VTR
+![IDs Clave](/screenshots/systems.png)
+
+### Tipificaciones
+![Tipificaciones](/screenshots/tipificaciones.png)
+
+### Aplicaciones
+![Aplicaciones](/screenshots/links.png)
+
+### Asistente Apex
+![Asistente Apex](/screenshots/apex.png)
+
+### Simuladores
+
+#### Android TV
+![Android TV](/screenshots/androidtv.png)
+
+#### Genesys
+![Genesys](/screenshots/genesys.png)
+
+#### ANDES/Siebel
+![ANDES](/screenshots/andes.png)
+
+### Medidor de velocidad
+![Medidor](/screenshots/medidor.png)
+
+### Formularios
+![Formularios](/screenshots/formularios.png)
