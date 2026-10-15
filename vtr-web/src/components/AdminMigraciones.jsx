@@ -17,7 +17,6 @@ import {
   suscribirMigraciones,
   listarMigraciones,
   actualizarEstadoMigracion,
-  exportarMigracionesCsv,
   exportarMigracionesExcel,
   eliminarMigracion,
   partesFechaHora,
@@ -25,9 +24,24 @@ import {
   normalizarEmail,
   claseEstado,
   ESTADOS_MIGRACION,
+  ESTADO_CURSADA,
+  ESTADO_ERROR_TSQ,
+  ESTADO_CORNESTONE,
+  ESTADO_OTROS,
 } from '../migracionesStore'
 
 const COLORS = ['#14b8a6', '#0ea5e9', '#f69100', '#8b5cf6', '#ef4444', '#10b981', '#f59e0b', '#6366f1']
+
+/** Color fijo por estado (coincide con el gráfico de tendencia y los badges). */
+const COLOR_ESTADO = {
+  [ESTADO_CURSADA]: '#10b981',
+  [ESTADO_ERROR_TSQ]: '#f43f5e',
+  [ESTADO_CORNESTONE]: '#f59e0b',
+  [ESTADO_OTROS]: '#8b5cf6',
+}
+
+/** Colores de respaldo para estados no reconocidos. */
+const COLOR_ESTADO_FALLBACK = ['#0ea5e9', '#14b8a6', '#6366f1', '#f69100']
 
 function fmtNum(n) {
   return Number(n || 0).toLocaleString('es-CL')
@@ -422,11 +436,22 @@ function TendenciaDias({ items }) {
   const ticks = [0, Math.ceil(max / 2), max]
 
   return (
-    <div
-      className="relative w-full select-none cursor-crosshair pt-4 pb-6"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={() => setHoveredIdx(null)}
-    >
+    <div>
+      {/* Leyenda de estados (arriba del gráfico) */}
+      <div className="flex flex-wrap gap-3 justify-center pb-2">
+        {seriesData.map((s) => (
+          <div key={s.key} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700">
+            <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
+            <span className="text-[11px] font-medium text-gray-700 dark:text-gray-300">{s.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <div
+        className="relative w-full select-none cursor-crosshair pt-4 pb-6"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={() => setHoveredIdx(null)}
+      >
       <svg
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="none"
@@ -611,15 +636,6 @@ function TendenciaDias({ items }) {
           </div>
         </div>
       )}
-
-      {/* Leyenda de estados */}
-      <div className="flex flex-wrap gap-3 justify-center pt-2">
-        {seriesData.map((s) => (
-          <div key={s.key} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700">
-            <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
-            <span className="text-[11px] font-medium text-gray-700 dark:text-gray-300">{s.label}</span>
-          </div>
-        ))}
       </div>
     </div>
   )
@@ -839,7 +855,10 @@ export default function AdminMigraciones({ db = null, onToast, esUsuario = false
     const arr = [...map.entries()]
       .map(([key, valor]) => ({ key, valor }))
       .sort((a, b) => b.valor - a.valor)
-    return arr.map((d, i) => ({ ...d, color: COLORS[(i + 3) % COLORS.length] }))
+    return arr.map((d, i) => ({
+      ...d,
+      color: COLOR_ESTADO[d.key] || COLOR_ESTADO_FALLBACK[i % COLOR_ESTADO_FALLBACK.length],
+    }))
   }, [filtrados])
 
   const stamp = new Date().toISOString().slice(0, 10)
@@ -932,15 +951,6 @@ export default function AdminMigraciones({ db = null, onToast, esUsuario = false
             >
               <Download size={14} />
               Excel
-            </button>
-            <button
-              type="button"
-              onClick={() => exportarMigracionesCsv(filtrados, `${archivoBase}.csv`)}
-              disabled={!filtrados.length}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-full bg-gray-800 text-white font-medium disabled:opacity-50 dark:bg-gray-700"
-            >
-              <Download size={14} />
-              CSV
             </button>
           </div>
         </div>
@@ -1146,7 +1156,7 @@ export default function AdminMigraciones({ db = null, onToast, esUsuario = false
                           onChange={(e) => cambiarEstado(m, e.target.value)}
                           disabled={cambiando === m.id}
                           title="Cambiar estado de la migración"
-                          className={`text-[11px] font-semibold rounded-full border px-2.5 py-1 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/40 disabled:opacity-60 ${claseEstado(m.estado)}`}
+                          className={`text-[11px] font-semibold rounded-full pl-2.5 py-1 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/40 disabled:opacity-60 ${claseEstado(m.estado)}`}
                         >
                           {ESTADOS_MIGRACION.map((e) => (
                             <option key={e} value={e} className="text-gray-800 dark:text-gray-100">
@@ -1156,7 +1166,7 @@ export default function AdminMigraciones({ db = null, onToast, esUsuario = false
                         </select>
                       ) : (
                         <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-semibold whitespace-nowrap ${claseEstado(m.estado)}`}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap ${claseEstado(m.estado)}`}
                         >
                           <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
                           {m.estado}

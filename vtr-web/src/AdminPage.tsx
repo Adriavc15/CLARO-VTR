@@ -1,33 +1,31 @@
 import React, { useState, useEffect } from 'react'
-import { ArrowLeft, Moon, Sun, User, Lock, Eye, EyeOff, LogOut, Loader2, AlertCircle, Upload, Save, Settings, Mail, KeyRound, X, Users, UserPlus, Bot, Database, CreditCard, Image, Megaphone, ChevronLeft, ChevronRight, ClipboardList, BarChart3, ShieldCheck, ClipboardCheck } from 'lucide-react'
+import { ArrowLeft, Moon, Sun, User, Lock, Eye, EyeOff, LogOut, Loader2, AlertCircle, Upload, Save, Settings, Mail, KeyRound, X, Users, Bot, Database, CreditCard, Image, Megaphone, ChevronLeft, ChevronRight, ClipboardList, BarChart3 } from 'lucide-react'
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth'
-import { AdminPanel, Modal, Toast, UsuariosSection, suscribirNoticias, suscribirPerfilAdmin, guardarPerfilAdmin, subirImagenImgbb, db, normalizarHistorialAvatares, cargarHistorialAvataresAdmin, guardarHistorialAvataresAdminLocal } from './App.tsx'
+import { AdminPanel, Modal, Toast, suscribirNoticias, suscribirPerfilAdmin, guardarPerfilAdmin, subirImagenImgbb, db, normalizarHistorialAvatares, cargarHistorialAvataresAdmin, guardarHistorialAvataresAdminLocal } from './App.tsx'
 import AdminConocimientoIA from './components/AdminConocimientoIA.jsx'
 import AdminIdsClave from './components/AdminIdsClave.jsx'
 import AdminPlanes from './components/AdminPlanes.jsx'
 import AdminStreamingShowcase from './components/AdminStreamingShowcase.jsx'
 import AdminTipificaciones from './components/AdminTipificaciones.jsx'
 import MigracionesTabs from './components/MigracionesTabs.jsx'
-import AdminAsesores from './components/AdminAsesores.jsx'
-import AdminSupervisores from './components/AdminSupervisores.jsx'
-import AdminAdminsAutorizados from './components/AdminAdminsAutorizados.jsx'
+import PersonasTabs from './components/PersonasTabs.jsx'
 import BotonGoogle from './components/BotonGoogle.jsx'
 import { entrarConGoogleAdmin, esAdminPrincipal } from './adminsAutorizados'
 import AvatarPerfilPicker from './components/AvatarPerfilPicker.jsx'
 
 const ADMIN_NAV = [
   { id: 'publicar', label: 'Comunicados', icon: Megaphone },
-  { id: 'usuarios', label: 'Usuarios', icon: Users },
+  { id: 'personas', label: 'Personas', icon: Users },
   { id: 'tipificaciones', label: 'Tipificaciones', icon: ClipboardList },
   { id: 'migraciones', label: 'Migraciones', icon: BarChart3 },
-  { id: 'asesores', label: 'Asesores', icon: UserPlus },
-  { id: 'supervisores', label: 'Supervisores', icon: ClipboardCheck },
-  { id: 'admins', label: 'Admins autorizados', icon: ShieldCheck },
   { id: 'ia', label: 'Conocimiento IA', icon: Bot },
   { id: 'ids', label: 'IDs Clave', icon: Database },
   { id: 'planes', label: 'Planes', icon: CreditCard },
   { id: 'streaming', label: 'Streaming', icon: Image },
 ]
+
+/** Ids de navegación que ahora viven agrupados dentro de la sección «Personas». */
+const PERSONAS_SECCIONES = ['personas', 'usuarios', 'asesores', 'supervisores', 'admins']
 
 const navActiva = (id, seccion) =>
   id === 'ia' ? seccion === 'ia' || seccion === 'aprendizaje' : seccion === id
@@ -890,19 +888,17 @@ const AdminPage = () => {
                 return
               }
               setSeccion(
-                sectionId === 'usuarios' ||
-                  sectionId === 'tipificaciones' ||
-                  sectionId === 'migraciones' ||
-                  sectionId === 'asesores' ||
-                  sectionId === 'supervisores' ||
-                  sectionId === 'admins' ||
-                  sectionId === 'ia' ||
-                  sectionId === 'ids' ||
-                  sectionId === 'aprendizaje' ||
-                  sectionId === 'planes' ||
-                  sectionId === 'streaming'
-                  ? sectionId
-                  : 'publicar'
+                PERSONAS_SECCIONES.includes(sectionId)
+                  ? 'personas'
+                  : sectionId === 'tipificaciones' ||
+                      sectionId === 'migraciones' ||
+                      sectionId === 'ia' ||
+                      sectionId === 'ids' ||
+                      sectionId === 'aprendizaje' ||
+                      sectionId === 'planes' ||
+                      sectionId === 'streaming'
+                    ? sectionId
+                    : 'publicar'
               )
             }}
             setNoticias={setNoticias}
@@ -911,23 +907,18 @@ const AdminPage = () => {
             nombreUsuario={nombreUsuario}
             avatarUrl={avatarUrl}
           />
-        ) : seccion === 'usuarios' ? (
-          <UsuariosSection noticias={noticias} onToast={showToast} />
+        ) : seccion === 'personas' ? (
+          <PersonasTabs
+            db={db}
+            onToast={showToast}
+            noticias={noticias}
+            esSuperAdmin={esSuperAdmin}
+            correoSesion={emailSesion}
+          />
         ) : seccion === 'tipificaciones' ? (
           <AdminTipificaciones db={db} onToast={showToast} />
         ) : seccion === 'migraciones' ? (
           <MigracionesTabs db={db} onToast={showToast} />
-        ) : seccion === 'asesores' ? (
-          <AdminAsesores db={db} onToast={showToast} />
-        ) : seccion === 'supervisores' ? (
-          <AdminSupervisores db={db} onToast={showToast} />
-        ) : seccion === 'admins' ? (
-          <AdminAdminsAutorizados
-            db={db}
-            onToast={showToast}
-            esSuperAdmin={esSuperAdmin}
-            correoSesion={emailSesion}
-          />
         ) : seccion === 'ia' || seccion === 'aprendizaje' ? (
           <AdminConocimientoIA
             db={db}

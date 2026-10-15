@@ -8,6 +8,12 @@
 const LS_KEY = 'vtr-no-acepta-fibra:local'
 const FS_COLLECTION = 'no_acepta_fibra'
 
+/**
+ * Opción «Otro» del selector de motivo: al elegirla se habilita el detalle
+ * (igual que «4- OTROS (ALGUN ERROR DIFERENTE - TIPIFICAR)» en Migraciones).
+ */
+export const MOTIVO_NO_ACEPTA_OTROS = 'OTRO'
+
 /** Motivos por los que un cliente no acepta el cambio a fibra (selector). */
 export const MOTIVOS_NO_ACEPTA = [
   'DESCONFIA DE LA FIBRA',
@@ -18,15 +24,25 @@ export const MOTIVOS_NO_ACEPTA = [
   'QUIERE DAR DE BAJA EL SERVICIO',
   'YA LE OFRECIERON ANTES Y NO QUIERE',
   'YA VINIERON Y NO SE PUDO',
+  MOTIVO_NO_ACEPTA_OTROS,
 ]
 
-export const CAMPOS_NO_ACEPTA = ['fecha', 'asesor', 'rutCliente', 'motivoNoAcepta']
+export const CAMPOS_NO_ACEPTA = [
+  'fecha',
+  'asesor',
+  'supervisor',
+  'rutCliente',
+  'motivoNoAcepta',
+  'detalleError',
+]
 
 export const LABELS_NO_ACEPTA = {
   fecha: 'Fecha',
   asesor: 'Asesor',
+  supervisor: 'Supervisor',
   rutCliente: 'RUT cliente',
   motivoNoAcepta: 'Motivo no acepta',
+  detalleError: 'Detalle del error / Tipificación',
 }
 
 export function labelNoAcepta(key) {
@@ -84,8 +100,10 @@ function sanitizeNoAcepta(r) {
   if (!clean.id) clean.id = uid()
   clean.fecha = aDia(clean.fecha)
   clean.asesor = String(clean.asesor || '').trim()
+  clean.supervisor = String(clean.supervisor || '').trim()
   clean.rutCliente = String(clean.rutCliente || '').trim()
   clean.motivoNoAcepta = String(clean.motivoNoAcepta || '').trim()
+  clean.detalleError = String(clean.detalleError || '').trim()
   clean.creado = aISO(clean.creado) || new Date().toISOString()
   clean.actualizado = aISO(clean.actualizado) || clean.creado
   clean.email = normalizarEmail(clean.email)
@@ -274,25 +292,6 @@ function valorCampo(m, key) {
   return String(v)
 }
 
-/** Exporta a CSV (Excel abre bien con BOM UTF-8). */
-export function exportarNoAceptaCsv(items, nombreArchivo = 'no-acepta-fibra.csv') {
-  const cols = CAMPOS_NO_ACEPTA
-  const filas = [['Fecha registro', 'Hora', ...cols.map(labelNoAcepta)]]
-  for (const m of items) {
-    const { fecha, hora } = partesFechaHora(m.creado)
-    filas.push([fecha, hora, ...cols.map((k) => valorCampo(m, k))])
-  }
-  const escape = (cell) => `"${String(cell ?? '').replace(/"/g, '""')}"`
-  const csv = '\uFEFF' + filas.map((r) => r.map(escape).join(';')).join('\n')
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = nombreArchivo
-  a.click()
-  URL.revokeObjectURL(url)
-}
-
 /** Exporta como .xls (tabla HTML que Excel abre). */
 export function exportarNoAceptaExcel(items, nombreArchivo = 'no-acepta-fibra.xls') {
   const escapeHtml = (s) =>
@@ -326,3 +325,4 @@ export function exportarNoAceptaExcel(items, nombreArchivo = 'no-acepta-fibra.xl
   a.click()
   URL.revokeObjectURL(url)
 }
+

@@ -19,9 +19,6 @@ import IconoAndroid from './components/IconoAndroid'
 import BuscadorTipificacion from './components/BuscadorTipificacion'
 import {
   guardarTipificacion,
-  listarTipificacionesAdmin,
-  exportarTipificacionesExcel,
-  exportarTipificacionesCsv,
 } from './tipificacionesStore'
 import { rutaTipificacion } from './tipificacionesCatalogo'
 import {
@@ -4621,14 +4618,13 @@ const apexOmniaUsers = [
 ]
 
 // Panel de administración: correos habilitados y quién vio cada comunicado.
-const UsuariosSection = ({ noticias = [], onToast }) => {
+const UsuariosSection = ({ noticias = [], onToast, vista = 'usuarios' }) => {
   const [lectores, setLectores] = useState([])
   const [lecturas, setLecturas] = useState([])
   const [emailNuevo, setEmailNuevo] = useState('')
   const [filtroUsuarios, setFiltroUsuarios] = useState('')
   const [guardando, setGuardando] = useState(false)
   const [noticiaExpandida, setNoticiaExpandida] = useState(null)
-  const [exportandoTipif, setExportandoTipif] = useState(false)
 
   useEffect(() => {
     const unsub = suscribirLectores((items) => setLectores(items))
@@ -4714,160 +4710,11 @@ const UsuariosSection = ({ noticias = [], onToast }) => {
     .map((n) => n.titulo || n.alt || 'Comunicado')
     .join(' | ')
 
-  const exportarExcel = () => {
-    const xmlEscape = (valor) => String(valor ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-    const fila = (celdas) => `<Row>${celdas.map((c) => `<Cell><Data ss:Type="String">${xmlEscape(c)}</Data></Cell>`).join('')}</Row>`
-    const hoja = (nombre, encabezados, filas) => `
-      <Worksheet ss:Name="${xmlEscape(nombre)}">
-        <Table>
-          ${fila(encabezados)}
-          ${filas.map((r) => fila(r)).join('')}
-        </Table>
-      </Worksheet>`
-
-    const filasUsuarios = lectores.map((lector) => [
-      lector.email,
-      String(vistasDelCorreo(lector.email)),
-      titulosVistosDelCorreo(lector.email) || 'Ninguno',
-      String(avisosLista.length),
-      vistasDelCorreo(lector.email) === avisosLista.length && avisosLista.length > 0 ? 'Completo' : 'Pendiente',
-    ])
-
-    const filasComunicados = avisosLista.map((item) => {
-      const vistas = lecturasDeNoticia(item.id)
-      const pendientes = lectores.filter((l) => !vistas.some((v) => v.email === l.email))
-      return [
-        item.titulo || item.alt || 'Comunicado',
-        item.fecha || '',
-        item.popup ? 'Sí' : 'No',
-        String(vistas.length),
-        String(lectores.length),
-        vistas.map((v) => v.email).join(', '),
-        pendientes.map((p) => p.email).join(', '),
-      ]
-    })
-
-    const filasDetalle = []
-    avisosLista.forEach((item) => {
-      const titulo = item.titulo || item.alt || 'Comunicado'
-      lectores.forEach((lector) => {
-        const vista = lecturas.find((l) => l.noticiaId === item.id && l.email === lector.email)
-        filasDetalle.push([
-          titulo,
-          item.fecha || '',
-          lector.email,
-          vista ? 'Visto' : 'Pendiente',
-          vista?.fecha || '',
-        ])
-      })
-    })
-
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<?mso-application progid="Excel.Sheet"?>
-<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
- xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
-  ${hoja('Usuarios', ['Correo', 'Vistos', 'Títulos vistos', 'Total comunicados', 'Estado'], filasUsuarios)}
-  ${hoja('Por comunicado', ['Comunicado', 'Fecha', 'Pop up', 'Vieron', 'Total usuarios', 'Correos que vieron', 'Pendientes'], filasComunicados)}
-  ${hoja('Detalle', ['Comunicado', 'Fecha comunicado', 'Correo', 'Estado', 'Fecha de lectura'], filasDetalle)}
-</Workbook>`
-
-    const blob = new Blob([xml], { type: 'application/vnd.ms-excel' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    const fecha = new Date().toLocaleDateString('es-CL').replace(/\//g, '-')
-    a.href = url
-    a.download = `lecturas-comunicados-${fecha}.xls`
-    document.body.appendChild(a)
-    a.click()
-    a.remove()
-    URL.revokeObjectURL(url)
-    onToast('Archivo de Excel descargado.')
-  }
-
-  /** Excel con todas las tipificaciones (incl. Genesys + capturas) de los correos corporativos */
-  const exportarExcelTipificaciones = async () => {
-    if (!db) {
-      onToast('Firestore no disponible.')
-      return
-    }
-    setExportandoTipif(true)
-    try {
-      const items = await listarTipificacionesAdmin(db, { dominio: 'apexamerica.com' })
-      if (!items.length) {
-        onToast('No hay tipificaciones de usuarios @apexamerica.com para exportar.')
-        return
-      }
-      const stamp = new Date().toISOString().slice(0, 10)
-      exportarTipificacionesExcel(items, `tipificaciones_apexamerica_${stamp}.xls`)
-      onToast(`Excel tipificaciones: ${items.length} registro${items.length === 1 ? '' : 's'} de @apexamerica.com.`)
-    } catch (err) {
-      console.error(err)
-      onToast(err?.message || 'No se pudo exportar las tipificaciones.')
-    } finally {
-      setExportandoTipif(false)
-    }
-  }
-
-  const exportarCsvTipificaciones = async () => {
-    if (!db) {
-      onToast('Firestore no disponible.')
-      return
-    }
-    setExportandoTipif(true)
-    try {
-      const items = await listarTipificacionesAdmin(db, { dominio: 'apexamerica.com' })
-      if (!items.length) {
-        onToast('No hay tipificaciones de usuarios @apexamerica.com para exportar.')
-        return
-      }
-      const stamp = new Date().toISOString().slice(0, 10)
-      exportarTipificacionesCsv(items, `tipificaciones_apexamerica_${stamp}.csv`)
-      onToast(`CSV tipificaciones: ${items.length} registro${items.length === 1 ? '' : 's'}.`)
-    } catch (err) {
-      console.error(err)
-      onToast(err?.message || 'No se pudo exportar las tipificaciones.')
-    } finally {
-      setExportandoTipif(false)
-    }
-  }
-
   return (
     <div className="space-y-4 animate-in fade-in duration-300 w-full">
-      <div className="flex flex-wrap justify-end gap-2">
-        <button
-          type="button"
-          onClick={exportarExcel}
-          className="px-3 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 text-xs sm:text-sm font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
-        >
-          <Download size={15} />
-          Excel lecturas
-        </button>
-        <button
-          type="button"
-          onClick={exportarExcelTipificaciones}
-          disabled={exportandoTipif}
-          className="px-3 py-2 rounded-xl bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-sm hover:bg-emerald-700 transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
-          title="Descarga todo lo que subieron los usuarios @apexamerica.com (Genesys, capturas, plantillas)"
-        >
-          <Download size={15} />
-          {exportandoTipif ? 'Preparando…' : 'Excel tipificaciones'}
-        </button>
-        <button
-          type="button"
-          onClick={exportarCsvTipificaciones}
-          disabled={exportandoTipif}
-          className="px-3 py-2 rounded-xl bg-gray-800 dark:bg-gray-700 text-white text-xs sm:text-sm font-bold shadow-sm hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
-        >
-          <Download size={15} />
-          CSV tipificaciones
-        </button>
-      </div>
-    <div className="grid lg:grid-cols-2 gap-4 lg:gap-5 items-start">
+    <div className="grid grid-cols-1 gap-4 lg:gap-5 items-start">
       {/* Correos habilitados */}
+      {vista === 'usuarios' && (
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
         <div className="flex items-center gap-3 mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
           <div className="p-2.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl">
@@ -4994,8 +4841,10 @@ const UsuariosSection = ({ noticias = [], onToast }) => {
           </ul>
         )}
       </div>
+      )}
 
       {/* Contador de lecturas por comunicado */}
+      {vista !== 'usuarios' && (
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
         <div className="flex items-center gap-3 mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
           <div className="p-2.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl">
@@ -5092,6 +4941,7 @@ const UsuariosSection = ({ noticias = [], onToast }) => {
           </ul>
         )}
       </div>
+      )}
     </div>
     </div>
   )

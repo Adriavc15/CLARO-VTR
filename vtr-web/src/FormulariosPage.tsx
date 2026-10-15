@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 import { db } from './App.tsx'
 import { guardarMigracion, ESTADOS_MIGRACION, ESTADO_OTROS } from './migracionesStore'
-import { guardarNoAceptaFibra, MOTIVOS_NO_ACEPTA } from './noAceptaFibraStore'
+import { guardarNoAceptaFibra, MOTIVOS_NO_ACEPTA, MOTIVO_NO_ACEPTA_OTROS } from './noAceptaFibraStore'
 import { ASESORES_SEED, suscribirAsesores } from './asesoresStore'
 import { SUPERVISORES_SEED, suscribirSupervisores } from './supervisoresStore'
 import MigracionesTabs from './components/MigracionesTabs'
@@ -32,6 +32,7 @@ const FORM_NAV = [
 const CAMPOS_NO_ACEPTA_FORM = [
   { key: 'fecha', label: 'Fecha', tipo: 'date', colSpan: 1 },
   { key: 'asesor', label: 'Asesor', tipo: 'select', opciones: ASESORES_SEED, placeholder: 'Selecciona un asesor' },
+  { key: 'supervisor', label: 'Supervisor', tipo: 'select', opciones: SUPERVISORES_SEED, placeholder: 'Selecciona un supervisor' },
   { key: 'rutCliente', label: 'RUT cliente', tipo: 'text', placeholder: 'Ej. 12.345.678-9' },
   {
     key: 'motivoNoAcepta',
@@ -43,7 +44,10 @@ const CAMPOS_NO_ACEPTA_FORM = [
   },
 ]
 
-const vacioNoAcepta = () => Object.fromEntries(CAMPOS_NO_ACEPTA_FORM.map((c) => [c.key, '']))
+const vacioNoAcepta = () => ({
+  ...Object.fromEntries(CAMPOS_NO_ACEPTA_FORM.map((c) => [c.key, ''])),
+  detalleError: '',
+})
 
 const CAMPOS_FORM = [
   { key: 'fechaIngreso', label: 'Fecha ingreso de migración', tipo: 'date', colSpan: 1 },
@@ -142,32 +146,32 @@ function FormComisiones({ onToast, onGuardado }: any) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[calc(100vh-7rem)]">
       {/* Panel izquierdo: mensaje */}
-      <aside className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-500 text-white p-6 sm:p-8 lg:p-10 flex flex-col justify-between shadow-lg">
+      <aside className="relative overflow-hidden rounded-2xl bg-[rgb(252,246,237)] p-6 sm:p-8 lg:p-10 flex flex-col justify-between shadow-lg">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold flex items-center gap-2">
+          <h2 className="text-2xl sm:text-3xl font-extrabold flex items-center gap-2 text-[#047857]">
             <Coins size={28} />
             MIGRACIONES
           </h2>
-          <p className="text-sm sm:text-base text-emerald-50/90 leading-relaxed mt-4">
+          <p className="text-sm sm:text-base text-[#3f3f46] leading-relaxed mt-4">
             ¡Equipo! 💪 Tengan en cuenta la importancia de registrar correctamente cada espacio durante el proceso.
             Un registro preciso evita observaciones y asegura que cada gestión sea válida.
           </p>
           <ul className="mt-6 space-y-3">
             {tips.map((t) => (
-              <li key={t} className="flex items-start gap-2 text-sm text-emerald-50/95">
-                <CheckCircle2 size={18} className="shrink-0 mt-0.5" />
+              <li key={t} className="flex items-start gap-2 text-sm text-[#3f3f46]">
+                <CheckCircle2 size={18} className="shrink-0 mt-0.5 text-[#059669]" />
                 <span>{t}</span>
               </li>
             ))}
           </ul>
-          <div className="mt-8 flex justify-center">
-            <img
-              src="/vtr%20migra.png"
-              alt="VTR Migración"
-              className="max-w-full h-auto object-contain select-none pointer-events-none"
-              draggable={false}
-            />
-          </div>
+        </div>
+        <div className="mt-6 -mb-6 sm:-mb-8 lg:-mb-10 flex justify-center">
+          <img
+            src="/fibra%20feliz.png"
+            alt="Fibra feliz"
+            className="fibra-anim max-h-[34rem] w-auto max-w-full object-contain select-none pointer-events-none"
+            draggable={false}
+          />
         </div>
       </aside>
 
@@ -307,6 +311,7 @@ function FormNoAceptaFibra({ onToast, onGuardado }) {
   const [enviando, setEnviando] = useState(false)
   const [exito, setExito] = useState(null)
   const [asesores, setAsesores] = useState(() => ASESORES_SEED)
+  const [supervisores, setSupervisores] = useState(() => SUPERVISORES_SEED)
 
   useEffect(() => {
     const unsub = suscribirAsesores(db, (lista) => {
@@ -316,9 +321,22 @@ function FormNoAceptaFibra({ onToast, onGuardado }) {
     return () => unsub && unsub()
   }, [])
 
+  useEffect(() => {
+    const unsub = suscribirSupervisores(db, (lista) => {
+      const nombres = (lista || []).map((a) => (typeof a === 'string' ? a : a.nombre)).filter(Boolean)
+      setSupervisores(nombres.length ? nombres : SUPERVISORES_SEED)
+    })
+    return () => unsub && unsub()
+  }, [])
+
   const campos = useMemo(
-    () => CAMPOS_NO_ACEPTA_FORM.map((c) => (c.key === 'asesor' ? { ...c, opciones: asesores } : c)),
-    [asesores]
+    () =>
+      CAMPOS_NO_ACEPTA_FORM.map((c) => {
+        if (c.key === 'asesor') return { ...c, opciones: asesores }
+        if (c.key === 'supervisor') return { ...c, opciones: supervisores }
+        return c
+      }),
+    [asesores, supervisores]
   )
 
   const emailLector =
@@ -326,7 +344,11 @@ function FormNoAceptaFibra({ onToast, onGuardado }) {
 
   const set = (k) => (e) => {
     const val = e.target.value
-    setForm((f) => ({ ...f, [k]: val }))
+    setForm((f) => ({
+      ...f,
+      [k]: val,
+      ...(k === 'motivoNoAcepta' && val !== MOTIVO_NO_ACEPTA_OTROS ? { detalleError: '' } : {}),
+    }))
   }
 
   const submit = async (e) => {
@@ -356,24 +378,32 @@ function FormNoAceptaFibra({ onToast, onGuardado }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[calc(100vh-7rem)]">
       {/* Panel izquierdo: mensaje */}
-      <aside className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#f69100] to-amber-400 text-white p-6 sm:p-8 lg:p-10 flex flex-col justify-between shadow-lg">
+      <aside className="relative overflow-hidden rounded-2xl bg-[rgb(252,246,237)] p-6 sm:p-8 lg:p-10 flex flex-col justify-between shadow-lg">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold flex items-center gap-2">
+          <h2 className="text-2xl sm:text-3xl font-extrabold flex items-center gap-2 text-[#b26a00]">
             <UserX size={28} />
             NO ACEPTA FIBRA
           </h2>
-          <p className="text-sm sm:text-base text-amber-50/95 leading-relaxed mt-4">
+          <p className="text-sm sm:text-base text-[#3f3f46] leading-relaxed mt-4">
             ¡Equipo! Registremos a los clientes que <strong>no aceptan el cambio a fibra</strong>. Guarda el
             motivo real de la negativa: nos ayuda a entender objeciones y mejorar la oferta.
           </p>
           <ul className="mt-6 space-y-3">
             {tips.map((t) => (
-              <li key={t} className="flex items-start gap-2 text-sm text-amber-50/95">
-                <CheckCircle2 size={18} className="shrink-0 mt-0.5" />
+              <li key={t} className="flex items-start gap-2 text-sm text-[#3f3f46]">
+                <CheckCircle2 size={18} className="shrink-0 mt-0.5 text-[#f69100]" />
                 <span>{t}</span>
               </li>
             ))}
           </ul>
+        </div>
+        <div className="mt-6 -mb-6 sm:-mb-8 lg:-mb-10 flex justify-center">
+          <img
+            src="/triste%20fibra.png"
+            alt="Fibra triste"
+            className="fibra-anim max-h-[34rem] w-auto max-w-full object-contain select-none pointer-events-none"
+            draggable={false}
+          />
         </div>
       </aside>
 
@@ -389,6 +419,11 @@ function FormNoAceptaFibra({ onToast, onGuardado }) {
             {exito.motivoNoAcepta && (
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 Motivo: <strong>{exito.motivoNoAcepta}</strong>
+                {exito.detalleError && (
+                  <span className="block text-xs text-amber-700 dark:text-amber-400 mt-1 font-medium">
+                    Detalle / Tipificación: {exito.detalleError}
+                  </span>
+                )}
               </p>
             )}
             <button
@@ -448,6 +483,27 @@ function FormNoAceptaFibra({ onToast, onGuardado }) {
                   )}
                 </label>
               ))}
+
+              {form.motivoNoAcepta === MOTIVO_NO_ACEPTA_OTROS && (
+                <label className="col-span-1 md:col-span-2 block animate-in fade-in slide-in-from-top-2 duration-200">
+                  <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 flex items-center justify-between">
+                    <span>
+                      Detalle del error / Tipificación <span className="text-red-500">*</span>
+                    </span>
+                    <span className="text-[11px] font-normal text-[#b26a00] dark:text-amber-400">
+                      Especifica el detalle
+                    </span>
+                  </span>
+                  <textarea
+                    rows={2}
+                    value={form.detalleError || ''}
+                    onChange={set('detalleError')}
+                    required
+                    placeholder="Describe detalladamente el motivo por el cual el cliente no acepta..."
+                    className={`${inputBase} mt-1.5 resize-none`}
+                  />
+                </label>
+              )}
             </div>
 
             <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">

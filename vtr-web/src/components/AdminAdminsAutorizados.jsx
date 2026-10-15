@@ -77,7 +77,7 @@ export default function AdminAdminsAutorizados({ db, onToast, esSuperAdmin = fal
     'flex-1 min-w-0 pl-9 pr-4 py-2.5 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500'
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="w-full">
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 sm:p-5 space-y-4">
         <div className="border-b border-gray-100 dark:border-gray-700 pb-4">
           <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">

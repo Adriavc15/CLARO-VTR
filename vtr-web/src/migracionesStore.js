@@ -366,33 +366,6 @@ function valorCampo(m, key) {
   return String(v)
 }
 
-/** Exporta a CSV (Excel abre bien con BOM UTF-8). */
-export function exportarMigracionesCsv(items, nombreArchivo = 'migraciones.csv') {
-  const cols = CAMPOS_MIGRACION
-  const filas = [
-    ['Fecha registro', 'Hora', 'Asesor', 'Comisión (S/)', ...cols.map(labelMigracion)],
-  ]
-  for (const m of items) {
-    const { fecha, hora } = partesFechaHora(m.creado)
-    filas.push([
-      fecha,
-      hora,
-      m.asesor || '',
-      String(m.comision || COMISION_MIGRACION),
-      ...cols.map((k) => valorCampo(m, k)),
-    ])
-  }
-  const escape = (cell) => `"${String(cell ?? '').replace(/"/g, '""')}"`
-  const csv = '\uFEFF' + filas.map((r) => r.map(escape).join(';')).join('\n')
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = nombreArchivo
-  a.click()
-  URL.revokeObjectURL(url)
-}
-
 /** Exporta como .xls (tabla HTML que Excel abre). */
 export function exportarMigracionesExcel(items, nombreArchivo = 'migraciones.xls') {
   const escapeHtml = (s) =>

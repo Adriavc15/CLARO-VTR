@@ -17,7 +17,6 @@ import {
   suscribirNoAceptaFibra,
   listarNoAceptaFibra,
   eliminarNoAceptaFibra,
-  exportarNoAceptaCsv,
   exportarNoAceptaExcel,
   partesFechaHora,
   normalizarEmail,
@@ -71,16 +70,17 @@ function prefijoMesActual() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-`
 }
 
-const cumple = (m, { desde, hasta, asesor, motivo, q }) => {
+const cumple = (m, { desde, hasta, asesor, supervisor, motivo, q }) => {
   const dia = diaDe(m)
   if (desde && dia < desde) return false
   if (hasta && dia > hasta) return false
   if (asesor !== 'todos' && normNombre(m.asesor) !== normNombre(asesor)) return false
+  if (supervisor !== 'todos' && normNombre(m.supervisor) !== normNombre(supervisor)) return false
   if (motivo !== 'todos' && (m.motivoNoAcepta || '') !== motivo) return false
   if (q) {
     const needle = q.trim().toLowerCase()
     if (needle) {
-      const blob = `${m.asesor} ${m.rutCliente} ${m.motivoNoAcepta || ''}`.toLowerCase()
+      const blob = `${m.asesor} ${m.supervisor} ${m.rutCliente} ${m.motivoNoAcepta || ''} ${m.detalleError || ''}`.toLowerCase()
       if (!blob.includes(needle)) return false
     }
   }
@@ -493,6 +493,7 @@ export default function RegistrosNoAceptaFibra({ db = null, onToast, esUsuario =
   const [desde, setDesde] = useState('')
   const [hasta, setHasta] = useState('')
   const [asesor, setAsesor] = useState('todos')
+  const [supervisor, setSupervisor] = useState('todos')
   const [motivo, setMotivo] = useState('todos')
   const [q, setQ] = useState('')
 
@@ -543,10 +544,11 @@ export default function RegistrosNoAceptaFibra({ db = null, onToast, esUsuario =
   }
 
   const asesores = useMemo(() => nombresUnicos(items.map((m) => m.asesor)), [items])
+  const supervisores = useMemo(() => nombresUnicos(items.map((m) => m.supervisor)), [items])
 
   const filtrados = useMemo(
-    () => items.filter((m) => cumple(m, { desde, hasta, asesor, motivo, q })),
-    [items, desde, hasta, asesor, motivo, q]
+    () => items.filter((m) => cumple(m, { desde, hasta, asesor, supervisor, motivo, q })),
+    [items, desde, hasta, asesor, supervisor, motivo, q]
   )
 
   const kpis = useMemo(() => {
@@ -691,20 +693,11 @@ export default function RegistrosNoAceptaFibra({ db = null, onToast, esUsuario =
               <Download size={14} />
               Excel
             </button>
-            <button
-              type="button"
-              onClick={() => exportarNoAceptaCsv(filtrados, `${archivoBase}.csv`)}
-              disabled={!filtrados.length}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-full bg-gray-800 text-white font-medium disabled:opacity-50 dark:bg-gray-700 cursor-pointer"
-            >
-              <Download size={14} />
-              CSV
-            </button>
           </div>
         </div>
 
         {/* Slicers */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5">
           <label className="block">
             <span className={labelBase}>Desde</span>
             <input type="date" value={desde} onChange={(e) => setDesde(e.target.value)} className={inputBase} />
@@ -720,6 +713,17 @@ export default function RegistrosNoAceptaFibra({ db = null, onToast, esUsuario =
               {asesores.map((a) => (
                 <option key={a} value={a}>
                   {a}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block">
+            <span className={labelBase}>Supervisor</span>
+            <select value={supervisor} onChange={(e) => setSupervisor(e.target.value)} className={inputBase}>
+              <option value="todos">Todos</option>
+              {supervisores.map((s) => (
+                <option key={s} value={s}>
+                  {s}
                 </option>
               ))}
             </select>
@@ -742,7 +746,7 @@ export default function RegistrosNoAceptaFibra({ db = null, onToast, esUsuario =
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="RUT, asesor, motivo…"
+                placeholder="RUT, asesor, supervisor…"
                 className={`${inputBase} pl-8`}
               />
             </div>
@@ -837,7 +841,7 @@ export default function RegistrosNoAceptaFibra({ db = null, onToast, esUsuario =
           <table className="w-full text-xs border-collapse min-w-[720px]">
             <thead>
               <tr className="bg-gray-50 dark:bg-gray-900/40 border-b border-gray-200 dark:border-gray-700">
-                {['Fecha', 'Asesor', 'RUT cliente', 'Motivo no acepta', 'Registrado'].map((h) => (
+                {['Fecha', 'Asesor', 'Supervisor', 'RUT cliente', 'Motivo no acepta', 'Registrado'].map((h) => (
                   <th key={h} className="text-left font-bold text-gray-500 dark:text-gray-400 py-2 px-2 whitespace-nowrap">
                     {h}
                   </th>
@@ -848,7 +852,7 @@ export default function RegistrosNoAceptaFibra({ db = null, onToast, esUsuario =
             <tbody>
               {filtrados.length === 0 && (
                 <tr>
-                  <td colSpan={esUsuario ? 5 : 6} className="text-center text-gray-400 dark:text-gray-500 py-8">
+                  <td colSpan={esUsuario ? 6 : 7} className="text-center text-gray-400 dark:text-gray-500 py-8">
                     Sin registros en el filtro actual
                   </td>
                 </tr>
@@ -857,11 +861,20 @@ export default function RegistrosNoAceptaFibra({ db = null, onToast, esUsuario =
                 <tr key={m.id} className="border-b border-gray-100 dark:border-gray-700/60 hover:bg-gray-50 dark:hover:bg-gray-700/30">
                   <td className="py-2 px-2 whitespace-nowrap text-gray-800 dark:text-gray-100">{m.fecha || '—'}</td>
                   <td className="py-2 px-2 whitespace-nowrap text-gray-800 dark:text-gray-100">{m.asesor || '—'}</td>
+                  <td className="py-2 px-2 whitespace-nowrap text-gray-600 dark:text-gray-300">{m.supervisor || '—'}</td>
                   <td className="py-2 px-2 whitespace-nowrap text-gray-600 dark:text-gray-300">{m.rutCliente || '—'}</td>
                   <td className="py-2 px-2">
                     <span className="inline-block rounded-full bg-[#f69100]/15 text-[#b26a00] dark:text-amber-300 px-2.5 py-1 text-[11px] font-semibold">
                       {m.motivoNoAcepta || '—'}
                     </span>
+                    {m.detalleError && (
+                      <span
+                        title={m.detalleError}
+                        className="mt-1 block max-w-[260px] truncate text-[11px] font-medium text-gray-600 dark:text-gray-300"
+                      >
+                        {m.detalleError}
+                      </span>
+                    )}
                   </td>
                   <td className="py-2 px-2 whitespace-nowrap text-gray-400 dark:text-gray-500">
                     {partesFechaHora(m.creado).fecha}
