@@ -103,6 +103,11 @@ Ver `docs/` para documentación específica:
 
 - **Nunca** commitear credenciales o `.env.local`
 - Las reglas de Firestore están actualmente abiertas (`allow read, write: if true`) — pendiente de seguridad
+- El acceso a `/admin` se controla en `vtr-web/src/adminsAutorizados.js`:
+  dominio corporativo habilitado (`DOMINIOS_ADMIN` = `apexamerica.com`, `clarovtr.cl`),
+  correo verificado por Google y presencia en el registro `admins_autorizados`.
+  En `vtr-web/src/AdminPage.tsx` los usuarios `@clarovtr.cl` tienen menú
+  restringido (solo Personas, Migraciones, IDs Clave, Planes y Streaming).
 - Ver `docs/10-seguridad.md` para detalles
 
 ## CI/CD
@@ -111,6 +116,8 @@ Ver `docs/` para documentación específica:
 - Ejecuta en push/PR a `main`
 - Prueba con Node 18.x, 20.x, 22.x
 - Ejecuta `npm ci`, `npm run build --if-present`, `npm test`
+- Pendiente: el workflow no fija `working-directory` y la raíz no tiene `package.json`,
+  por lo que `npm ci` falla en la raíz — apuntar el job a `vtr-web`/`functions`
 
 ## Notas Importantes
 

@@ -3,7 +3,8 @@
  * Colección Firestore 'admins_autorizados' (doc id = correo normalizado).
  *
  * El botón "Iniciar sesión con Google" del login de administración exige:
- *  1) correo del dominio @apexamerica.com verificado por Google, y
+ *  1) correo de un dominio corporativo habilitado (@apexamerica.com o
+ *     @clarovtr.cl) verificado por Google, y
  *  2) correo agregado a este registro por el administrador principal.
  * Si no está en el registro, el dominio no alcanza: no entra al admin.
  */
@@ -14,13 +15,28 @@ const LS_KEY = 'vtr-admins-autorizados:local'
 const FS_COLLECTION = 'admins_autorizados'
 
 export const DOMINIO_ADMIN = 'apexamerica.com'
+/** Dominio corporativo adicional habilitado para el panel (Claro VTR). */
+export const DOMINIO_ADMIN_CLARO = 'clarovtr.cl'
+/** Dominioscorporativos admitidos para registrarse como administrador. */
+export const DOMINIOS_ADMIN = [DOMINIO_ADMIN, DOMINIO_ADMIN_CLARO]
+/** Texto legible con los dominios admitidos (para mensajes de la interfaz). */
+export const DOMINIOS_ADMIN_TEXTO = DOMINIOS_ADMIN.map((d) => `@${d}`).join(' o ')
 /** Único correo habilitado para agregar/quitar administradores. */
 export const ADMIN_PRINCIPAL = 'adriangamervc@gmail.com'
 
-export function esCorreoApexAdmin(email) {
+/** ¿El correo pertenece a algún dominio corporativo habilitado para el admin? */
+export function esCorreoAdmin(email) {
   const e = normalizarEmail(email)
-  return Boolean(e) && e.endsWith(`@${DOMINIO_ADMIN}`) && e.length > DOMINIO_ADMIN.length + 1
+  if (!e) return false
+  const partes = e.split('@')
+  if (partes.length !== 2) return false
+  const [local, dominio] = partes
+  if (!local) return false
+  return DOMINIOS_ADMIN.includes(dominio)
 }
+
+/** @deprecated Usa `esCorreoAdmin` (admite @apexamerica.com y @clarovtr.cl). */
+export const esCorreoApexAdmin = esCorreoAdmin
 
 export function esAdminPrincipal(email) {
   return normalizarEmail(email) === normalizarEmail(ADMIN_PRINCIPAL)
@@ -108,12 +124,12 @@ export async function existeAdminAutorizado(db, email) {
   return cargarAdminsLocal().includes(clave)
 }
 
-/** Agrega un administrador al registro (solo @apexamerica.com). */
+/** Agrega un administrador al registro (solo dominios corporativos habilitados). */
 export async function agregarAdminAutorizado(db, email, agregadoPor = '') {
   const clave = normalizarEmail(email)
   if (!clave) throw new Error('Ingresa un correo válido.')
-  if (!esCorreoApexAdmin(clave)) {
-    throw new Error(`Solo se admiten correos del dominio @${DOMINIO_ADMIN}.`)
+  if (!esCorreoAdmin(clave)) {
+    throw new Error(`Solo se admiten correos del dominio ${DOMINIOS_ADMIN_TEXTO}.`)
   }
   const local = sanitizeAdmins([...cargarAdminsLocal(), clave])
   guardarAdminsLocal(local)
@@ -173,16 +189,16 @@ function mensajeErrorGoogle(code) {
 
 /**
  * Valida la sesión de Google para el panel de administración:
- * dominio @apexamerica.com + verificado + presente en el registro.
+ * dominio corporativo habilitado + verificado + presente en el registro.
  */
 async function validarAdminGoogle(db, user) {
   if (!user) return { ok: false, motivo: 'No hay sesión activa' }
   const mail = normalizarEmail(user.email || '')
   if (!mail) return { ok: false, motivo: 'Google no devolvió el correo' }
-  if (!esCorreoApexAdmin(mail)) {
+  if (!esCorreoAdmin(mail)) {
     return {
       ok: false,
-      motivo: `"${mail}" no cumple el requisito: solo se admiten correos corporativos @${DOMINIO_ADMIN} verificados por Google. Elige otra cuenta.`,
+      motivo: `"${mail}" no cumple el requisito: solo se admiten correos corporativos ${DOMINIOS_ADMIN_TEXTO} verificados por Google. Elige otra cuenta.`,
     }
   }
   if (user.emailVerified !== true) {

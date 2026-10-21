@@ -84,6 +84,10 @@ vtr/
 - **Grilla de canales** — guías de canales por paquete y región, con conteo de HD/SD y packs.
 - **Comunicados y noticias** — publicación en tiempo real vía Firestore y confirmación de
   lectura por correo.
+- **Registro de administradores** — control de quién puede entrar a `/admin`
+  (correos `@apexamerica.com` y `@clarovtr.cl` autorizados uno a uno). Los usuarios
+  `@clarovtr.cl` tienen acceso restringido (solo **Personas**, **Migraciones**,
+  **IDs Clave**, **Planes** y **Streaming**).
 - **Tipificaciones** — bloc personal de tipificaciones con catálogo RAZÓN → SERVICIO → MOTIVO
   y exportación a Excel/CSV.
 - **Asistente "Apex"** — chatbot con Gemini + RAG sobre la base de conocimiento del portal.
@@ -135,6 +139,17 @@ Detalles y alternativas en [docs/08-despliegue.md](docs/08-despliegue.md).
 
 ---
 
+## Integración continua
+
+`.github/workflows/node.js.yml` se dispara en cada push y PR contra `main`, con una matriz
+de Node **18.x, 20.x y 22.x**: `npm ci` → `npm run build --if-present` → `npm test`.
+
+> ⚠️ El workflow todavía no fija `working-directory` y la raíz del repositorio no tiene
+> `package.json`, por lo que `npm ci` falla en la raíz. Pendiente: apuntar el job a
+> `vtr-web` (o `functions`) para que la CI valide el build real.
+
+---
+
 ## Variables de entorno
 
 Definidas en [`vtr-web/.env.example`](vtr-web/.env.example):
@@ -159,6 +174,31 @@ La configuración de Firebase está embebida en el código del cliente
 | `/formularios` | Formulario de migraciones (`FormulariosPage.tsx`) |
 
 El enrutado es manual, por `pathname`/`hash`, en `vtr-web/src/main.tsx`.
+
+---
+
+## Acceso al panel `/admin`
+
+| Método | Requisitos |
+|---|---|
+| **Google** | Correo corporativo **verificado** de `@apexamerica.com` **o** `@clarovtr.cl` **y** registro en la colección `admins_autorizados` |
+| **Email / contraseña** | Cuenta existente en Firebase Auth |
+
+El registro de administradores se gestiona desde el propio panel
+(`/admin` → **Personas → Admins autorizados**, lógica en `vtr-web/src/adminsAutorizados.js`):
+
+- Los dominios admitidos están en `DOMINIOS_ADMIN` (`apexamerica.com`, `clarovtr.cl`).
+  Tener el dominio **no** alcanza: el correo debe estar en el registro.
+- El **administrador principal** (`ADMIN_PRINCIPAL`) puede agregar o quitar
+  administradores; también puede hacerlo cualquiera que ya esté en el registro.
+- **Permisos por dominio:** los correos `@clarovtr.cl` solo ven **Personas**,
+  **Migraciones**, **IDs Clave**, **Planes** y **Streaming** (se ocultan **Comunicados**,
+  **Tipificaciones** y **Conocimiento IA**).
+- El registro vive en Firestore (`admins_autorizados`, doc id = correo normalizado) y se
+  replica a `localStorage` como respaldo.
+
+> Las reglas de Firestore siguen abiertas, así que la autorización real depende del
+> cliente. Ver [docs/10-seguridad.md](docs/10-seguridad.md).
 
 ---
 

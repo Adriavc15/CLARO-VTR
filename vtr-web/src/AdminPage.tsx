@@ -10,7 +10,7 @@ import AdminTipificaciones from './components/AdminTipificaciones.jsx'
 import MigracionesTabs from './components/MigracionesTabs.jsx'
 import PersonasTabs from './components/PersonasTabs.jsx'
 import BotonGoogle from './components/BotonGoogle.jsx'
-import { entrarConGoogleAdmin, esAdminPrincipal } from './adminsAutorizados'
+import { entrarConGoogleAdmin, esAdminPrincipal, DOMINIOS_ADMIN_TEXTO } from './adminsAutorizados'
 import AvatarPerfilPicker from './components/AvatarPerfilPicker.jsx'
 
 const ADMIN_NAV = [
@@ -23,6 +23,10 @@ const ADMIN_NAV = [
   { id: 'planes', label: 'Planes', icon: CreditCard },
   { id: 'streaming', label: 'Streaming', icon: Image },
 ]
+
+/** Secciones visibles únicamente para usuarios @clarovtr.cl */
+const CLARO_VTR_NAV_IDS = ['personas', 'migraciones', 'ids', 'planes', 'streaming']
+const CLARO_VTR_SECCION_INICIAL = 'ids'
 
 /** Ids de navegación que ahora viven agrupados dentro de la sección «Personas». */
 const PERSONAS_SECCIONES = ['personas', 'usuarios', 'asesores', 'supervisores', 'admins']
@@ -51,6 +55,10 @@ const AdminPage = () => {
   const [entrandoGoogle, setEntrandoGoogle] = useState(false)
   const [emailSesion, setEmailSesion] = useState('')
   const [uid, setUid] = useState('')
+
+  const esAdminClaroVtr = String(emailSesion || '').trim().toLowerCase().endsWith('@clarovtr.cl')
+  const ADMIN_NAV_FILTRADO = esAdminClaroVtr ? ADMIN_NAV.filter((item) => CLARO_VTR_NAV_IDS.includes(item.id)) : ADMIN_NAV
+  const SECCIONES_PERMITIDAS = esAdminClaroVtr ? new Set(CLARO_VTR_NAV_IDS) : null
 
   // Configuración del perfil del administrador
   const [seccion, setSeccion] = useState('publicar')
@@ -92,6 +100,22 @@ const AdminPage = () => {
     document.documentElement.classList.toggle('dark', darkMode)
     localStorage.setItem('vtr-dark-mode', String(darkMode))
   }, [darkMode])
+
+  // Restringe navegación para usuarios @clarovtr.cl
+  useEffect(() => {
+    if (authEstado !== 'loggedIn') return
+    if (!esAdminClaroVtr) return
+    const seccionPermite = (s) =>
+      s === 'personas' ||
+      s === 'usuarios' ||
+      s === 'asesores' ||
+      s === 'supervisores' ||
+      s === 'admins' ||
+      CLARO_VTR_NAV_IDS.includes(s)
+    if (!seccionPermite(seccion)) {
+      setSeccion(CLARO_VTR_SECCION_INICIAL)
+    }
+  }, [authEstado, esAdminClaroVtr, seccion])
 
   useEffect(() => {
     document.title = 'ADMINISTRACION'
@@ -321,7 +345,7 @@ const AdminPage = () => {
   // ya registrados también pueden agregar/quitar a otros (se valida en el panel).
   const esSuperAdmin = esAdminPrincipal(emailSesion)
 
-  // Acceso con Google: exige dominio @apexamerica.com Y estar en el registro
+  // Acceso con Google: exige dominio corporativo habilitado Y estar en el registro
   const handleLoginGoogle = async () => {
     setErrorLogin('')
     setEntrandoGoogle(true)
@@ -484,8 +508,8 @@ const AdminPage = () => {
             />
 
             <p className="text-[11px] leading-relaxed text-gray-500 dark:text-gray-400 text-center">
-              Solo cuentas corporativas <strong>@apexamerica.com</strong> registradas en el registro de administradores
-              pueden entrar con Google.
+              Solo cuentas corporativas <strong>{DOMINIOS_ADMIN_TEXTO}</strong> registradas en el registro de
+              administradores pueden entrar con Google.
             </p>
           </div>
         </div>
@@ -737,7 +761,7 @@ const AdminPage = () => {
         className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white shadow-xl fixed h-full z-40 left-0 overflow-visible transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]`}
       >
         <div className="h-full flex flex-col">
-          <div className="border-b border-gray-100 flex items-center justify-center p-4 h-32 relative shrink-0">
+          <div className="border-b border-gray-100 flex items-center justify-center p-4 h-20 relative shrink-0">
             <a
               href="https://apex.wayfromhome.cx/login?returnUrl=%2Fmenu"
               target="_blank"
@@ -748,7 +772,7 @@ const AdminPage = () => {
                 src="https://i.ibb.co/7Nn2L1Py/apex-large.png"
                 alt="Logo Apex"
                 className={`object-contain cursor-pointer transition-all duration-300 nav-logo ${sidebarOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
-                style={{ height: '40px' }}
+                style={{ height: '28px' }}
                 onError={(e) => {
                   e.target.style.display = 'none'
                 }}
@@ -763,7 +787,7 @@ const AdminPage = () => {
               <img
                 src="https://i.ibb.co/XrtN8M3V/apex-2.png"
                 alt="Apex"
-                className={`w-8 h-8 object-contain cursor-pointer transition-all duration-300 nav-logo ${sidebarOpen ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}
+                className={`w-6 h-6 object-contain cursor-pointer transition-all duration-300 nav-logo ${sidebarOpen ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}
                 onError={(e) => {
                   e.target.style.display = 'none'
                 }}
@@ -773,7 +797,7 @@ const AdminPage = () => {
 
           <nav className="p-4 pb-4 flex-1 overflow-y-auto overflow-x-hidden">
             <ul className="space-y-2">
-              {ADMIN_NAV.map((item) => {
+              {ADMIN_NAV_FILTRADO.map((item) => {
                 const Icon = item.icon
                 const activa = navActiva(item.id, seccion)
                 return (
@@ -883,6 +907,10 @@ const AdminPage = () => {
           <AdminPanel
             noticias={noticias}
             onNavigateToSection={(sectionId) => {
+              if (esAdminClaroVtr && !CLARO_VTR_NAV_IDS.includes(sectionId) && sectionId !== 'configuracion') {
+                setSeccion(CLARO_VTR_SECCION_INICIAL)
+                return
+              }
               if (sectionId === 'configuracion') {
                 setConfigModalOpen(true)
                 return

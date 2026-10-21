@@ -5,16 +5,17 @@ import {
   agregarAdminAutorizado,
   eliminarAdminAutorizado,
   esAdminRegistradoOn,
-  DOMINIO_ADMIN,
+  DOMINIOS_ADMIN,
+  DOMINIOS_ADMIN_TEXTO,
   ADMIN_PRINCIPAL,
 } from '../adminsAutorizados'
 
 /**
  * Panel admin: registro de administradores con acceso al panel.
- * Solo los correos @apexamerica.com agregados aquí pueden entrar con el
- * botón "Iniciar sesión con Google". Pueden gestionar el registro (agregar/
- * quitar) los administradores que ya están registrados y el administrador
- * principal.
+ * Solo los correos de los dominios corporativos habilitados (@apexamerica.com
+ * o @clarovtr.cl) agregados aquí pueden entrar con el botón "Iniciar sesión con
+ * Google". Pueden gestionar el registro (agregar/quitar) los administradores
+ * que ya están registrados y el administrador principal.
  */
 export default function AdminAdminsAutorizados({ db, onToast, esSuperAdmin = false, correoSesion = '' }) {
   const [admins, setAdmins] = useState([])
@@ -85,7 +86,7 @@ export default function AdminAdminsAutorizados({ db, onToast, esSuperAdmin = fal
             Registro de administradores
           </h3>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Solo los correos <strong>@{DOMINIO_ADMIN}</strong> agregados aquí pueden entrar al panel con el botón
+            Solo los correos <strong>{DOMINIOS_ADMIN_TEXTO}</strong> agregados aquí pueden entrar al panel con el botón
             “Iniciar sesión con Google”. Quien tenga el dominio pero <strong>no esté en esta lista</strong> no podrá
             acceder.
           </p>
@@ -112,7 +113,7 @@ export default function AdminAdminsAutorizados({ db, onToast, esSuperAdmin = fal
               value={nuevoEmail}
               onChange={(e) => setNuevoEmail(e.target.value)}
               disabled={!puedeGestionar}
-              placeholder={`correo@${DOMINIO_ADMIN}`}
+              placeholder={`correo@${DOMINIOS_ADMIN[0]}`}
               autoComplete="off"
               className={`${inputStyle} disabled:opacity-60`}
             />

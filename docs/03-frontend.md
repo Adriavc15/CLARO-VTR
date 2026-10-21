@@ -76,13 +76,31 @@ En `/admin`, la sección **Migraciones** (`AdminMigraciones`) incluye la tabla c
 **Motivo** (detalle del error / tipificación) y, mediante `MigracionesTabs`, la pestaña
 **No acepta fibra** (`RegistrosNoAceptaFibra`) con el mismo dashboard en modo administrador.
 
+### Acceso al panel (`/admin`)
+
+`src/adminsAutorizados.js` concentra la autorización del panel:
+
+- `DOMINIOS_ADMIN` — dominios corporativos admitidos: `apexamerica.com` y `clarovtr.cl`.
+- `esCorreoAdmin(email)` — valida el dominio del correo (parsea por `@`, no por `endsWith`).
+- `ADMIN_PRINCIPAL` — único administrador inicial; junto con los que ya están en el
+  registro, puede agregar o quitar administradores (`AdminAdminsAutorizados`).
+- **Restricción por dominio** (`AdminPage.tsx`): los correos `@clarovtr.cl` solo
+  muestran **Personas**, **Migraciones**, **IDs Clave**, **Planes** y **Streaming**.
+  **Comunicados**, **Tipificaciones** y **Conocimiento IA** quedan ocultos y las
+  redirecciones a esas secciones llevan a **IDs Clave**.
+- Registro en Firestore (`admins_autorizados`) + respaldo en `localStorage`
+  (`vtr-admins-autorizados:local`).
+
+El login con Google (`entrarConGoogleAdmin`) exige: dominio habilitado **y** correo
+verificado por Google **y** presencia en el registro. Tener el dominio no basta.
+
 ## Stores y módulos de estado (raíz de `src/`)
 
 | Archivo | Colección / función |
 |---|---|
 | `messengerStore.js` | `messenger_chats` (+ `mensajes`), `lectores` |
 | `messengerAuth.js` | Identidad (Firebase Auth) del messenger |
-| `adminsAutorizados.js` | `admins_autorizados` (admin principal configurado) |
+| `adminsAutorizados.js` | `admins_autorizados` (admin principal configurado; dominios `@apexamerica.com` y `@clarovtr.cl`) |
 | `asesoresStore.js` | `asesores` |
 | `supervisoresStore.js` | `supervisores` |
 | `listaNombresStore.js` | Store genérico de listas de nombres |
