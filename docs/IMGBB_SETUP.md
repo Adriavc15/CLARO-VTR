@@ -4,7 +4,7 @@ La API key de imgbb.com ahora está en el servidor (Cloud Function) por segurida
 
 ## Pasos para configurar
 
-### Opción 1: Desde Firebase Console (recomendado)
+### Desde Firebase Console (recomendado)
 
 1. Ve a [Firebase Console](https://console.firebase.google.com/)
 2. Selecciona el proyecto `vtrclaroo-3c572`
@@ -17,41 +17,22 @@ La API key de imgbb.com ahora está en el servidor (Cloud Function) por segurida
 6. Haz clic en **Guardar**
 7. Redespliega las Functions: `firebase deploy --only functions`
 
-### Opción 2: Desde línea de comandos
-
-```bash
-cd /ruta/a/vtr
-firebase functions:config:set IMGBB_API_KEY=27a975d7c50c5282d8f5403ce786fa4b
-firebase deploy --only functions
-```
-
 ## Verificación
 
-Para verificar que la variable está configurada:
-
-```bash
-firebase functions:config:get
-```
-
-Deberías ver algo como:
-```json
-{
-  "IMGBB_API_KEY": "27a975d7c50c5282d8f5403ce786fa4b"
-}
-```
+Para verificar que la variable está configurada, puedes verla en Firebase Console bajo **Functions** → **Configuración** → **Variables de entorno**.
 
 ## Cambios realizados
 
 - ✅ Creada Cloud Function `subirImagen` en `functions/src/index.ts`
 - ✅ Modificada función `subirImagenImgbb` en `vtr-web/src/App.tsx` para usar la Cloud Function
 - ✅ Eliminada API key del código del cliente
-- ✅ Agregada autenticación: solo usuarios logueados pueden subir imágenes
+- ✅ Agregada autenticación: solo usuarios @apexamerica.com y @clarovtr.cl pueden subir imágenes
 - ✅ Actualizada documentación de seguridad
 
 ## Ventajas de seguridad
 
 - La API key nunca se expone en el código del cliente
-- Solo usuarios autenticados pueden subir imágenes
+- Solo usuarios autenticados y autorizados pueden subir imágenes
 - La key está protegida en el servidor de Firebase
 - Fácil de rotar sin redesplegar el frontend
 

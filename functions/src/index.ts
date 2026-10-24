@@ -9,6 +9,9 @@ initializeApp();
 
 setGlobalOptions({maxInstances: 10});
 
+// API key de imgbb desde variable de entorno
+const IMGBB_API_KEY = process.env.IMGBB_API_KEY || "";
+
 const CARPETA_COMUNICADOS_ID = "1zFW47MKDJArZ4jiKa1tw-4dezVJ673QM";
 const FUNCION_URL = "https://us-central1-vtrclaroo-3c572.cloudfunctions.net/comunicados";
 const LISTA_NOTICIAS_URL = "https://script.google.com/macros/s/AKfycbw9YoO7pCH6bVb0gjSuOvDMhbpqtxjtt1Xdg0c8ZcXJuaHgFRIpOamDL-uKRlqHukQ/exec?action=listNoticias";
@@ -224,7 +227,7 @@ export const fastTargets = onRequest({cors: true}, async (req, res) => {
 
 /**
  * Sube una imagen a imgbb desde el servidor.
- * La API key está en variable de entorno del servidor (más seguro).
+ * La API key está en config de Firebase (más seguro).
  * Requiere autenticación de Firebase.
  */
 export const subirImagen = onRequest(
@@ -233,51 +236,58 @@ export const subirImagen = onRequest(
     try {
       // Verificar autenticación
       const authHeader = req.headers.authorization;
-      if (!authHeader?.startsWith('Bearer ')) {
-        res.status(401).json({ok: false, error: 'No autorizado'});
+      if (!authHeader?.startsWith("Bearer ")) {
+        res.status(401).json({ok: false, error: "No autorizado"});
         return;
       }
 
-      const token = authHeader.split('Bearer ')[1];
+      const token = authHeader.split("Bearer ")[1];
       const auth = getAuth();
       const decoded = await auth.verifyIdToken(token);
 
       // Opcional: verificar que el usuario sea admin
       // Descomentar si quieres restringir solo a administradores
       const email = decoded.email;
-      if (!email || (!email.includes('@apexamerica.com') && !email.includes('@clarovtr.cl'))) {
-        res.status(403).json({ok: false, error: 'Solo usuarios autorizados pueden subir imágenes'});
+      if (!email ||
+          (!email.includes("@apexamerica.com") &&
+           !email.includes("@clarovtr.cl"))) {
+        res.status(403).json({
+          ok: false,
+          error: "Solo usuarios autorizados pueden subir imágenes",
+        });
         return;
       }
 
       // Obtener la imagen del body (base64)
       const {image, name} = req.body;
       if (!image) {
-        res.status(400).json({ok: false, error: 'Falta la imagen'});
+        res.status(400).json({ok: false, error: "Falta la imagen"});
         return;
       }
 
-      // Subir a imgbb con la API key del servidor
-      const IMGBB_API_KEY = process.env.IMGBB_API_KEY;
+      // Subir a imgbb con la API key del servidor (env)
       if (!IMGBB_API_KEY) {
-        res.status(500).json({ok: false, error: 'API key no configurada en servidor'});
+        res.status(500).json({
+          ok: false,
+          error: "API key no configurada en servidor",
+        });
         return;
       }
 
       const body = new FormData();
-      body.append('key', IMGBB_API_KEY);
-      body.append('image', image);
-      if (name) body.append('name', String(name).slice(0, 80));
+      body.append("key", IMGBB_API_KEY);
+      body.append("image", image);
+      if (name) body.append("name", String(name).slice(0, 80));
 
-      const response = await fetch('https://api.imgbb.com/1/upload', {
-        method: 'POST',
+      const response = await fetch("https://api.imgbb.com/1/upload", {
+        method: "POST",
         body,
       });
 
       const data = await response.json();
 
       if (!data.success) {
-        res.status(500).json({ok: false, error: 'Error al subir a imgbb'});
+        res.status(500).json({ok: false, error: "Error al subir a imgbb"});
         return;
       }
 
@@ -285,7 +295,7 @@ export const subirImagen = onRequest(
       const url = data.data?.url || data.data?.display_url;
       res.json({ok: true, url});
     } catch (err) {
-      logger.error('Error subiendo imagen', err);
+      logger.error("Error subiendo imagen", err);
       res.status(500).json({ok: false, error: String(err)});
     }
   }
