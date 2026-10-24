@@ -4,22 +4,19 @@ import { createPortal } from 'react-dom'
 import { Phone, PhoneCall, Mail, Lock, User, Link, Image, Calendar, AlertCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, LayoutDashboard, Settings, Users, Database, Globe, Monitor, Shield, CreditCard, Search, Menu, X, Home, Zap, Moon, Sun, GraduationCap, Coins, ClipboardList, Copy, Save, CheckCircle2, AlertTriangle, Truck, Unplug, Plug, Server, Cable, Eye, ListChecks, Bell, Trash2, Upload, ExternalLink, Pencil, Receipt, FileText, Wifi, Download, RefreshCw, MessageSquare, ListOrdered, Router, EyeOff, Tv } from 'lucide-react'
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
+import { getAuth } from 'firebase/auth'
 import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, updateDoc, doc, getDoc, query, orderBy, setDoc, serverTimestamp, writeBatch } from 'firebase/firestore'
 import AsistentePasos from './components/AsistentePasos'
 import GenesysSimulador from './components/GenesysSimulador'
 import MedidorVelocidad from './components/MedidorVelocidad'
 import ChatbotAndes from './components/ChatbotAndes'
 import ModalSomosClave from './components/ModalSomosClave'
-import TipificacionesPanel from './components/TipificacionesPanel'
 import MessengerApex from './components/MessengerApex'
 import AplicacionesExcel from './components/AplicacionesExcel'
 import AndroidTvInterface from './components/AndroidTvInterface'
 import AndesSimulador from './components/AndesSimulador'
 import IconoAndroid from './components/IconoAndroid'
 import BuscadorTipificacion from './components/BuscadorTipificacion'
-import {
-  guardarTipificacion,
-} from './tipificacionesStore'
 import { rutaTipificacion } from './tipificacionesCatalogo'
 import {
   CONTROL_REMOTO_IMG_BASE,
@@ -34,11 +31,11 @@ import {
 import { IDS_CLAVE_SEED, cargarIdsClave } from './asistente/idsClaveLive'
 import { gruposDesdeSeed, suscribirPlanes } from './asistente/planesLive'
 import { PLANES_CLARO } from './asistente/planesClaro'
+import { STREAM_NAMES } from './asistente/planesSeed'
 import { grilla, grillaModal, normalizaCanal, REGIONES_VTR, REGION_VTR_POR_DEFECTO } from './asistente/grillaCanales'
-import { CABLE_PACKS, logoCanal, packsDeGrilla } from './asistente/packsCable'
+import { CABLE_PACKS, CANALES_FUERA_GRILLA, logoCanal, packsDeGrilla } from './asistente/packsCable'
 import { avatarImgProps } from './asistente/messengerAvatar'
 import { nombreDesdeEmail } from './messengerStore'
-import { useMessengerAuth } from './messengerAuth'
 import { SHOWCASE_SEED, suscribirShowcaseStreaming } from './asistente/streamingShowcaseLive'
 
 // Firebase configuration
@@ -56,6 +53,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 const analytics = getAnalytics(app)
 const db = getFirestore(app)
+const auth = getAuth(app)
 
 // URL de la aplicación web de Google Apps Script (termina en /exec).
 // Pega aquí la URL que obtengas al publicar el script (ver CODIGO_APPS_SCRIPT_GOOGLE_SHEETS.gs)
@@ -74,55 +72,6 @@ const guardarEnSheets = async (data) => {
     return true
   } catch (err) {
     console.error('Error al guardar en sheets:', err)
-    return false
-  }
-}
-
-/** Guarda tipificación personal (sin Google Sheets) y navega a la pestaña Tipificaciones */
-const enviarTipificacionPersonal = async ({
-  correoApex,
-  tipo,
-  campos,
-  texto,
-  capturaUrl,
-  onEnviado,
-  setModal,
-}) => {
-  if (!correoApex) {
-    setModal?.({
-      tipo: 'error',
-      titulo: 'Falta tu sesión',
-      mensaje:
-        'Inicia sesión con tu cuenta de Google corporativa (correo verificado y registrado en el portal) para guardar tipificaciones en tu bloc personal. El correo del portal ya no alcanza: el bloc solo se abre con tu sesión verificada.',
-    })
-    return false
-  }
-  try {
-    const result = await guardarTipificacion({
-      email: correoApex,
-      tipo,
-      campos,
-      texto,
-      capturaUrl,
-      db,
-    })
-    if (result?.cloud === false) {
-      console.error('[Tipificaciones] Falló sync Firestore:', result.cloudError)
-      // Aviso visible aunque luego navegue a Tipificaciones
-      window.setTimeout(() => {
-        window.alert(
-          `Tipificación guardada en este equipo, pero NO en Firestore.\n\n${result.cloudError || 'Error desconocido'}\n\nRevisa la colección tipificaciones_bloc en Firebase.`
-        )
-      }, 400)
-    }
-    onEnviado?.()
-    return true
-  } catch (err) {
-    setModal?.({
-      tipo: 'error',
-      titulo: 'No se pudo guardar',
-      mensaje: err?.message || 'Error al guardar la tipificación.',
-    })
     return false
   }
 }
@@ -574,8 +523,7 @@ export const suscribirLecturas = (onData) => {
 
 // imgbb es el servicio de subida del portal. Las imágenes quedan alojadas y se
 // sirven desde su CDN i.ibb.co, que es la única URL que se guarda en Firestore.
-const IMGBB_API_KEY = '27a975d7c50c5282d8f5403ce786fa4b'
-const IMGBB_UPLOAD_URL = 'https://api.imgbb.com/1/upload'
+// La API key ahora está en el servidor (Cloud Function) por seguridad.
 const IMGBB_CDN = 'i.ibb.co'
 const MAX_URL_IMG = 800
 
@@ -618,60 +566,59 @@ function urlImgbbACdn(valor) {
 
 /** Sube imagen a imgbb (i.ibb.co) y devuelve la URL https corta, apta para Firestore. */
 export const subirImagenImgbb = async (file) => {
-  if (!IMGBB_API_KEY) {
-    throw new Error('Falta configurar la API key de imgbb.com en el código (IMGBB_API_KEY).')
-  }
   if (!file) throw new Error('No hay archivo para subir.')
 
   const base64 = await archivoABase64(file)
-  const body = new FormData()
-  body.append('key', IMGBB_API_KEY)
-  body.append('image', base64)
-  if (file.name) body.append('name', String(file.name).replace(/\.\w+$/, '').slice(0, 80))
+  const name = file.name?.replace(/\.\w+$/, '').slice(0, 80) || ''
 
+  // Obtener el token del usuario actual
+  const user = auth.currentUser
+  if (!user) throw new Error('Debes estar autenticado para subir imágenes.')
+  const token = await user.getIdToken()
+
+  // Llamar a la Cloud Function
   const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null
   const timer = ctrl ? setTimeout(() => ctrl.abort(), 90000) : null
   let data
   try {
-    const r = await fetch(IMGBB_UPLOAD_URL, {
-      method: 'POST',
-      body,
-      signal: ctrl?.signal,
-    })
+    const r = await fetch(
+      'https://us-central1-vtrclaroo-3c572.cloudfunctions.net/subirImagen',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({image: base64, name}),
+        signal: ctrl?.signal,
+      }
+    )
     data = await r.json().catch(() => null)
     if (!r.ok) {
-      const msg = data?.error?.message || `Error HTTP ${r.status} al subir la imagen`
+      const msg = data?.error || `Error HTTP ${r.status} al subir la imagen`
       throw new Error(msg)
     }
   } catch (err) {
     if (err?.name === 'AbortError') throw new Error('La subida tardó demasiado. Prueba una imagen más liviana.')
     if (err?.message) throw err
-    throw new Error('No se pudo subir la imagen a imgbb.')
+    throw new Error('No se pudo subir la imagen.')
   } finally {
     if (timer) clearTimeout(timer)
   }
 
-  if (!(data && data.success && data.data)) {
-    throw new Error(data?.error?.message || 'Respuesta inválida de imgbb.')
+  if (!(data && data.ok && data.url)) {
+    throw new Error(data?.error || 'Respuesta inválida del servidor.')
   }
 
-  // Candidatas en orden de preferencia: la corta de i.ibb.co primero.
-  const candidatas = [data.data.url, data.data.display_url, data.data.image?.url]
-  let url = ''
-  for (const c of candidatas) {
-    const norm = urlImgbbACdn(c)
-    if (norm && norm.length <= MAX_URL_IMG) {
-      url = norm
-      break
-    }
-  }
+  // Normalizar la URL a i.ibb.co
+  const url = urlImgbbACdn(data.url)
   if (!url) {
-    // Sin candidato válido en i.ibb.co: se acepta display_url para no perder la subida.
-    const crudo = String(data.data.display_url || data.data.url || '').trim()
+    // Si no es i.ibb.co, usar la URL tal cual (pero debe ser https)
+    const crudo = String(data.url || '').trim()
     const https = crudo.startsWith('http://') ? `https://${crudo.slice(7)}` : crudo
     if (!/^https:\/\//i.test(https)) throw new Error('URL de imagen inválida.')
     if (https.length > MAX_URL_IMG) throw new Error('El enlace de la imagen es demasiado largo.')
-    url = https
+    return https
   }
   return url
 }
@@ -920,10 +867,42 @@ const formatNewsText = (text) => {
   return <div style={{ whiteSpace: 'pre-line', lineHeight: '1.6' }}>{formatted}</div>
 }
 
+// Máximo de iconos de plataforma por tarjeta. Si el plan trae más, el último
+// espacio se reemplaza por un chip "+N" con la cantidad de plataformas ocultas
+// (el tooltip del chip lista cuáles son) para que el diseño siempre cuadre.
+const MAX_ICONOS_STREAM = 6
+
+const IconosStreaming = ({ streams, className = '' }) => {
+  const lista = (streams || []).filter(Boolean)
+  if (lista.length === 0) return null
+  const visibles = lista.length > MAX_ICONOS_STREAM ? lista.slice(0, MAX_ICONOS_STREAM - 1) : lista
+  const ocultas = lista.length - visibles.length
+  return (
+    <span className={`flex items-center gap-1.5 ${className}`} title="Streaming incluido">
+      {visibles.map((src) => (
+        <span key={src} className="relative group">
+          <img src={src} alt={STREAM_NAMES[src] || 'Streaming'} loading="lazy" className="h-4 w-4 lg:h-5 lg:w-5 rounded object-contain bg-white dark:bg-gray-900/40" onError={(e) => { e.target.style.display = 'none' }} />
+          <span className="plan-stream-tip pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gray-900 px-2 py-0.5 text-[10px] font-semibold text-white shadow-lg opacity-0 transition-opacity duration-150 group-hover:opacity-100 z-20">
+            {STREAM_NAMES[src] || src}
+          </span>
+        </span>
+      ))}
+      {ocultas > 0 && (
+        <span className="relative group">
+          <span className="plan-stream-more flex items-center justify-center h-4 w-4 lg:h-5 lg:w-5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[9px] lg:text-[10px] font-bold leading-none">+{ocultas}</span>
+          <span className="plan-stream-tip pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gray-900 px-2 py-0.5 text-[10px] font-semibold text-white shadow-lg opacity-0 transition-opacity duration-150 group-hover:opacity-100 z-20">
+            {lista.slice(visibles.length).map((s) => STREAM_NAMES[s] || s).join(', ')}
+          </span>
+        </span>
+      )}
+    </span>
+  )
+}
+
 // Grilla de planes (tarjetas apiladas en móvil y grilla en desktop, sin tablas)
 const PlanTable = ({ data, showPromo, q = '', tag = '', onSelect }) => {
   const term = normalize(q)
-  const match = (row) => !term || normalize(`${row.comercial} ${row.andes} ${(row.tags || []).join(' ')} ${tag}`).includes(term)
+  const match = (row) => !term || normalize(`${row.comercial || row.plan || ''} ${row.andes || ''} ${(row.tags || []).join(' ')} ${tag} ${redDePlanTexto(row)}`).includes(term)
   const rows = term ? data.filter(match) : data
   const highlighted = (row) => term && match(row)
 
@@ -944,20 +923,7 @@ const PlanTable = ({ data, showPromo, q = '', tag = '', onSelect }) => {
               {tag && <span className={`inline-flex items-center justify-center mr-1.5 w-6 h-6 lg:w-7 lg:h-7 rounded-full text-white text-[10px] lg:text-xs font-bold align-middle whitespace-nowrap shrink-0 ${tag === '2P' ? 'bg-gradient-to-r from-yellow-400 to-blue-600' : tag === '3P' ? 'bg-gradient-to-r from-red-500 to-blue-600' : 'bg-gradient-to-r from-green-500 to-blue-600'}`}>{tag === 'Legacy' ? 'L' : tag}</span>}
               {row.comercial}
             </p>
-            <span className="flex items-center gap-1.5 shrink-0 pt-0.5">
-            {(row.streams || []).length > 0 && (
-                <span className="flex items-center justify-end gap-1.5" title="Streaming incluido">
-                {(row.streams || []).map((src, i) => (
-                  <span key={i} className="relative group">
-                      <img src={src} alt={STREAM_NAMES[src] || 'Streaming'} loading="lazy" className="h-4 w-4 lg:h-5 lg:w-5 rounded object-contain bg-white dark:bg-gray-900/40" onError={(e) => { e.target.style.display = 'none' }} />
-                    <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gray-900 px-2 py-0.5 text-[10px] font-semibold text-white shadow-lg opacity-0 transition-opacity duration-150 group-hover:opacity-100 z-20 dark:bg-gray-100 dark:text-gray-900">
-                      {STREAM_NAMES[src] || src}
-                    </span>
-                  </span>
-                ))}
-              </span>
-            )}
-            </span>
+            <IconosStreaming streams={row.streams} className="justify-end shrink-0 pt-0.5" />
           </div>
           <p className="mt-1 text-xs lg:text-sm leading-relaxed text-gray-500 dark:text-gray-400">{row.andes}</p>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -982,26 +948,20 @@ const TV_PREMIUM_II_STREAMS = ['/stream/netflix.png', '/stream/hbo-max.png', '/s
 
 const TV_FULL_STREAMS = ['/stream/disney.png', '/stream/netflix.png', '/stream/hbo-max.png', '/stream/prime-video.png', '/stream/atresplayer.png', '/stream/universal.png', '/stream/cindie.png', '/stream/riivi.png', '/stream/teatrix.png']
 
-const STREAM_NAMES = {
-  '/stream/disney.png': 'Disney+',
-  '/stream/netflix.png': 'Netflix',
-  '/stream/hbo-max.png': 'HBO Max',
-  '/stream/prime-video.png': 'Prime Video',
-  '/stream/atresplayer.png': 'Atresplayer',
-  '/stream/universal.png': 'Universal+',
-  '/stream/cindie.png': 'Cindie',
-  '/stream/riivi.png': 'Riivi',
-  '/stream/teatrix.png': 'Teatrix',
-}
+// Pack Full de Claro: suma las plataformas exclusivas (TVN Play, OndaMedia, Storytel).
+const TV_FULL_STREAMS_CLARO = [...TV_FULL_STREAMS, '/stream/tvn-play.png', '/onmedia.png', '/STORYTEL.png']
 
 // Paquetes de canales cable (packs extra) + logos: viven en asistente/packsCable.js
 
+/**
+ * TV de VTR (Octubre 2026). Desde TV Premium hacia arriba la parrilla suma los
+ * packs cable: 74 canales de la grilla base + 27 de packs = 101.
+ */
 const TV_PLAN_META = {
   inicia: { label: 'TV Inicia', canales: '74 canales', hd: '57 HD', incluyeExtras: false },
-  plus: { label: 'TV Plus', canales: '101 canales', hd: '82 HD', incluyeExtras: true },
-  premium: { label: 'TV Premium', canales: '101 canales', hd: '82 HD', incluyeExtras: true },
-  premium2: { label: 'TV Premium 2', canales: '101 canales', hd: '82 HD', incluyeExtras: true },
-  full: { label: 'TV Full / Premium 3', canales: '74 canales', hd: '68 HD', incluyeExtras: true },
+  premium: { label: 'TV Premium', canales: '101 canales', hd: '84 HD', incluyeExtras: true },
+  premium2: { label: 'TV Premium 2', canales: '101 canales', hd: '84 HD', incluyeExtras: true },
+  full: { label: 'TV Full / Premium 3', canales: '101 canales', hd: '84 HD', incluyeExtras: true },
 }
 
 const FIBRA_META = {
@@ -1016,7 +976,6 @@ const detectarTvKey = (texto) => {
   if (n.includes('full') || n.includes('premium 3') || n.includes('residencial 3')) return 'full'
   if (n.includes('premium ii') || n.includes('premium 2') || n.includes('residencial 2')) return 'premium2'
   if (n.includes('premium')) return 'premium'
-  if (n.includes('tv plus') || n.includes('stream tv plus')) return 'plus'
   return null
 }
 
@@ -1028,12 +987,14 @@ const detectarFibraKey = (texto) => {
   return null
 }
 
-/** TV de Claro: TV Full comparte la grilla de VTR TV Full; TV Inicia tiene la suya */
+/**
+ * TV de Claro (Octubre 2026): TV Inicia tiene su propia grilla (77 canales) y
+ * desde TV Premium hacia arriba la grilla es de 74 canales (68 HD).
+ */
 const CLARO_TV_META = {
   inicia: { label: 'TV Inicia', canales: '77 canales', hd: '66 HD', fuenteGrilla: 'claro:inicia' },
-  plus: { label: 'TV Plus', canales: null, hd: null, fuenteGrilla: null },
-  premium: { label: 'TV Premium', canales: null, hd: null, fuenteGrilla: null },
-  premium2: { label: 'TV Premium 2', canales: null, hd: null, fuenteGrilla: null },
+  premium: { label: 'TV Premium', canales: '74 canales', hd: '68 HD', fuenteGrilla: null },
+  premium2: { label: 'TV Premium 2', canales: '74 canales', hd: '68 HD', fuenteGrilla: null },
   full: { label: 'TV Full', canales: '74 canales', hd: '68 HD', fuenteGrilla: 'claro:full' },
 }
 
@@ -1042,9 +1003,30 @@ const detectarTvClaro = (texto) => {
   if (n.includes('tv inicia')) return 'inicia'
   if (n.includes('tv full') || n.includes('premium 3')) return 'full'
   if (n.includes('premium ii') || n.includes('premium 2')) return 'premium2'
-  if (n.includes('tv plus')) return 'plus'
   if (n.includes('tv premium')) return 'premium'
   return null
+}
+
+/** Redes de los planes VTR: HFC (Internet 500) y Fibra Óptica FTTH. */
+const REDES_VTR = [
+  { id: 'HFC', label: 'HFC' },
+  { id: 'FTTH', label: 'Fibra Óptica (FTTH)' },
+]
+
+/** Red del plan: usa el campo `red` y, si no está, lo deduce del nombre. */
+const redDePlan = (row) => {
+  const red = String(row.red || '').toUpperCase()
+  if (red === 'HFC' || red === 'FTTH') return red
+  const n = normalize(row.comercial || row.plan || '')
+  if (n.includes('internet 500')) return 'HFC'
+  if (n.includes('fibra')) return 'FTTH'
+  return ''
+}
+
+/** Etiqueta legible de la red del plan ('' si no aplica). */
+const redDePlanTexto = (row) => {
+  const red = redDePlan(row)
+  return REDES_VTR.find((r) => r.id === red)?.label || ''
 }
 
 const detalleDesdeComercial = (row, tag = '') => {
@@ -1055,7 +1037,12 @@ const detalleDesdeComercial = (row, tag = '') => {
   const tieneFono = n.includes('telefonia') || n.includes('fono') || !!row.fono
   const streams = row.streams || []
   const tv = tvKey ? { ...TV_PLAN_META[tvKey], key: tvKey } : null
-  const fibra = fibraKey ? { ...FIBRA_META[fibraKey], key: fibraKey } : null
+  // El HFC 500 Mbps no es fibra, pero igual es internet: se muestra aparte.
+  const fibra = fibraKey
+    ? { ...FIBRA_META[fibraKey], key: fibraKey }
+    : n.includes('internet 500')
+      ? { label: 'Internet 500 Megas', andes: 'HFC', key: '500' }
+      : null
   const incluyeExtras = tv ? tv.incluyeExtras : false
 
   return {
@@ -1065,7 +1052,7 @@ const detalleDesdeComercial = (row, tag = '') => {
     tag,
     normal: row.normal || row.precio || null,
     promo: row.promo || null,
-    detalle: row.detalle || null,
+    detalle: row.detalle || redDePlanTexto(row) || null,
     fibra,
     tv,
     fono: tieneFono,
@@ -1074,40 +1061,16 @@ const detalleDesdeComercial = (row, tag = '') => {
     canales: tv?.canales || null,
     hd: tv?.hd || null,
     fuenteGrilla: tvKey === 'full' ? 'vtr:full' : null,
-  }
-}
-
-const detalleDesdeCable = (row) => {
-  const tvKey = detectarTvKey(row.plan)
-  return {
-    tipo: 'cable',
-    titulo: row.plan,
-    subtitulo: row.modalidad,
-    tag: 'Cable',
-    normal: row.precio,
-    promo: null,
-    detalle: row.detalle,
-    fibra: null,
-    tv: {
-      label: row.plan,
-      canales: row.canales,
-      hd: row.hd,
-      incluyeExtras: row.incluyeExtras,
-      key: tvKey || (row.incluyeExtras ? 'plus' : 'inicia'),
-    },
-    fono: false,
-    streams: row.streams || [],
-    incluyeExtras: row.incluyeExtras,
-    canales: row.canales,
-    hd: row.hd,
-    fuenteGrilla: tvKey === 'full' ? 'vtr:full' : null,
+    nota: row.nota || '',
   }
 }
 
 const detalleDesdeClaro = (row) => {
-  const tvKey = detectarTvClaro(row.comercial)
+  const tvKey = row.tipoTv || detectarTvClaro(row.comercial)
   const tv = tvKey ? { ...CLARO_TV_META[tvKey], key: tvKey } : null
   const tieneFibra = !!row.megas && row.megas !== '-'
+  const canales = row.canales || tv?.canales || null
+  const hd = row.hd || tv?.hd || null
   return {
     tipo: 'claro',
     titulo: row.comercial,
@@ -1119,12 +1082,13 @@ const detalleDesdeClaro = (row) => {
     fibra: tieneFibra ? { label: row.megas, key: null } : null,
     tv,
     fono: /telefon/i.test(row.comercial),
-    streams: [],
+    streams: row.streams || [],
     incluyeExtras: tvKey && tvKey !== 'inicia',
-    canales: tv?.canales || null,
-    hd: tv?.hd || null,
+    canales,
+    hd,
     descuento: row.descuento && row.descuento !== '-' ? row.descuento : null,
     fuenteGrilla: tv?.fuenteGrilla || null,
+    nota: row.nota || '',
   }
 }
 
@@ -1156,31 +1120,34 @@ const inicialesCanal = (nombre) =>
     .toUpperCase()
 
 /** Grilla de logos: cada canal es una casilla con su logo y el número debajo */
-const GrillaLogos = ({ canales, muted = false, conNumero = false }) => (
-  <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-1.5">
-    {canales.map(({ n, canal, muted: itemMuted, premium, retirado, nota }) => {
+const GrillaLogos = ({ canales, muted = false, conNumero = false, sello = null }) => (
+  <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1.5">
+    {canales.map(({ n, hasta, canal, muted: itemMuted, premium, retirado, nota }) => {
       const logo = logoCanal(canal)
       const atenuado = muted || itemMuted
+      const soloLogoScience = /^science$/i.test(String(canal || ''))
+      const dial = n != null && hasta != null ? `${n}–${hasta}` : n != null ? String(n) : null
+      const selloTile = sello || (premium ? 'Prem' : null)
       const etiquetas = [
-        n != null ? `Canal ${n}` : null,
+        dial ? `Canal ${dial}` : null,
         canal,
         nota,
-        premium ? 'Premium' : null,
+        selloTile,
         retirado ? 'Fuera de circulación' : null,
       ]
         .filter(Boolean)
         .join(' · ')
       return (
         <div
-          key={`${n || ''}-${canal}`}
+          key={`${dial || 'pack'}-${canal}-${nota || ''}`}
           title={etiquetas}
           className={`relative flex flex-col items-center justify-center gap-1 rounded-xl px-1.5 py-2 ${
             atenuado ? 'bg-white/5 opacity-45' : 'bg-white/10 hover:bg-white/15'
           } transition-colors`}
         >
-          {premium && (
+          {selloTile && (
             <span className="absolute right-1 top-1 rounded-full bg-amber-400/25 px-1.5 py-px text-[8px] font-bold uppercase tracking-wide text-amber-200">
-              Prem
+              {selloTile}
             </span>
           )}
           {retirado && (
@@ -1188,7 +1155,11 @@ const GrillaLogos = ({ canales, muted = false, conNumero = false }) => (
               Fuera
             </span>
           )}
-          {logo ? (
+          {soloLogoScience ? (
+            <span className="flex h-7 min-w-[3.5rem] items-center justify-center text-[9px] font-black tracking-[0.18em] text-white">
+              SCIENCE
+            </span>
+          ) : logo ? (
             <img
               src={logo}
               alt={canal || `Canal ${n}`}
@@ -1201,16 +1172,20 @@ const GrillaLogos = ({ canales, muted = false, conNumero = false }) => (
               {inicialesCanal(canal)}
             </span>
           )}
-          <span className="w-full truncate text-center text-[10px] leading-tight text-white/75">{canal || 'Sin nombre'}</span>
-          {conNumero && n != null && <span className="font-mono text-[9px] text-white/40">{n}</span>}
+          {!soloLogoScience && (
+            <span className="w-full truncate text-center text-[10px] leading-tight text-white/75">{canal || 'Sin nombre'}</span>
+          )}
+          {conNumero && dial && <span className="font-mono text-[9px] text-white/40">{dial}</span>}
         </div>
       )
     })}
   </div>
 )
 
-const GrillaCanalesTV = ({ clave, titulo, resumen, incluidos, declarado }) => {
-  const [abierto, setAbierto] = useState(false)
+const GrillaCanalesTV = ({ clave, titulo, resumen, incluidos }) => {
+  // La grilla se muestra desplegada por defecto: el modal la usa como referencia
+  // de canales, no como un detalle opcional. El botón permite plegarla igual.
+  const [abierto, setAbierto] = useState(true)
   const [soloHd, setSoloHd] = useState(false)
   const [region, setRegion] = useState(REGION_VTR_POR_DEFECTO)
   const meta = useMemo(() => (clave ? grilla(clave) : null), [clave])
@@ -1223,19 +1198,38 @@ const GrillaCanalesTV = ({ clave, titulo, resumen, incluidos, declarado }) => {
   const senales = datos ? datos.senales : []
   const conflictosAbiertos = datos?.conflictos?.filter((c) => !c.resuelto) || []
   const incluyePacks = incluidos !== undefined ? incluidos : packs.incluidos.length > 0
+  const fueraGrilla = new Set(CANALES_FUERA_GRILLA.map((n) => normalizaCanal(n)))
 
-  const base = (soloHd ? senales.filter((s) => s.hd) : senales).map((s) => ({
+  const base = (soloHd ? senales.filter((s) => s.hd) : senales)
+    .filter((s) => !fueraGrilla.has(normalizaCanal(s.canal)))
+    .map((s) => ({
     n: s.n,
+    hasta: s.hasta,
     canal: s.canal,
     muted: false,
     premium: s.premium,
     retirado: s.retirado,
     nota: s.nota,
   }))
+  // Los packs se cruzan con la guía por nombre. La lista oficial usa el nombre
+  // completo ("Universal Channel", "Warner Channel") y los packs lo usan
+  // abreviado ("Universal", "Warner"), así que se comparan también por prefijo
+  // y por el nombre entre paréntesis ("ESPN Extra (ESPN 4)") para no mostrar dos
+  // veces el mismo canal.
   const yaEnGrilla = new Set(senales.map((s) => normalizaCanal(s.canal)))
+  const yaEsta = (item) => {
+    const n = normalizaCanal(item)
+    if (yaEnGrilla.has(n)) return true
+    const dentro = String(item).match(/\(([^)]+)\)/)
+    if (dentro && yaEnGrilla.has(normalizaCanal(dentro[1]))) return true
+    return senales.some((s) => normalizaCanal(s.canal).startsWith(`${n} `))
+  }
   const extras = CABLE_PACKS.flatMap((p) => p.items)
-    .filter((item) => !yaEnGrilla.has(normalizaCanal(item)))
+    .filter((item) => !yaEsta(item) && !fueraGrilla.has(normalizaCanal(item)))
     .map((item) => ({ canal: item, muted: !incluyePacks }))
+  // Los packs a la carta son servicios de pago extra que siempre se muestran,
+  // independientemente de si hay canales con nombres similares en la grilla base
+  const packsContratar = datos?.packsALaCarta || []
 
   const tituloGrilla = titulo || (meta ? `Grilla ${meta.proveedor} · ${meta.paquete}` : 'Grilla de canales')
   const conteo = datos?.conteo
@@ -1279,14 +1273,19 @@ const GrillaCanalesTV = ({ clave, titulo, resumen, incluidos, declarado }) => {
                   {conteo.retirados} fuera de circulación
                 </span>
               )}
-              <button
-                type="button"
-                onClick={() => setSoloHd((v) => !v)}
-                className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-white/20 px-2.5 py-1 text-[11px] font-semibold text-white/80 hover:bg-white/10 transition-colors"
-              >
-                {soloHd ? <EyeOff size={12} /> : <Eye size={12} />}
-                {soloHd ? 'Ver todos' : 'Solo HD'}
-              </button>
+              {/* El filtro por HD solo existe donde la fuente dice la calidad de
+                  cada señal. En Claro el conteo viene a nivel de grilla, así que
+                  el botón se oculta en vez de filtrar una lista vacía. */}
+              {datos.hdPorCanal && (
+                <button
+                  type="button"
+                  onClick={() => setSoloHd((v) => !v)}
+                  className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-white/20 px-2.5 py-1 text-[11px] font-semibold text-white/80 hover:bg-white/10 transition-colors"
+                >
+                  {soloHd ? <EyeOff size={12} /> : <Eye size={12} />}
+                  {soloHd ? 'Ver todos' : 'Solo HD'}
+                </button>
+              )}
             </div>
           )}
 
@@ -1307,8 +1306,35 @@ const GrillaCanalesTV = ({ clave, titulo, resumen, incluidos, declarado }) => {
             </label>
           )}
 
-          <div className="max-h-72 overflow-y-auto overscroll-contain pr-1 [scrollbar-width:thin]">
+          <div className="max-h-72 lg:max-h-[26rem] overflow-y-auto overscroll-contain pr-1 [scrollbar-width:thin] space-y-4">
             <GrillaLogos canales={[...base, ...extras]} conNumero={!!datos} />
+
+            {packsContratar.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-start gap-2">
+                  <CreditCard size={16} className="mt-0.5 shrink-0 text-white/70" />
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-white/90">
+                      Premium a la carta · para contratar
+                    </p>
+                  </div>
+                </div>
+                {packsContratar.map((pack) => (
+                  <div key={pack.id} className="space-y-2">
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
+                      <span className="text-[11px] font-semibold text-white/90">{pack.nombre}</span>
+                      {pack.precio && (
+                        <span className="text-[11px] font-bold text-amber-200">{pack.precio}/mes</span>
+                      )}
+                    </div>
+                    {pack.nota && (
+                      <p className="text-[10px] leading-snug text-white/50">{pack.nota}</p>
+                    )}
+                    <GrillaLogos canales={pack.canales} conNumero={!!datos} sello="Contratar" />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {!!conflictosAbiertos?.length && (
@@ -1317,8 +1343,13 @@ const GrillaCanalesTV = ({ clave, titulo, resumen, incluidos, declarado }) => {
                 Números por confirmar
               </p>
               {conflictosAbiertos.map((c) => (
-                <p key={c.senales.join('-')} className="text-[11px] leading-snug text-amber-100/80">
-                  <span className="font-mono">{c.senales.join(', ')}</span> — {c.detalle}
+                <p key={c.senales.join('-') || c.detalle} className="text-[11px] leading-snug text-amber-100/80">
+                  {c.senales.length > 0 && (
+                    <>
+                      <span className="font-mono">{c.senales.join(', ')}</span> —{' '}
+                    </>
+                  )}
+                  {c.detalle}
                 </p>
               ))}
               <p className="text-[11px] text-amber-100/60">
@@ -1332,17 +1363,6 @@ const GrillaCanalesTV = ({ clave, titulo, resumen, incluidos, declarado }) => {
               ? `Números de canal de la guía oficial de ${datos.proveedor}. Cada proveedor tiene su propia numeración: un mismo número puede ser una señal distinta en VTR y en Claro.`
               : 'Canales de los packs de cable. Este plan no tiene guía de canales por número.'}
           </p>
-
-          {datos &&
-            declarado?.canales &&
-            parseInt(String(declarado.canales), 10) !== datos.conteo.canales && (
-              <p className="text-[11px] leading-snug text-amber-100/70">
-                El plan declara {declarado.canales}
-                {declarado.hd ? ` (${declarado.hd})` : ''} y la guía detalla {datos.conteo.canales}. La guía de{' '}
-                {datos.proveedor} no está separada por plan, así que no se puede afirmar qué señales entran en este
-                paquete puntualmente.
-              </p>
-            )}
         </div>
       )}
     </div>
@@ -1351,7 +1371,7 @@ const GrillaCanalesTV = ({ clave, titulo, resumen, incluidos, declarado }) => {
 
 const StatModal = ({ label, value, highlight = false }) => (
   <div
-    className={`flex min-w-[86px] flex-col items-center gap-0.5 rounded-2xl px-3.5 py-2 text-center ${
+    className={`flex min-w-[92px] flex-col items-center gap-0.5 rounded-2xl px-3.5 py-2 text-center ${
       highlight ? 'bg-emerald-500/15 ring-1 ring-emerald-400/30' : 'bg-white/5'
     }`}
   >
@@ -1370,6 +1390,22 @@ const PillModal = ({ Icon, label, value, muted = false }) => (
     <span className="font-semibold">{label}</span>
     {value && <span className="opacity-90">{value}</span>}
   </span>
+)
+
+// Tarjeta centrada (ícono, label y valor apilados) para la columna angosta del
+// modal con grilla: mantiene el bloque centrado y ordenado.
+const ItemModal = ({ Icon, label, value, muted = false, className = '' }) => (
+  <div
+    className={`flex flex-col items-center gap-1 rounded-xl px-3 py-2.5 text-center ring-1 ${
+      muted ? 'bg-white/[0.04] ring-white/5' : 'bg-white/5 ring-white/10'
+    } ${className}`}
+  >
+    {Icon && <Icon size={16} className="shrink-0 text-white/55" />}
+    <span className={`text-xs lg:text-sm font-semibold ${muted ? 'text-white/50' : 'text-white/85'}`}>{label}</span>
+    {value && (
+      <span className={`text-[11px] leading-snug ${muted ? 'text-white/40' : 'text-white/55'}`}>{value}</span>
+    )}
+  </div>
 )
 
 const SeccionModal = ({ Icon, titulo, children }) => (
@@ -1397,10 +1433,17 @@ const PlanDetalleModal = ({ detalle, onClose }) => {
   if (!detalle) return null
 
   const streams = detalle.streams || []
-  const streamsExcluidos = TV_FULL_STREAMS.filter((src) => !streams.includes(src))
+  const packFull = detalle.tipo === 'claro' ? TV_FULL_STREAMS_CLARO : TV_FULL_STREAMS
+  const streamsExcluidos = packFull.filter((src) => !streams.includes(src))
   const tieneTv = !!detalle.tv
   const tieneFibra = !!detalle.fibra
+  // Solo hay grilla que mostrar cuando el plan trae televisión: si no, el modal
+  // se mantiene en una sola columna para no dejar un espacio vacío a la derecha.
+  const tieneGrilla = !!detalle.fuenteGrilla || tieneTv
   const incluyePacks = !!detalle.incluyeExtras
+  // Con grilla la columna izquierda queda angosta: ahí el detalle se presenta en
+  // ficha técnica (filas alineadas) en vez de pills centradas, que se descuadran.
+  const compacto = tieneGrilla
   const tagClass = detalle.tag === '2P'
     ? 'bg-gradient-to-r from-yellow-400 to-blue-600'
     : detalle.tag === '3P'
@@ -1453,7 +1496,7 @@ const PlanDetalleModal = ({ detalle, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-[28px] bg-[#1a1a1a]/75 backdrop-blur-xl shadow-[0_25px_80px_rgba(0,0,0,0.55)] overflow-hidden border border-white/10"
+        className={`relative w-full max-w-2xl ${tieneGrilla ? 'lg:max-w-6xl' : ''} max-h-[90vh] flex flex-col rounded-[28px] bg-[#1a1a1a]/75 backdrop-blur-xl shadow-[0_25px_80px_rgba(0,0,0,0.55)] overflow-hidden border border-white/10`}
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -1488,87 +1531,135 @@ const PlanDetalleModal = ({ detalle, onClose }) => {
             <p className="mt-1 text-xs lg:text-sm text-white/55">{detalle.subtitulo}</p>
           )}
           {resumenDetalle && <p className="mt-1 text-[11px] text-white/40">{resumenDetalle}</p>}
+          {detalle.nota && (
+            <p className="mt-1.5 text-[11px] leading-snug text-amber-300/90">{detalle.nota}</p>
+          )}
         </div>
 
-        <div className="flex-1 overflow-y-auto overscroll-contain px-6 pb-6 pt-5 space-y-7 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden text-white/90 [&_strong]:text-white [&_.text-gray-900]:text-white [&_.text-gray-100]:text-white [&_.text-gray-700]:text-white/85 [&_.text-gray-200]:text-white/85 [&_.text-gray-600]:text-white/60 [&_.text-gray-300]:text-white/60 [&_.text-gray-500]:text-white/50 [&_.text-gray-400]:text-white/50 [&_.text-gray-800]:text-white">
-          {(detalle.normal || detalle.canales || detalle.hd || detalle.descuento) && (
-            <div className="flex flex-wrap items-stretch justify-center gap-2">
-              {detalle.normal && <StatModal label="Precio normal" value={detalle.normal} />}
-              {detalle.promo && detalle.promo !== detalle.normal && (
-                <StatModal label="Promo" value={detalle.promo} highlight />
-              )}
-              {detalle.canales && <StatModal label="Canales" value={detalle.canales} />}
-              {detalle.hd && <StatModal label="HD" value={detalle.hd} />}
-              {detalle.descuento && <StatModal label="Descuento" value={detalle.descuento} />}
-            </div>
-          )}
-
-          <SeccionModal Icon={CheckCircle2} titulo="Incluye">
-            <div className="flex flex-wrap justify-center gap-2">
-              {incluidos.map((it) => (
-                <PillModal key={it.label} Icon={it.Icon} label={it.label} value={it.value} />
-              ))}
-              {incluidos.length === 0 && (
-                <span className="text-xs text-white/50">Sin componentes detectados.</span>
-              )}
-            </div>
-            {streams.length > 0 && (
-              <div className="flex flex-wrap justify-center gap-2">
-                {streams.map((src) => (
-                  <StreamIcon key={src} src={src} />
-                ))}
-              </div>
-            )}
-          </SeccionModal>
-
-          {detalle.fuenteGrilla && (
-            <GrillaCanalesTV
-              clave={detalle.fuenteGrilla}
-              titulo={`Guía de canales ${detalle.tipo === 'claro' ? 'Claro' : 'VTR'}`}
-              resumen={detalle.canales && detalle.hd ? `${detalle.canales} · ${detalle.hd}` : undefined}
-              declarado={{ canales: detalle.canales, hd: detalle.hd }}
-            />
-          )}
-          {tieneTv && !detalle.fuenteGrilla && (
-            <GrillaCanalesTV
-              clave={detalle.tipo === 'claro' ? 'claro:full' : 'vtr:full'}
-              titulo={`Grilla ${detalle.tv.label}`}
-              resumen={detalle.canales && detalle.hd ? `${detalle.canales} · ${detalle.hd}` : undefined}
-              incluidos={incluyePacks}
-              declarado={{ canales: detalle.canales, hd: detalle.hd }}
-            />
-          )}
-
-          <SeccionModal Icon={AlertCircle} titulo="No incluye">
-            <div className="flex flex-wrap justify-center gap-2">
-              {excluidos.map((it) => (
-                <PillModal key={it.label} label={it.label} value={it.value} muted />
-              ))}
-              {tieneTv && incluyePacks && streamsExcluidos.length > 0 && (
-                <p className="w-full text-center text-xs text-white/50">
-                  No excluye paquetes de canales cable (HBO, Discovery, ESPN y otros). Solo quedan fuera las plataformas
-                  de streaming listadas abajo.
-                </p>
-              )}
-              {tieneTv && incluyePacks && streamsExcluidos.length === 0 && (
-                <p className="w-full text-center text-xs text-white/50">
-                  Sin exclusiones de grilla ni streaming del pack Full.
-                </p>
-              )}
-              {streamsExcluidos.length > 0 && (
-                <div className="w-full flex flex-col items-center gap-2">
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-white/35">
-                    Streaming no incluido
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-2">
-                    {streamsExcluidos.map((src) => (
-                      <StreamIcon key={src} src={src} muted />
-                    ))}
-                  </div>
+        <div className="flex-1 overflow-y-auto overscroll-contain px-6 pb-6 pt-5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden text-white/90 [&_strong]:text-white [&_.text-gray-900]:text-white [&_.text-gray-100]:text-white [&_.text-gray-700]:text-white/85 [&_.text-gray-200]:text-white/85 [&_.text-gray-600]:text-white/60 [&_.text-gray-300]:text-white/60 [&_.text-gray-500]:text-white/50 [&_.text-gray-400]:text-white/50 [&_.text-gray-800]:text-white">
+          {/* En desktop: todo el detalle del plan queda a la izquierda y la grilla
+              de canales pasa a una columna propia a la derecha. */}
+          <div
+            className={
+              tieneGrilla
+                ? 'space-y-7 lg:grid lg:grid-cols-2 lg:items-start lg:gap-8 lg:space-y-0'
+                : 'space-y-7'
+            }
+          >
+            <div className="space-y-7 lg:col-start-1 lg:row-start-1">
+              {(detalle.normal || detalle.canales || detalle.hd || detalle.descuento) && (
+                <div className="flex flex-wrap items-stretch justify-center gap-2">
+                  {detalle.normal && <StatModal label="Precio normal" value={detalle.normal} />}
+                  {detalle.promo && detalle.promo !== detalle.normal && (
+                    <StatModal label="Promo" value={detalle.promo} highlight />
+                  )}
+                  {detalle.canales && <StatModal label="Canales" value={detalle.canales} />}
+                  {detalle.hd && <StatModal label="HD" value={detalle.hd} />}
+                  {detalle.descuento && <StatModal label="Descuento" value={detalle.descuento} />}
                 </div>
               )}
+
+              <SeccionModal Icon={CheckCircle2} titulo="Incluye">
+                <div className={compacto ? 'space-y-6' : 'space-y-3'}>
+                  <div className={compacto ? 'grid gap-2 sm:grid-cols-2' : 'flex flex-wrap justify-center gap-2'}>
+                    {incluidos.map((it, i) =>
+                      compacto ? (
+                        <ItemModal
+                          key={it.label}
+                          Icon={it.Icon}
+                          label={it.label}
+                          value={it.value}
+                          className={
+                            i === incluidos.length - 1 && incluidos.length % 2 === 1 ? 'sm:col-span-2' : ''
+                          }
+                        />
+                      ) : (
+                        <PillModal key={it.label} Icon={it.Icon} label={it.label} value={it.value} />
+                      )
+                    )}
+                    {incluidos.length === 0 && (
+                      <span className="text-xs text-white/50">Sin componentes detectados.</span>
+                    )}
+                  </div>
+                  {streams.length > 0 && (
+                    <div className={compacto ? 'border-t border-white/5 pt-5' : ''}>
+                      <div className="mx-auto flex w-full max-w-md flex-wrap items-center justify-center gap-4">
+                        {streams.map((src) => (
+                          <StreamIcon key={src} src={src} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </SeccionModal>
             </div>
-          </SeccionModal>
+
+            {tieneGrilla && (
+              <div className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:min-w-0">
+                {detalle.fuenteGrilla ? (
+                  <GrillaCanalesTV
+                    clave={detalle.fuenteGrilla}
+                    titulo={`Guía de canales ${detalle.tipo === 'claro' ? 'Claro' : 'VTR'}`}
+                    resumen={detalle.canales && detalle.hd ? `${detalle.canales} · ${detalle.hd}` : undefined}
+                  />
+                ) : (
+                  <GrillaCanalesTV
+                    clave={detalle.tipo === 'claro' ? 'claro:full' : 'vtr:full'}
+                    titulo={`Grilla ${detalle.tv.label}`}
+                    resumen={detalle.canales && detalle.hd ? `${detalle.canales} · ${detalle.hd}` : undefined}
+                    incluidos={incluyePacks}
+                  />
+                )}
+              </div>
+            )}
+
+            <div className="lg:col-start-1 lg:row-start-2">
+              <SeccionModal Icon={AlertCircle} titulo="No incluye">
+                <div className={compacto ? 'space-y-6' : 'space-y-3'}>
+                  <div className={compacto ? 'grid gap-2 sm:grid-cols-2' : 'flex flex-wrap justify-center gap-2'}>
+                    {excluidos.map((it, i) =>
+                      compacto ? (
+                        <ItemModal
+                          key={it.label}
+                          label={it.label}
+                          value={it.value}
+                          muted
+                          className={
+                            i === excluidos.length - 1 && excluidos.length % 2 === 1 ? 'sm:col-span-2' : ''
+                          }
+                        />
+                      ) : (
+                        <PillModal key={it.label} label={it.label} value={it.value} muted />
+                      )
+                    )}
+                  </div>
+                  {tieneTv && incluyePacks && streamsExcluidos.length > 0 && (
+                    <p className="text-center text-xs leading-snug text-white/50">
+                      No excluye paquetes de canales cable (HBO, Discovery, ESPN y otros). Solo quedan fuera las plataformas
+                      de streaming listadas abajo.
+                    </p>
+                  )}
+                  {tieneTv && incluyePacks && streamsExcluidos.length === 0 && (
+                    <p className="text-center text-xs leading-snug text-white/50">
+                      Sin exclusiones de grilla ni streaming del pack Full.
+                    </p>
+                  )}
+                  {streamsExcluidos.length > 0 && (
+                    <div className={`flex flex-col items-center gap-3 ${compacto ? 'border-t border-white/5 pt-5' : ''}`}>
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-white/35">
+                        Streaming no incluido
+                      </p>
+                      <div className="mx-auto flex w-full max-w-md flex-wrap items-center justify-center gap-4">
+                        {streamsExcluidos.map((src) => (
+                          <StreamIcon key={src} src={src} muted />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </SeccionModal>
+            </div>
+          </div>
         </div>
       </div>
     </div>,
@@ -1618,11 +1709,9 @@ const PlanesComerciales = () => {
   const planesVtr = grupos['1p-internet'] || []
   const planes1pInternet = proveedor === 'vtr' ? (grupos['1p-internet'] || []) : []
   const planes1pStream = proveedor === 'vtr' ? (grupos['1p-stream'] || []) : []
-  const planes1pTv = proveedor === 'vtr' ? (grupos['1p-tv'] || []) : []
   const planes2pTv = proveedor === 'vtr' ? (grupos['2p-tv'] || []) : []
   const planes2pFono = proveedor === 'vtr' ? (grupos['2p-fono'] || []) : []
   const planes3p = proveedor === 'vtr' ? (grupos['3p'] || []) : []
-  const planesCableVtr = proveedor === 'vtr' ? (grupos['cable'] || []) : []
   const planesLegacy = proveedor === 'vtr' ? (grupos['legacy'] || []) : []
   const planesClaro = proveedor === 'claro' ? PLANES_CLARO : []
   const planesClaroHFC = planesClaro.filter((r) => r.tecnologia === 'HFC')
@@ -1632,16 +1721,13 @@ const PlanesComerciales = () => {
   const [planDetalle, setPlanDetalle] = useState(null)
 
   const abrirComercial = (row, tag) => setPlanDetalle(detalleDesdeComercial(row, tag))
-  const abrirCable = (row) => setPlanDetalle(detalleDesdeCable(row))
 
   const term = normalize(query)
   const matches = (row, tag = '') => {
     if (!term) return true
-    return normalize(`${row.comercial || row.plan} ${row.andes} ${(row.tags || []).join(' ')} ${tag}`).includes(term)
+    return normalize(`${row.comercial || row.plan || ''} ${row.andes || ''} ${(row.tags || []).join(' ')} ${tag} ${redDePlanTexto(row)}`).includes(term)
   }
-  const matchCable = (row) => !term || normalize(`${row.plan} ${row.canales} ${row.hd} ${row.precio} ${row.modalidad} cable vtr`).includes(term)
   const has = (data, tag = '') => data.some(r => matches(r, tag))
-  const hasCable = planesCableVtr.some(matchCable)
   const matchLegacy = (row) => !term || normalize(`${row.plan} ${row.precio} ${row.modalidad} legacy vtr`).includes(term)
   const hasLegacy = planesLegacy.some(matchLegacy)
   const matchClaro = (row) => !term || normalize(`${row.comercial} ${row.andes} ${row.precio} ${row.promo} ${row.pack} ${row.megas} ${row.tecnologia}`).includes(term)
@@ -1650,12 +1736,10 @@ const PlanesComerciales = () => {
   const resultados = [
     ...conTag(planes1pInternet, '1P'),
     ...conTag(planes1pStream, '1P'),
-    ...conTag(planes1pTv, '1P'),
     ...conTag(planes2pTv, '2P'),
     ...conTag(planes2pFono, '2P'),
     ...conTag(planes3p, '3P'),
   ].filter(({ row, tag }) => matches(row, tag)).length
-    + planesCableVtr.filter(matchCable).length
     + planesLegacy.filter(matchLegacy).length
     + planesClaro.filter(matchClaro).length
 
@@ -1664,6 +1748,48 @@ const PlanesComerciales = () => {
       <h4 className="font-bold text-base lg:text-lg text-gray-800 dark:text-gray-100">{title}</h4>
     </div>
   )
+
+  /**
+   * Los planes VTR vienen en dos redes: HFC (Internet 500 Megas) y Fibra
+   * Óptica FTTH (600 / 800 / 940 Megas). Cada grupo se separa por red.
+   */
+
+  /** Divide un grupo de planes en bloques por red (HFC / FTTH / sin red). */
+  const bloquesPorRed = (data, tag, labelSinRed = '') => {
+    const filas = data.filter((row) => matches(row, tag))
+    const bloques = []
+    for (const red of REDES_VTR) {
+      const rows = filas.filter((row) => redDePlan(row) === red.id)
+      if (rows.length) bloques.push({ id: red.id, label: red.label, rows })
+    }
+    const otros = filas.filter((row) => !REDES_VTR.some((r) => r.id === redDePlan(row)))
+    if (otros.length) bloques.push({ id: '', label: labelSinRed, rows: otros })
+    return bloques
+  }
+
+  const SubtituloRed = ({ label }) => (
+    <div className="flex items-center gap-3 mb-3">
+      <span className="text-[11px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 whitespace-nowrap">{label}</span>
+      <span className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+    </div>
+  )
+
+  /** Grupo de planes VTR separado por red (HFC / Fibra FTTH). */
+  const GrupoPorRed = ({ data, tag, title = '', className = '' }) => {
+    const bloques = bloquesPorRed(data, tag)
+    if (!bloques.length) return null
+    return (
+      <ModernCard>
+        {title ? <GrupoTitulo title={title} className={className} /> : null}
+        {bloques.map((b, i) => (
+          <div key={b.id || 'sin-red'} className={i === 0 ? '' : 'mt-6'}>
+            {b.label ? <SubtituloRed label={b.label} /> : null}
+            <PlanTable data={b.rows} showPromo q={query} tag={tag} onSelect={abrirComercial} />
+          </div>
+        ))}
+      </ModernCard>
+    )
+  }
 
   const TarjetaClaro = ({ row }) => (
     <button
@@ -1676,6 +1802,7 @@ const PlanesComerciales = () => {
           <span className={`inline-flex items-center justify-center mr-1.5 w-6 h-6 lg:w-7 lg:h-7 rounded-full text-white text-[10px] lg:text-xs font-bold align-middle whitespace-nowrap shrink-0 ${row.pack === '2P' ? 'bg-gradient-to-r from-yellow-400 to-blue-600' : row.pack === '3P' ? 'bg-gradient-to-r from-red-500 to-blue-600' : 'bg-gradient-to-r from-green-500 to-blue-600'}`}>{row.pack}</span>
           {row.comercial}
         </p>
+        <IconosStreaming streams={row.streams} className="justify-end shrink-0 pt-0.5" />
       </div>
       <p className="mt-1 text-xs lg:text-sm leading-relaxed text-gray-500 dark:text-gray-400">{row.andes}</p>
       <div className="mt-3 flex flex-wrap gap-2">
@@ -1779,104 +1906,55 @@ const PlanesComerciales = () => {
         )}
       </div>
 
-      {(proveedor === 'vtr' && (has(planes1pInternet, '1P') || has(planes1pStream, '1P') || has(planes1pTv, '1P') || has(planes2pTv, '2P') || has(planes2pFono, '2P') || has(planes3p, '3P') || hasCable || hasLegacy)) && (
+      {(proveedor === 'vtr' && (has(planes1pInternet, '1P') || has(planes1pStream, '1P') || has(planes2pTv, '2P') || has(planes2pFono, '2P') || has(planes3p, '3P') || hasLegacy)) && (
         <>
           {has(planes1pInternet, '1P') && (
-            <ModernCard>
-              <GrupoTitulo title="Internet Solo Fibra (FTTH)" />
-              <PlanTable data={planes1pInternet} showPromo q={query} tag="1P" onSelect={abrirComercial} />
-            </ModernCard>
+            <GrupoPorRed data={planes1pInternet} tag="1P" title="Internet Solo" />
           )}
           {has(planes1pStream, '1P') && (
-            <ModernCard>
-              <GrupoTitulo title="Internet + Stream (Disney+/Netflix)" className="mt-6 lg:mt-8" />
-              <PlanTable data={planes1pStream} showPromo q={query} tag="1P" onSelect={abrirComercial} />
-            </ModernCard>
-          )}
-          {has(planes1pTv, '1P') && (
-            <ModernCard>
-              <GrupoTitulo title="Televisión Sola (Stream TV)" className="mt-6 lg:mt-8" />
-              <PlanTable data={planes1pTv} showPromo q={query} tag="1P" onSelect={abrirComercial} />
-            </ModernCard>
+            <GrupoPorRed data={planes1pStream} tag="1P" title="Internet + Stream (Disney+/Netflix)" className="mt-6 lg:mt-8" />
           )}
           {has(planes2pTv, '2P') && (
-            <ModernCard>
-              <GrupoTitulo title="Doble Pack Internet + TV (FTTH)" />
-              <PlanTable data={planes2pTv} showPromo q={query} tag="2P" onSelect={abrirComercial} />
-            </ModernCard>
+            <GrupoPorRed data={planes2pTv} tag="2P" title="Doble Pack Internet + TV" />
           )}
           {has(planes2pFono, '2P') && (
             <ModernCard>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-4">
-                {planes2pFono.filter(r => matches(r, '2P')).map((item) => (
-                  <button
-                    type="button"
-                    key={item.id || item.plan}
-                    onClick={() => abrirComercial({ ...item, comercial: item.plan, fono: true }, '2P')}
-                    className={`plan-hover text-left flex flex-col gap-2 rounded-xl border border-transparent px-4 py-3 transition-all cursor-pointer focus:outline-none ${term ? 'bg-emerald-50 dark:bg-emerald-900/40' : 'bg-gray-50 dark:bg-gray-700/50'}`}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <p className="text-sm lg:text-base font-semibold text-gray-900 dark:text-gray-100">
-                          <span className="inline-flex items-center justify-center mr-1.5 w-6 h-6 lg:w-7 lg:h-7 rounded-full bg-gradient-to-r from-yellow-400 to-blue-600 text-white text-[10px] lg:text-xs font-bold align-middle whitespace-nowrap shrink-0">2P</span>
-                          {item.plan}
-                        </p>
-                        <p className="text-xs lg:text-sm text-gray-500 dark:text-gray-400">{item.andes}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 lg:gap-4 whitespace-nowrap">
-                      <span className="text-xs lg:text-sm text-gray-500 dark:text-gray-400">Normal: <strong className="text-gray-900 dark:text-gray-100">{item.normal || '—'}</strong></span>
-                      {item.promo && item.promo !== item.normal && (
-                        <span className="text-xs lg:text-sm font-bold text-emerald-600 dark:text-emerald-400">Promo: {item.promo}</span>
-                      )}
-                    </div>
-                  </button>
-                ))}
-              </div>
+              {bloquesPorRed(planes2pFono, '2P', 'Solo TV + Telefonía').map((b, i) => (
+                <div key={b.id || 'sin-red'} className={i === 0 ? '' : 'mt-6'}>
+                  {b.label ? <SubtituloRed label={b.label} /> : null}
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-4">
+                    {b.rows.map((item) => (
+                      <button
+                        type="button"
+                        key={item.id || item.plan}
+                        onClick={() => abrirComercial({ ...item, comercial: item.plan, fono: true }, '2P')}
+                        className={`plan-hover text-left flex flex-col gap-2 rounded-xl border border-transparent px-4 py-3 transition-all cursor-pointer focus:outline-none ${term ? 'bg-emerald-50 dark:bg-emerald-900/40' : 'bg-gray-50 dark:bg-gray-700/50'}`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <p className="text-sm lg:text-base font-semibold text-gray-900 dark:text-gray-100">
+                              <span className="inline-flex items-center justify-center mr-1.5 w-6 h-6 lg:w-7 lg:h-7 rounded-full bg-gradient-to-r from-yellow-400 to-blue-600 text-white text-[10px] lg:text-xs font-bold align-middle whitespace-nowrap shrink-0">2P</span>
+                              {item.plan}
+                            </p>
+                            <p className="text-xs lg:text-sm text-gray-500 dark:text-gray-400">{item.andes}</p>
+                            <IconosStreaming streams={item.streams} className="mt-1.5 flex-wrap" />
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 lg:gap-4 whitespace-nowrap">
+                          <span className="text-xs lg:text-sm text-gray-500 dark:text-gray-400">Normal: <strong className="text-gray-900 dark:text-gray-100">{item.normal || '—'}</strong></span>
+                          {item.promo && item.promo !== item.normal && (
+                            <span className="text-xs lg:text-sm font-bold text-emerald-600 dark:text-emerald-400">Promo: {item.promo}</span>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </ModernCard>
           )}
           {has(planes3p, '3P') && (
-            <ModernCard>
-              <PlanTable data={planes3p} showPromo q={query} tag="3P" onSelect={abrirComercial} />
-            </ModernCard>
-          )}
-          {hasCable && (
-            <ModernCard>
-              <GrupoTitulo title="Planes Cable VTR" />
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-4">
-                {planesCableVtr.filter(matchCable).map((row) => (
-                  <button
-                    type="button"
-                    key={row.id || row.plan}
-                    onClick={() => abrirCable(row)}
-                    className={`plan-hover text-left rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm transition-all cursor-pointer hover:shadow-md focus:outline-none ${term ? 'bg-emerald-50 dark:bg-emerald-900/40 border-emerald-200 dark:border-emerald-900' : ''}`}
-                  >
-                    <div className="flex items-start justify-between gap-1.5">
-                      <p className="text-sm lg:text-base font-semibold text-gray-900 dark:text-gray-100">{row.plan}</p>
-                      {(row.streams || []).length > 0 && (
-                        <span className="flex items-center justify-end gap-1.5 shrink-0 pt-0.5" title="Streaming incluido">
-                          {row.streams.slice(0, 4).map((src) => (
-                            <img key={src} src={src} alt={STREAM_NAMES[src] || ''} title={STREAM_NAMES[src]} className="h-4 w-4 lg:h-5 lg:w-5 rounded object-contain bg-white dark:bg-gray-900/40" onError={(e) => { e.target.style.display = 'none' }} />
-                          ))}
-                        </span>
-                      )}
-                    </div>
-                    <p className="mt-1 text-xs lg:text-sm leading-relaxed text-gray-500 dark:text-gray-400">{row.modalidad}</p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <span className="plan-meta-pill inline-flex items-center px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs font-semibold text-gray-900 dark:text-gray-100">
-                        {row.canales}
-                      </span>
-                      <span className="plan-hd-pill inline-flex items-center px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 text-xs font-semibold">
-                        {row.hd}
-                      </span>
-                      <span className="plan-normal-pill inline-flex items-center px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-xs font-semibold text-gray-900 dark:text-gray-100">
-                        {row.precio}
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </ModernCard>
+            <GrupoPorRed data={planes3p} tag="3P" />
           )}
           {hasLegacy && (
             <ModernCard>
@@ -2149,12 +2227,11 @@ const LectorLogin = ({ onConfirmar, onCerrar }) => {
   )
 }
 
-/** Chip de perfil: clic abre Tipificaciones. */
+/** Chip de perfil: muestra al lector identificado. */
 const PerfilLectorChip = ({
   email,
   nombre,
   avatarUrl,
-  onOpenTipificaciones,
   compact = false,
 }) => {
   if (!email) return null
@@ -2165,14 +2242,11 @@ const PerfilLectorChip = ({
 
   return (
     <div className="flex items-center gap-3 min-w-0">
-      <button
-        type="button"
-        onClick={() => onOpenTipificaciones?.()}
-        title="Mis tipificaciones"
-        className={`relative w-9 h-9 shrink-0 flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity border-0 p-0 ${
+      <span
+        className={`relative w-9 h-9 shrink-0 flex items-center justify-center border-0 p-0 ${
           avatar.isMessenger
             ? 'bg-transparent overflow-visible'
-            : 'rounded-full overflow-hidden bg-transparent text-current'
+            : 'rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200'
         }`}
       >
         {avatar.src ? (
@@ -2185,19 +2259,13 @@ const PerfilLectorChip = ({
         ) : (
           <span className="text-sm font-bold">{inicial}</span>
         )}
-      </button>
+      </span>
       {!compact && (
-        <button
-          type="button"
-          onClick={() => onOpenTipificaciones?.()}
-          className="min-w-0 text-left hover:opacity-80 transition-opacity"
-          title="Ver mis tipificaciones"
-        >
-          <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Tipificaciones</p>
+        <div className="min-w-0 text-left">
           <p className="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate leading-tight">
             {nombreLector}
           </p>
-        </button>
+        </div>
       )}
     </div>
   )
@@ -2478,7 +2546,7 @@ const MobileNavigation = ({ navigationItems, activeSection, setActiveSection }) 
 )
 
 // Componente principal para móvil
-const MobileLayout = ({ children, darkMode, setDarkMode, navigationItems, activeSection, setActiveSection, modalImage, modalSize, modalDisableZoom, onClose, lectorEmail = '', lectorAvatar = '', onLectorAvatarChange, onToast, onOpenTipificaciones }) => (
+const MobileLayout = ({ children, darkMode, setDarkMode, navigationItems, activeSection, setActiveSection, modalImage, modalSize, modalDisableZoom, onClose, lectorEmail = '', lectorAvatar = '', onLectorAvatarChange, onToast }) => (
   <div
     className={`bg-gray-50 ${
       activeSection === 'mensajes'
@@ -2494,7 +2562,8 @@ const MobileLayout = ({ children, darkMode, setDarkMode, navigationItems, active
             <button
               onClick={() => setDarkMode(!darkMode)}
               title={darkMode ? 'Modo claro' : 'Modo oscuro'}
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors"
+              aria-label={darkMode ? 'Modo claro' : 'Modo oscuro'}
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 transition-colors cursor-pointer"
             >
               {darkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
@@ -2521,7 +2590,6 @@ const MobileLayout = ({ children, darkMode, setDarkMode, navigationItems, active
               <PerfilLectorChip
                 email={lectorEmail}
                 avatarUrl={lectorAvatar}
-                onOpenTipificaciones={onOpenTipificaciones}
                 compact
               />
             ) : null}
@@ -2550,7 +2618,7 @@ const MobileLayout = ({ children, darkMode, setDarkMode, navigationItems, active
 )
 
 // Componente principal para desktop
-const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActiveSection, sidebarOpen, setSidebarOpen, navigationItems, modalImage, modalSize, modalDisableZoom, onClose, lectorEmail = '', lectorAvatar = '', onLectorAvatarChange, onToast, onOpenTipificaciones }) => {
+const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActiveSection, sidebarOpen, setSidebarOpen, navigationItems, modalImage, modalSize, modalDisableZoom, onClose, lectorEmail = '', lectorAvatar = '', onLectorAvatarChange, onToast }) => {
   const [sidebarHover, setSidebarHover] = useState(false)
   const [simuladoresOpen, setSimuladoresOpen] = useState(activeSection === 'androidtv' || activeSection === 'genesys' || activeSection === 'andes')
 
@@ -2563,7 +2631,7 @@ const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActi
       className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white shadow-xl fixed h-full z-40 left-0 overflow-visible transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]`}
     >
       <div className="h-full overflow-y-auto overflow-x-hidden flex flex-col">
-      <div className="border-b border-gray-100 flex items-center justify-center p-4 h-32 relative shrink-0">
+      <div className="border-b border-gray-100 flex items-center justify-center p-4 h-20 relative shrink-0">
         <a
           href="https://apex.wayfromhome.cx/login?returnUrl=%2Fmenu"
           target="_blank"
@@ -2574,7 +2642,7 @@ const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActi
             src="https://i.ibb.co/7Nn2L1Py/apex-large.png"
             alt="Logo Apex"
             className={`object-contain cursor-pointer transition-all duration-300 nav-logo ${sidebarOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
-            style={{ height: '40px' }}
+            style={{ height: '28px' }}
             onError={(e) => {
               e.target.style.display = 'none'
             }}
@@ -2589,7 +2657,7 @@ const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActi
           <img
             src="https://i.ibb.co/XrtN8M3V/apex-2.png"
             alt="Apex"
-            className={`w-8 h-8 object-contain cursor-pointer transition-all duration-300 nav-logo ${sidebarOpen ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}
+            className={`w-6 h-6 object-contain cursor-pointer transition-all duration-300 nav-logo ${sidebarOpen ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`}
             onError={(e) => {
               e.target.style.display = 'none'
             }}
@@ -2725,29 +2793,28 @@ const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActi
         </ul>
       </nav>
 
-      {/* Mismo diseño que los items del nav: pastilla con perfil + tema (solo escritorio) */}
-      <div className="shrink-0 border-t border-gray-100 p-4 pt-3">
+      {/* Mismo diseño que los items del nav: pastilla con perfil (solo escritorio). El cambio de tema vive en el header. */}
+      <div className={`shrink-0 border-t border-gray-100 p-4 pt-3 ${lectorEmail ? '' : 'hidden'}`}>
         <div
-          className={`btn-cyan-hover nav-side-btn flex items-center rounded-full text-gray-700 dark:text-gray-200 transition-[gap,padding,justify-content] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          className={`nav-side-btn flex items-center rounded-full text-gray-700 dark:text-gray-200 transition-[gap,padding,justify-content] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             sidebarOpen ? 'gap-3 px-4 py-2' : 'gap-0 px-0 py-2 justify-center'
           }`}
         >
           {lectorEmail ? (
-            <button
-              type="button"
-              onClick={() => onOpenTipificaciones?.()}
-              title="Mis tipificaciones"
-              aria-label="Mis tipificaciones"
-              className={`min-w-0 flex items-center cursor-pointer transition-[gap] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            <div
+              className={`min-w-0 flex items-center transition-[gap] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                 sidebarOpen ? 'gap-3' : 'gap-0 justify-center'
               }`}
             >
               {(() => {
                 const av = avatarImgProps(lectorAvatar, { fallbackMessenger: true })
+                // Avatar idéntico al del sidebar de /admin (AvatarPerfilPicker size="sm")
                 return (
                   <span
-                    className={`relative w-6 h-6 shrink-0 flex items-center justify-center text-[10px] font-bold text-gray-600 dark:text-gray-300 ${
-                      av.isMessenger ? 'bg-transparent overflow-visible' : 'rounded-full overflow-hidden bg-transparent text-current'
+                    className={`relative w-8 h-8 shrink-0 flex items-center justify-center border-0 p-0 ${
+                      av.isMessenger
+                        ? 'bg-transparent overflow-visible'
+                        : 'rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200'
                     }`}
                   >
                     {av.src ? (
@@ -2758,7 +2825,7 @@ const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActi
                         style={av.style}
                       />
                     ) : (
-                      String(lectorEmail).charAt(0).toUpperCase()
+                      <User size={16} className="text-gray-400" />
                     )}
                   </span>
                 )
@@ -2772,19 +2839,8 @@ const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActi
               >
                 {nombreDesdeEmail(lectorEmail)}
               </span>
-            </button>
+            </div>
           ) : null}
-          <button
-            type="button"
-            onClick={() => setDarkMode(!darkMode)}
-            title={darkMode ? 'Modo claro' : 'Modo oscuro'}
-            aria-label={darkMode ? 'Modo claro' : 'Modo oscuro'}
-            className={`shrink-0 flex items-center justify-center cursor-pointer transition-[margin] duration-300 ${
-              lectorEmail ? (sidebarOpen ? 'ml-auto' : 'ml-0') : 'mx-auto'
-            }`}
-          >
-            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
         </div>
       </div>
       </div>
@@ -2812,7 +2868,18 @@ const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActi
         sidebarOpen ? 'ml-64' : 'ml-20'
       } ${activeSection === 'mensajes' || activeSection === 'androidtv' || activeSection === 'genesys' || activeSection === 'andes' ? 'h-screen min-h-0 overflow-hidden' : 'min-h-screen'}`}
     >
-      {/* El perfil del lector y el cambio de tema viven al final del sidebar */}
+      {/* Header de escritorio: mismo estilo que el de /admin (tema claro/oscuro) */}
+      <header className="bg-white shadow-sm sticky top-0 z-30 flex justify-end items-center gap-3 px-6 py-3 shrink-0">
+        <button
+          type="button"
+          onClick={() => setDarkMode(!darkMode)}
+          title={darkMode ? 'Modo claro' : 'Modo oscuro'}
+          aria-label={darkMode ? 'Modo claro' : 'Modo oscuro'}
+          className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 transition-colors cursor-pointer"
+        >
+          {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+      </header>
 
       {/* Content — mensajes, androidtv, genesys y andes a pantalla completa (sin card flotante ni padding) */}
       <div
@@ -2906,37 +2973,6 @@ const FormField = ({ label, children, full }) => (
     {children}
   </div>
 )
-
-// Modal de confirmación de subida (reemplaza el alert del navegador)
-const ModalExito = ({ abierto, titulo, mensaje, tipo = 'exito', onCerrar }) => {
-  if (!abierto) return null
-  const esError = tipo === 'error'
-  return (
-    <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center z-[60] p-4 animate-in fade-in duration-200"
-      onClick={onCerrar}
-    >
-      <div
-        className="rounded-[28px] bg-[#1a1a1a]/75 backdrop-blur-xl border border-white/10 shadow-[0_25px_80px_rgba(0,0,0,0.55)] p-8 max-w-sm w-full text-center animate-in zoom-in duration-200"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center ${esError ? 'bg-red-500/20 text-red-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
-          {esError ? <AlertTriangle size={32} /> : <CheckCircle2 size={32} />}
-        </div>
-        <h3 className={`mt-4 text-xl font-bold ${esError ? 'text-red-400' : 'text-white'}`}>
-          {titulo || (esError ? 'Error' : 'Subida Exitosamente')}
-        </h3>
-        {mensaje && <p className="mt-2 text-sm text-white/55">{mensaje}</p>}
-        <button
-          onClick={onCerrar}
-          className={`mt-6 w-full py-3 rounded-full text-white font-medium transition-all duration-300 hover:scale-[1.02] ${esError ? 'bg-red-600 hover:bg-red-700' : 'bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700'}`}
-        >
-          Aceptar
-        </button>
-      </div>
-    </div>
-  )
-}
 
 const Toast = ({ toast, onClose }) => {
   useEffect(() => {
@@ -3119,7 +3155,7 @@ const CredencialModal = ({ credencial, onClose, onCopiar }) => {
 }
 
 // Plantilla de derivación Web N1 / Trazabilidad técnica
-const PlantillaN1 = ({ correoApex = '', onEnviado }) => {
+const PlantillaN1 = () => {
   const [form, setForm] = useState({
     asesor: '',
     nombre: '',
@@ -3135,9 +3171,6 @@ const PlantillaN1 = ({ correoApex = '', onEnviado }) => {
   })
 
   const update = (key) => (e) => setForm(prev => ({ ...prev, [key]: e.target.value }))
-
-  const [guardando, setGuardando] = useState(false)
-  const [modal, setModal] = useState(null)
 
   const copyTemplate = () => {
     const text = `N1 TECNICO / TRAZABILIDAD TÉCNICA
@@ -3157,47 +3190,6 @@ const PlantillaN1 = ({ correoApex = '', onEnviado }) => {
       .then(() => window.alert('Plantilla copiada al portapapeles'))
       .catch(() => window.alert('No se pudo copiar la plantilla'))
     return text
-  }
-
-  const guardar = async () => {
-    if (!form.asesor || !form.nombre) {
-      setModal({ tipo: 'error', titulo: 'Campos incompletos', mensaje: 'Completa al menos el Asesor y el Nombre del Cliente antes de guardar.' })
-      return
-    }
-    setGuardando(true)
-    const texto = `N1 TECNICO / TRAZABILIDAD TÉCNICA
-
-👤 Asesor: ${form.asesor}
-➡️ Nombre del Cliente: ${form.nombre}
-🔹 1. PLATAFORMA: ${form.plataformaTitulo}
-➡️ ${form.plataforma}
-🔹 2. MARCA: ${form.marca}
-🔹 3. SERVICIO: ${form.servicio}
-➡️ ${form.servicioOpcion}
-🔹 4. RUT CLIENTE: ${form.rut}
-🔹 5. TELÉFONO CELULAR: ${form.telefono}
-🔹 6. CANAL DE INGRESO: ${form.canal}
-🔹 7. OBSERVACIÓN INICIAL: ${form.observacion}`
-    const ok = await enviarTipificacionPersonal({
-      correoApex,
-      tipo: 'N1',
-      campos: { ...form },
-      texto,
-      onEnviado,
-      setModal,
-    })
-    setGuardando(false)
-    if (ok) {
-      setForm(prev => ({
-        ...prev,
-        asesor: '',
-        nombre: '',
-        rut: '',
-        telefono: '',
-        observacion: '',
-      }))
-      setModal({ tipo: 'exito', titulo: 'Guardado', mensaje: 'Tipificación guardada en tu historial personal.' })
-    }
   }
 
   const inputClass = "w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
@@ -3276,14 +3268,6 @@ const PlantillaN1 = ({ correoApex = '', onEnviado }) => {
 
       <div className="mt-auto pt-6 flex flex-wrap justify-start gap-3">
         <button
-          onClick={guardar}
-          disabled={guardando}
-          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-lg shadow-emerald-600/20 transition-colors disabled:opacity-60 cursor-pointer"
-        >
-          <Save size={16} />
-          {guardando ? 'Enviando...' : 'Enviar'}
-        </button>
-        <button
           onClick={copyTemplate}
           className="inline-flex items-center justify-center gap-2 px-5 py-2.5 ml-auto rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-semibold transition-colors cursor-pointer"
         >
@@ -3292,19 +3276,12 @@ const PlantillaN1 = ({ correoApex = '', onEnviado }) => {
         </button>
       </div>
     </div>
-    <ModalExito
-      abierto={modal !== null}
-      tipo={modal?.tipo}
-      titulo={modal?.titulo}
-      mensaje={modal?.mensaje}
-      onCerrar={() => setModal(null)}
-    />
     </>
   )
 }
 
 // Plantilla de requerimiento cliente crítico
-const PlantillaRequerimientoCritico = ({ correoApex = '', onEnviado }) => {
+const PlantillaRequerimientoCritico = () => {
   const [form, setForm] = useState({
     tipoActividad: 'VISITA TECNICA',
     usuarioCreador: '',
@@ -3322,9 +3299,6 @@ const PlantillaRequerimientoCritico = ({ correoApex = '', onEnviado }) => {
   })
 
   const update = (key) => (e) => setForm(prev => ({ ...prev, [key]: e.target.value }))
-
-  const [guardando, setGuardando] = useState(false)
-  const [modal, setModal] = useState(null)
 
   const copyTemplate = () => {
     const text = `Buenas tardes estimada, de ser posible tu ayuda con este requerimiento, cliente crítico
@@ -3346,55 +3320,6 @@ BLOQUE: ${form.bloqueDeseado}`
     navigator.clipboard.writeText(text)
       .then(() => window.alert('Plantilla copiada al portapapeles'))
       .catch(() => window.alert('No se pudo copiar la plantilla'))
-  }
-
-  const guardar = async () => {
-    if (!form.usuarioCreador || !form.rut) {
-      setModal({ tipo: 'error', titulo: 'Campos incompletos', mensaje: 'Completa al menos el Usuario Creador y el RUT antes de guardar.' })
-      return
-    }
-    setGuardando(true)
-    const texto = `Buenas tardes estimada, de ser posible tu ayuda con este requerimiento, cliente crítico
-
-TIPO DE ACTIVIDAD: ${form.tipoActividad}
-USUARIO CREADOR: ${form.usuarioCreador}
-RUT: ${form.rut}
-Cel: ${form.cel}
-PEDIDO: ${form.pedido}
-ACTIVIDAD: ${form.actividad}
-COMUNA: ${form.comuna}
-TECNOLOGÍA: ${form.tecnologia}
-FECHA: ${form.fecha}
-BLOQUE: ${form.bloque}
-TIPO DE MARCA: ${form.marca}
-
-FECHA DESEADA: ${form.fechaDeseada}
-BLOQUE: ${form.bloqueDeseado}`
-    const ok = await enviarTipificacionPersonal({
-      correoApex,
-      tipo: 'RequerimientoCritico',
-      campos: { ...form },
-      texto,
-      onEnviado,
-      setModal,
-    })
-    setGuardando(false)
-    if (ok) {
-      setForm(prev => ({
-        ...prev,
-        usuarioCreador: '',
-        rut: '',
-        cel: '',
-        pedido: '',
-        actividad: '',
-        comuna: '',
-        fecha: '',
-        bloque: '',
-        fechaDeseada: '',
-        bloqueDeseado: '',
-      }))
-      setModal({ tipo: 'exito', titulo: 'Guardado', mensaje: 'Tipificación guardada en tu historial personal.' })
-    }
   }
 
   const inputClass = "w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
@@ -3476,14 +3401,6 @@ BLOQUE: ${form.bloqueDeseado}`
 
       <div className="mt-auto pt-6 flex flex-wrap justify-start gap-3">
         <button
-          onClick={guardar}
-          disabled={guardando}
-          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-lg shadow-emerald-600/20 transition-colors disabled:opacity-60 cursor-pointer"
-        >
-          <Save size={16} />
-          {guardando ? 'Enviando...' : 'Enviar'}
-        </button>
-        <button
           onClick={copyTemplate}
           className="inline-flex items-center justify-center gap-2 px-5 py-2.5 ml-auto rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-semibold transition-colors cursor-pointer"
         >
@@ -3492,19 +3409,12 @@ BLOQUE: ${form.bloqueDeseado}`
         </button>
       </div>
     </div>
-    <ModalExito
-      abierto={modal !== null}
-      tipo={modal?.tipo}
-      titulo={modal?.titulo}
-      mensaje={modal?.mensaje}
-      onCerrar={() => setModal(null)}
-    />
     </>
   )
 }
 
 // Plantilla Genesys
-const PlantillaGenesys = ({ correoApex = '', onEnviado }) => {
+const PlantillaGenesys = () => {
   const [form, setForm] = useState({
     supervisor: '',
     asesor: '',
@@ -3517,13 +3427,8 @@ const PlantillaGenesys = ({ correoApex = '', onEnviado }) => {
     idAndes: '',
     accion: '',
   })
-  const [capturaFile, setCapturaFile] = useState(null)
-  const [capturaPreview, setCapturaPreview] = useState('')
 
   const update = (key) => (e) => setForm(prev => ({ ...prev, [key]: e.target.value }))
-
-  const [guardando, setGuardando] = useState(false)
-  const [modal, setModal] = useState(null)
 
   const SUPERVISORES = ['Enmanuel Mota', 'Zarela Rojas', 'Gean Mendoza', 'Fernando Perez', 'Harold Tejada']
   const INCIDENCIAS = [
@@ -3541,34 +3446,6 @@ const PlantillaGenesys = ({ correoApex = '', onEnviado }) => {
     'No se llamó al cliente',
   ]
 
-  const onCapturaChange = (e) => {
-    const file = e.target.files?.[0] || null
-    if (capturaPreview) URL.revokeObjectURL(capturaPreview)
-    if (!file) {
-      setCapturaFile(null)
-      setCapturaPreview('')
-      return
-    }
-    if (!/^image\//i.test(file.type)) {
-      setModal({ tipo: 'error', titulo: 'Archivo inválido', mensaje: 'La captura debe ser una imagen (PNG, JPG, etc.).' })
-      e.target.value = ''
-      return
-    }
-    if (file.size > 8 * 1024 * 1024) {
-      setModal({ tipo: 'error', titulo: 'Archivo muy pesado', mensaje: 'La captura no puede superar 8 MB.' })
-      e.target.value = ''
-      return
-    }
-    setCapturaFile(file)
-    setCapturaPreview(URL.createObjectURL(file))
-  }
-
-  const limpiarCaptura = () => {
-    if (capturaPreview) URL.revokeObjectURL(capturaPreview)
-    setCapturaFile(null)
-    setCapturaPreview('')
-  }
-
   const copyTemplate = () => {
     const text = `REGISTRO LLAMADA GENESYS
 
@@ -3585,73 +3462,6 @@ const PlantillaGenesys = ({ correoApex = '', onEnviado }) => {
     navigator.clipboard.writeText(text)
       .then(() => window.alert('Plantilla copiada al portapapeles'))
       .catch(() => window.alert('No se pudo copiar la plantilla'))
-  }
-
-  const guardar = async () => {
-    if (!form.asesor || !form.rutCliente) {
-      setModal({ tipo: 'error', titulo: 'Campos incompletos', mensaje: 'Completa al menos el Asesor y el RUT del Cliente antes de guardar.' })
-      return
-    }
-    if (!capturaFile) {
-      setModal({
-        tipo: 'error',
-        titulo: 'Falta la captura',
-        mensaje: 'Adjunta una captura de pantalla del registro en Genesys antes de enviar.',
-      })
-      return
-    }
-    setGuardando(true)
-    let capturaUrl = ''
-    try {
-      capturaUrl = await subirImagenImgbb(capturaFile)
-    } catch (err) {
-      setGuardando(false)
-      setModal({
-        tipo: 'error',
-        titulo: 'No se pudo subir la captura',
-        mensaje: err?.message || 'Error al subir la imagen.',
-      })
-      return
-    }
-    const texto = `REGISTRO LLAMADA GENESYS
-
-👤 Supervisor: ${form.supervisor}
-👤 Asesor: ${form.asesor}
-🪪 RUT Asesor: ${form.rutAsesor}
-🕐 Hora de la llamada: ${form.horaLlamada}
-📅 Fecha: ${form.fechaLlamada}
-🪪 RUT Cliente: ${form.rutCliente}
-📱 Teléfono Cliente: ${form.telefonoCliente}
-🏷️ ID Tipificación de Andes: ${form.idAndes}
-⚠️ Incidencia Ocurrida: ${form.incidencia}
-✅ Acción tomada: ${form.accion}
-🖼️ Captura: ${capturaUrl}`
-    const ok = await enviarTipificacionPersonal({
-      correoApex,
-      tipo: 'Genesys',
-      campos: { ...form },
-      texto,
-      capturaUrl,
-      onEnviado,
-      setModal,
-    })
-    setGuardando(false)
-    if (ok) {
-      setForm({
-        supervisor: '',
-        asesor: '',
-        rutAsesor: '',
-        horaLlamada: '',
-        fechaLlamada: '',
-        rutCliente: '',
-        telefonoCliente: '',
-        incidencia: '',
-        idAndes: '',
-        accion: '',
-      })
-      limpiarCaptura()
-      setModal({ tipo: 'exito', titulo: 'Guardado', mensaje: 'Tipificación y captura guardadas en tu historial (también visibles para admin).' })
-    }
   }
 
   const inputClass = "w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
@@ -3709,91 +3519,9 @@ const PlantillaGenesys = ({ correoApex = '', onEnviado }) => {
             {ACCIONES.map(a => <option key={a} value={a}>{a}</option>)}
           </select>
         </FormField>
-
-        <FormField label="Captura de pantalla *" full>
-          <div className="space-y-2">
-            {!capturaPreview ? (
-              <label
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault()
-                  const f = e.dataTransfer?.files?.[0]
-                  if (f) onCapturaChange({ target: { files: [f], value: '' } })
-                }}
-                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 px-4 py-7 text-center transition hover:border-emerald-400 hover:bg-emerald-50/60 dark:border-gray-700 dark:bg-gray-900/40 dark:hover:border-emerald-700 dark:hover:bg-emerald-950/30"
-              >
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
-                  <Upload size={18} className="text-emerald-600 dark:text-emerald-400" />
-                </span>
-                <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">
-                  Arrastra la captura o haz clic para subirla
-                </span>
-                <span className="text-[11px] text-gray-500 dark:text-gray-400">
-                  PNG o JPG · máximo 8 MB
-                </span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  onChange={onCapturaChange}
-                  className="sr-only"
-                />
-              </label>
-            ) : (
-              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-900/40">
-                <img
-                  src={capturaPreview}
-                  alt="Vista previa captura"
-                  className="h-24 w-32 rounded-lg border border-gray-200 bg-white object-contain dark:border-gray-700 dark:bg-gray-950"
-                />
-                <div className="flex min-w-0 flex-col gap-1">
-                  <span className="max-w-[14rem] truncate text-xs font-semibold text-gray-800 dark:text-gray-100">
-                    {capturaFile?.name}
-                  </span>
-                  <span className="text-[11px] text-gray-500 dark:text-gray-400">
-                    {capturaFile ? `${(capturaFile.size / 1024 / 1024).toFixed(2)} MB` : ''}
-                    <span className="mx-1.5 opacity-40">·</span>Lista para enviar
-                  </span>
-                  <div className="mt-1 flex flex-wrap gap-2">
-                    <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1 text-[11px] font-semibold text-gray-600 transition hover:border-emerald-400 hover:text-emerald-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-emerald-600 dark:hover:text-emerald-400">
-                      <RefreshCw size={12} />
-                      Cambiar
-                      <input
-                        type="file"
-                        accept="image/*"
-                        capture="environment"
-                        onChange={onCapturaChange}
-                        className="sr-only"
-                      />
-                    </label>
-                    <button
-                      type="button"
-                      onClick={limpiarCaptura}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1 text-[11px] font-semibold text-gray-500 transition hover:border-red-300 hover:text-red-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:border-red-800 dark:hover:text-red-400"
-                    >
-                      <Trash2 size={12} />
-                      Quitar
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-            <p className="text-[11px] text-gray-500 dark:text-gray-400">
-              Sube la captura del registro en Genesys. Queda guardada en tu bloc y el admin puede verla.
-            </p>
-          </div>
-        </FormField>
       </div>
 
       <div className="mt-auto pt-6 flex flex-wrap justify-start gap-3">
-        <button
-          onClick={guardar}
-          disabled={guardando}
-          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-lg shadow-emerald-600/20 transition-colors disabled:opacity-60 cursor-pointer"
-        >
-          <Save size={16} />
-          {guardando ? 'Enviando...' : 'Enviar'}
-        </button>
         <button
           onClick={copyTemplate}
           className="inline-flex items-center justify-center gap-2 px-5 py-2.5 ml-auto rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-semibold transition-colors cursor-pointer"
@@ -3803,19 +3531,12 @@ const PlantillaGenesys = ({ correoApex = '', onEnviado }) => {
         </button>
       </div>
     </div>
-    <ModalExito
-      abierto={modal !== null}
-      tipo={modal?.tipo}
-      titulo={modal?.titulo}
-      mensaje={modal?.mensaje}
-      onCerrar={() => setModal(null)}
-    />
     </>
   )
 }
 
 // Plantilla general
-const PlantillaGeneral = ({ correoApex = '', onEnviado }) => {
+const PlantillaGeneral = () => {
   const [form, setForm] = useState({
     asesor: '',
     rut: '',
@@ -3828,8 +3549,6 @@ const PlantillaGeneral = ({ correoApex = '', onEnviado }) => {
     motivo: '',
     detalleRazon: '',
   })
-  const [guardando, setGuardando] = useState(false)
-  const [modal, setModal] = useState(null)
   // Textos autocompletados desde el catálogo. Se actualizan al cambiar de
   // tipificación, pero no se pisan si el asesor ya escribió a mano.
   const ultimoAutoInconveniente = useRef('')
@@ -3852,48 +3571,6 @@ const PlantillaGeneral = ({ correoApex = '', onEnviado }) => {
     navigator.clipboard.writeText(text)
       .then(() => window.alert('Plantilla copiada al portapapeles'))
       .catch(() => window.alert('No se pudo copiar la plantilla'))
-  }
-
-  const guardar = async () => {
-    if (!form.asesor || !form.cliente) {
-      setModal({ tipo: 'error', titulo: 'Campos incompletos', mensaje: 'Completa al menos el Asesor y el Nombre del Cliente antes de guardar.' })
-      return
-    }
-    setGuardando(true)
-    const texto = `PLANTILLA GENERAL
-
-👤 Asesor: ${form.asesor}
-🪪 RUT: ${form.rut}
-➡️ Nombre del Cliente: ${form.cliente}
-📧 Correo: ${form.correo}
-⚠️ Inconveniente: ${form.inconveniente}
-✅ Solución: ${form.solucion}${lineaTipif}`
-    const ok = await enviarTipificacionPersonal({
-      correoApex,
-      tipo: 'Basico',
-      campos: { ...form },
-      texto,
-      onEnviado,
-      setModal,
-    })
-    setGuardando(false)
-    if (ok) {
-      ultimoAutoInconveniente.current = ''
-      ultimoAutoSolucion.current = ''
-      setForm(prev => ({
-        ...prev,
-        asesor: '',
-        cliente: '',
-        rut: '',
-        inconveniente: '',
-        solucion: '',
-        razon: '',
-        servicioTipif: '',
-        motivo: '',
-        detalleRazon: '',
-      }))
-      setModal({ tipo: 'exito', titulo: 'Guardado', mensaje: 'Tipificación guardada en tu historial personal.' })
-    }
   }
 
   const inputClass = "w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
@@ -3985,14 +3662,6 @@ const PlantillaGeneral = ({ correoApex = '', onEnviado }) => {
 
       <div className="mt-auto pt-6 flex flex-wrap justify-start gap-3">
         <button
-          onClick={guardar}
-          disabled={guardando}
-          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-lg shadow-emerald-600/20 transition-colors disabled:opacity-60 cursor-pointer"
-        >
-          <Save size={16} />
-          {guardando ? 'Enviando...' : 'Enviar'}
-        </button>
-        <button
           onClick={copyTemplate}
           className="inline-flex items-center justify-center gap-2 px-5 py-2.5 ml-auto rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-semibold transition-colors cursor-pointer"
         >
@@ -4001,13 +3670,6 @@ const PlantillaGeneral = ({ correoApex = '', onEnviado }) => {
         </button>
       </div>
     </div>
-    <ModalExito
-      abierto={modal !== null}
-      tipo={modal?.tipo}
-      titulo={modal?.titulo}
-      mensaje={modal?.mensaje}
-      onCerrar={() => setModal(null)}
-    />
     </>
   )
 }
@@ -5015,6 +4677,64 @@ const ZTE_SCP_VIDEO_PASOS = [
   },
 ]
 
+/** Pasos del video tutorial HUAWEITUTO.mp4 — gestión del equipo (Huawei) en iMaster NCE */
+const HUAWEI_NCE_VIDEO_PASOS = [
+  {
+    titulo: 'Buscar el cliente y obtener la MAC del equipo',
+    items: [
+      'Ingresa a Andes (Portal de cliente).',
+      'Busca la cuenta del cliente (ejemplo: 7034682-6).',
+      'Ve a la pestaña Productos Instalados.',
+      'Expande el producto Equipo o el que corresponda al gateway/router.',
+      'Copia la MAC Address del equipo (en el video: 485754432D022AB9).',
+    ],
+  },
+  {
+    titulo: 'Ingresar a iMaster NCE',
+    items: [
+      'Abre iMaster NCE.',
+      'En la barra de búsqueda superior, pega la MAC Address del equipo.',
+      'Selecciona el suscriptor / gateway correspondiente.',
+    ],
+  },
+  {
+    titulo: 'Revisar el estado de la red (opcional pero recomendado)',
+    items: [
+      'Entra a la vista 360-Degree Subscriber View o Home Insight.',
+      'Revisa los indicadores de Coverage and Roaming, Bandwidth e Issues.',
+    ],
+    detalle: ['STA Access Denied', 'Weak STA Signal', 'Strong Interference'],
+  },
+  {
+    titulo: 'Cambiar la contraseña del WiFi (SSID)',
+    items: [
+      'Ve a Wi-Fi Settings → Basic Settings.',
+      'Haz clic en el ícono de editar (lápiz) del SSID principal 2.4G.',
+      'En Modify SSID Settings cambia la Password, confírmala y presiona OK.',
+      'Repite el mismo procedimiento para el SSID de 5G.',
+    ],
+    detalle: ['Wifi_Mesh-2D022AB9 (2.4G)', 'Wifi_Mesh-2D022AB9_5G (5G)', 'EasyMesh / Backhaul'],
+  },
+  {
+    titulo: 'Optimizar el RF (canales y potencia)',
+    items: [
+      'Ve a la pestaña Advanced Settings.',
+      'En la sección RF Information haz clic en el botón Optimize.',
+      'Selecciona Auto optimization.',
+      'Confirma la advertencia (el WiFi se reiniciará temporalmente) y presiona OK.',
+      'Espera a que termine el proceso de optimización ("Optimizing…").',
+    ],
+  },
+  {
+    titulo: 'Notas importantes',
+    items: [
+      'La optimización automática puede dejar el WiFi sin servicio unos minutos.',
+      'Después de cambiar la contraseña, el cliente debe reconectar todos sus dispositivos con la nueva clave.',
+      'Si hay problemas de cobertura o interferencia, la optimización de RF suele mejorar el rendimiento.',
+    ],
+  },
+]
+
 /** Causas de la alerta LOS en rojo (fibra óptica) — se muestran como selector */
 const FIBRA_CAUSAS = [
   {
@@ -5046,7 +4766,6 @@ const FIBRA_CAUSAS = [
 const App = () => {
   const isMobile = useIsMobile()
   const [activeSection, setActiveSection] = useState('dashboard')
-  const [tipificacionesRefresh, setTipificacionesRefresh] = useState(0)
   const [expandedSections, setExpandedSections] = useState({})
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -5056,7 +4775,7 @@ const App = () => {
   const [fibraCausaSel, setFibraCausaSel] = useState(0)
   const [contratacionSeleccion, setContratacionSeleccion] = useState(null)
   const [dboxContratacionSeleccion, setDboxContratacionSeleccion] = useState(null)
-  const [plantillaSeleccion, setPlantillaSeleccion] = useState('general')
+  const [plantillaSeleccion, setPlantillaSeleccion] = useState('n1')
   const [appliedIdsSearch, setAppliedIdsSearch] = useState('')
   const [idClaveVTR, setIdClaveVTR] = useState(() => IDS_CLAVE_SEED.map((x) => ({ ...x })))
   const [noticiaOpen, setNoticiaOpen] = useState(false)
@@ -5082,12 +4801,6 @@ const App = () => {
     if (typeof window === 'undefined') return ''
     return localStorage.getItem('vtr-lector-email') || ''
   })
-  // Identidad real (Firebase Auth) para las tipificaciones. `lectorEmail` sale
-  // de localStorage y cualquiera puede editarlo, así que no sirve como prueba
-  // de quién escribe: las reglas de Firestore exigen que el documento se llame
-  // como el correo de esta sesión de Google.
-  const { email: correoSesion, verificado: sesionVerificada } = useMessengerAuth(app)
-  const correoTipificaciones = sesionVerificada ? correoSesion : ''
   const [lectorAvatar, setLectorAvatar] = useState(() => {
     if (typeof window === 'undefined') return ''
     return localStorage.getItem('vtr-lector-avatar') || ''
@@ -5447,6 +5160,7 @@ const App = () => {
     { id: 'planes', label: 'Planes', icon: Coins },
     { id: 'modem', label: 'Modem', icon: Router },
     { id: 'n1q', label: 'Plantillas', icon: ClipboardList },
+    { id: 'tipificacion', label: 'Tipificacion', icon: Pencil },
     { id: 'mensajes', label: 'Mensajes', icon: MessageSquare },
     { id: 'pasos', label: 'Pasos', icon: ListChecks },
     { id: 'contrataciones', label: 'Contrataciones', icon: FileText },
@@ -5625,13 +5339,6 @@ const App = () => {
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4">
                   <QuickLink title="Marcar Asistencia" icon={Globe} onClick={() => window.open('https://dashboards-apexpe.omnia.la/login', '_blank')} iconType="image" iconSrc="/logo-green.png" />
                   <QuickLink title="Somos Clave" icon={Database} onClick={() => window.open('https://somosclave.cl/index.php', '_blank')} iconType="image" iconSrc="/logo-login-portal.png" />
-                  <QuickLink
-                    title="Solucionar Modem"
-                    icon={Wifi}
-                    iconType="image"
-                    iconSrc="/ba57a81434707.png"
-                    onClick={() => setRouterModalOpen(true)}
-                  />
                   <QuickLink title="Streaming" icon={Monitor} onClick={() => setActiveSection('streaming')} />
                   <QuickLink title="Andes" icon={Monitor} onClick={() => window.open('http://siebelprd.vtr.cl:2080/ecommunications_ldap_esn/start.swe?SWENeedContext=false&SWECmd=Logoff&SWEC=306&SWEBID=-1&SRN=&SWETS=', '_blank')} />
                   <QuickLink title="Pasos" icon={ListChecks} onClick={() => setActiveSection('pasos')} />
@@ -5713,6 +5420,9 @@ const App = () => {
                       </li>
                       <li>
                         <strong>Buzón de Voz:</strong> Configurable llamando al <strong>600 310 2000</strong>.
+                      </li>
+                      <li>
+                        <strong>Número de VTR PyME:</strong> Llama al <strong>600 800 9009</strong>.
                       </li>
                     </ul>
                   </div>
@@ -6069,57 +5779,115 @@ const App = () => {
                 </div>
               </div>
 
-              {/* Video tutorial: gestión del equipo (ZTE) en SCP */}
-              <div className="mt-6 overflow-hidden rounded-2xl">
-                <div className="bg-gray-900 dark:bg-gray-950 flex items-center gap-2 px-4 lg:px-5 py-3.5">
-                  <Monitor size={18} className="text-white shrink-0" />
-                  <div>
-                    <p className="text-xs lg:text-base font-bold text-white leading-tight">Video tutorial: gestión del equipo en SCP (ZTE)</p>
-                    <p className="text-[10px] lg:text-xs text-neutral-400">Consulta y gestión en SCP | CPE (Device Management)</p>
-                  </div>
-                </div>
-                <div className="bg-white dark:bg-[#141414] p-4 lg:p-6">
-                  {/* Reproductor — ancho completo para que se vea grande */}
-                  <div className="mx-auto w-full max-w-4xl">
-                    <div className="rounded-2xl overflow-hidden bg-black">
-                      <video controls preload="metadata" playsInline className="w-full h-auto aspect-video bg-black">
-                        <source src="/ZTETUTO.mp4" type="video/mp4" />
-                        Tu navegador no soporta la reproducción de video.
-                      </video>
+              {/* Videos tutoriales comparativos: ZTE (SCP) vs Huawei (iMaster NCE) */}
+              <div className="mt-6 grid md:grid-cols-2 gap-4 lg:gap-6">
+                {/* Video tutorial: gestión del equipo (ZTE) en SCP */}
+                <div className="overflow-hidden rounded-2xl flex flex-col">
+                  <div className="bg-gray-900 dark:bg-gray-950 flex items-center gap-2 px-4 lg:px-5 py-3.5">
+                    <Monitor size={18} className="text-white shrink-0" />
+                    <div>
+                      <p className="text-xs lg:text-base font-bold text-white leading-tight">Video tutorial: gestión del equipo en SCP (ZTE)</p>
+                      <p className="text-[10px] lg:text-xs text-neutral-400">Consulta y gestión en SCP | CPE (Device Management)</p>
                     </div>
                   </div>
+                  <div className="bg-white dark:bg-[#141414] p-4 lg:p-6 flex-1">
+                    {/* Reproductor */}
+                    <div className="w-full">
+                      <div className="rounded-2xl overflow-hidden bg-black">
+                        <video controls preload="metadata" playsInline className="w-full h-auto aspect-video bg-black">
+                          <source src="/ZTETUTO.mp4" type="video/mp4" />
+                          Tu navegador no soporta la reproducción de video.
+                        </video>
+                      </div>
+                    </div>
 
-                  {/* Pasos */}
-                  <div className="mt-6">
-                    <ol className="grid md:grid-cols-2 gap-x-5 gap-y-3">
-                      {ZTE_SCP_VIDEO_PASOS.map((paso, i) => (
-                        <li key={i} className="flex gap-3 py-1.5">
-                          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-[11px] font-bold shrink-0">
-                            {i + 1}
-                          </span>
-                          <div className="min-w-0">
-                            <p className="text-[11px] lg:text-xs font-bold text-gray-800 dark:text-gray-100 leading-snug">{paso.titulo}</p>
-                            <ul className="mt-1 space-y-1 text-[10px] lg:text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-                              {paso.items.map((t, j) => (
-                                <li key={j} className="flex gap-1.5">
-                                  <span className="text-neutral-400 dark:text-neutral-500 shrink-0">•</span>
-                                  <span>{t}</span>
-                                </li>
-                              ))}
-                            </ul>
-                            {paso.detalle && (
-                              <div className="mt-2 grid grid-cols-2 gap-1.5">
-                                {paso.detalle.map((t, j) => (
-                                  <span key={j} className="font-mono text-[10px] text-neutral-600 dark:text-neutral-300 truncate" title={t}>
-                                    {t}
-                                  </span>
+                    {/* Pasos */}
+                    <div className="mt-6">
+                      <ol className="space-y-3">
+                        {ZTE_SCP_VIDEO_PASOS.map((paso, i) => (
+                          <li key={i} className="flex gap-3 py-1.5">
+                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-[11px] font-bold shrink-0">
+                              {i + 1}
+                            </span>
+                            <div className="min-w-0">
+                              <p className="text-[11px] lg:text-xs font-bold text-gray-800 dark:text-gray-100 leading-snug">{paso.titulo}</p>
+                              <ul className="mt-1 space-y-1 text-[10px] lg:text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+                                {paso.items.map((t, j) => (
+                                  <li key={j} className="flex gap-1.5">
+                                    <span className="text-neutral-400 dark:text-neutral-500 shrink-0">•</span>
+                                    <span>{t}</span>
+                                  </li>
                                 ))}
-                              </div>
-                            )}
-                          </div>
-                        </li>
-                      ))}
-                    </ol>
+                              </ul>
+                              {paso.detalle && (
+                                <div className="mt-2 grid grid-cols-2 gap-1.5">
+                                  {paso.detalle.map((t, j) => (
+                                    <span key={j} className="font-mono text-[10px] text-neutral-600 dark:text-neutral-300 truncate" title={t}>
+                                      {t}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Video tutorial: gestión del equipo (Huawei) en iMaster NCE */}
+                <div className="overflow-hidden rounded-2xl flex flex-col">
+                  <div className="bg-gray-900 dark:bg-gray-950 flex items-center gap-2 px-4 lg:px-5 py-3.5">
+                    <Monitor size={18} className="text-white shrink-0" />
+                    <div>
+                      <p className="text-xs lg:text-base font-bold text-white leading-tight">Video tutorial: gestión del equipo en iMaster NCE (Huawei)</p>
+                      <p className="text-[10px] lg:text-xs text-neutral-400">Cambio de clave WiFi, revisión de red y optimización RF</p>
+                    </div>
+                  </div>
+                  <div className="bg-white dark:bg-[#141414] p-4 lg:p-6 flex-1">
+                    {/* Reproductor */}
+                    <div className="w-full">
+                      <div className="rounded-2xl overflow-hidden bg-black">
+                        <video controls preload="metadata" playsInline className="w-full h-auto aspect-video bg-black">
+                          <source src="/HUAWEITUTO.mp4" type="video/mp4" />
+                          Tu navegador no soporta la reproducción de video.
+                        </video>
+                      </div>
+                    </div>
+
+                    {/* Pasos */}
+                    <div className="mt-6">
+                      <ol className="space-y-3">
+                        {HUAWEI_NCE_VIDEO_PASOS.map((paso, i) => (
+                          <li key={i} className="flex gap-3 py-1.5">
+                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-[11px] font-bold shrink-0">
+                              {i + 1}
+                            </span>
+                            <div className="min-w-0">
+                              <p className="text-[11px] lg:text-xs font-bold text-gray-800 dark:text-gray-100 leading-snug">{paso.titulo}</p>
+                              <ul className="mt-1 space-y-1 text-[10px] lg:text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+                                {paso.items.map((t, j) => (
+                                  <li key={j} className="flex gap-1.5">
+                                    <span className="text-neutral-400 dark:text-neutral-500 shrink-0">•</span>
+                                    <span>{t}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                              {paso.detalle && (
+                                <div className="mt-2 flex flex-wrap gap-1.5">
+                                  {paso.detalle.map((t, j) => (
+                                    <span key={j} className="font-mono text-[10px] text-neutral-600 dark:text-neutral-300 truncate" title={t}>
+                                      {t}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -6129,18 +5897,6 @@ const App = () => {
           {activeSection === 'n1q' && (
             <div className="w-full h-full flex flex-col rounded-2xl bg-white p-4 shadow-lg dark:bg-gray-800 sm:p-6">
               <div className="mb-6 flex flex-wrap justify-center gap-x-6 gap-y-5 border-b border-gray-100 pb-5 dark:border-gray-700/60">
-                <button
-                  onClick={() => setPlantillaSeleccion('general')}
-                  className="flex flex-col items-center gap-2 cursor-pointer select-none group"
-                >
-                  <span className="w-14 h-14 lg:w-16 lg:h-16 rounded-full bg-gradient-to-br from-gray-800 to-gray-950 dark:from-gray-100 dark:to-gray-300 text-white dark:text-gray-900 flex items-center justify-center shadow-lg ring-1 ring-black/10 group-hover:scale-110 group-hover:shadow-xl transition-all duration-300 mx-auto">
-                    <FileText size={24} className="shrink-0" />
-                  </span>
-                  <span className="max-w-24 text-[11px] lg:text-xs font-medium text-gray-700 dark:text-gray-300 text-center leading-tight">
-                    Plantilla General
-                  </span>
-                </button>
-
                 <button
                   onClick={() => setPlantillaSeleccion('n1')}
                   className="flex flex-col items-center gap-2 cursor-pointer select-none group"
@@ -6179,55 +5935,30 @@ const App = () => {
               </div>
 
               {plantillaSeleccion === 'n1' && (
-                <PlantillaN1
-                  correoApex={correoTipificaciones}
-                  onEnviado={() => {
-                    setTipificacionesRefresh((n) => n + 1)
-                    setActiveSection('tipificaciones')
-                  }}
-                />
-              )}
-              {plantillaSeleccion === 'general' && (
-                <PlantillaGeneral
-                  correoApex={correoTipificaciones}
-                  onEnviado={() => {
-                    setTipificacionesRefresh((n) => n + 1)
-                    setActiveSection('tipificaciones')
-                  }}
-                />
+                <PlantillaN1 />
               )}
               {plantillaSeleccion === 'visita' && (
-                <PlantillaRequerimientoCritico
-                  correoApex={correoTipificaciones}
-                  onEnviado={() => {
-                    setTipificacionesRefresh((n) => n + 1)
-                    setActiveSection('tipificaciones')
-                  }}
-                />
+                <PlantillaRequerimientoCritico />
               )}
               {plantillaSeleccion === 'genesys' && (
-                <PlantillaGenesys
-                  correoApex={correoTipificaciones}
-                  onEnviado={() => {
-                    setTipificacionesRefresh((n) => n + 1)
-                    setActiveSection('tipificaciones')
-                  }}
-                />
+                <PlantillaGenesys />
               )}
             </div>
           )}
 
-          {activeSection === 'tipificaciones' && (
-            <TipificacionesPanel
-              firebaseApp={app}
-              refreshKey={tipificacionesRefresh}
-              db={db}
-              avatarUrl={lectorAvatar}
-              avataresUsados={lectorAvatares}
-              onCambiarFoto={cambiarFotoPerfil}
-              onElegirAvatar={elegirAvatarGuardado}
-              onToast={showToast}
-            />
+          {activeSection === 'tipificacion' && (
+            <div className="w-full h-full flex flex-col rounded-2xl bg-white p-4 shadow-lg dark:bg-gray-800 sm:p-6">
+              <div className="mb-6 flex flex-wrap items-center gap-3 border-b border-gray-100 pb-5 dark:border-gray-700/60">
+                <span className="w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-gradient-to-br from-gray-800 to-gray-950 dark:from-gray-100 dark:to-gray-300 text-white dark:text-gray-900 flex items-center justify-center shadow-lg ring-1 ring-black/10 shrink-0">
+                  <Pencil size={22} className="shrink-0" />
+                </span>
+                <div className="min-w-0">
+                  <h3 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-gray-100 leading-tight">Tipificacion</h3>
+                  <p className="text-[11px] lg:text-xs text-gray-500 dark:text-gray-400">Plantilla General de tipificación</p>
+                </div>
+              </div>
+              <PlantillaGeneral />
+            </div>
           )}
 
           {activeSection === 'mensajes' && (
@@ -7062,7 +6793,6 @@ const App = () => {
           lectorAvatar={lectorAvatar}
           onLectorAvatarChange={setLectorAvatar}
           onToast={showToast}
-          onOpenTipificaciones={() => setActiveSection('tipificaciones')}
         >
           {content}
         </MobileLayout>
@@ -7097,7 +6827,6 @@ const App = () => {
         lectorAvatar={lectorAvatar}
         onLectorAvatarChange={setLectorAvatar}
         onToast={showToast}
-        onOpenTipificaciones={() => setActiveSection('tipificaciones')}
       >
         {content}
       </DesktopLayout>
@@ -7115,5 +6844,5 @@ const App = () => {
   )
 }
 
-export { AdminPanel, Modal, Toast, UsuariosSection, db, app as firebaseApp }
+export { AdminPanel, Modal, Toast, UsuariosSection, PlantillaGenesys, db, app as firebaseApp }
 export default App

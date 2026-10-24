@@ -3,6 +3,7 @@ import {FieldValue, getFirestore} from "firebase-admin/firestore";
 import {setGlobalOptions} from "firebase-functions";
 import {onRequest} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
+import {getAuth} from "firebase-admin/auth";
 
 initializeApp();
 
@@ -220,3 +221,72 @@ export const fastTargets = onRequest({cors: true}, async (req, res) => {
     res.status(500).json({ok: false, error: String(err)});
   }
 });
+
+/**
+ * Sube una imagen a imgbb desde el servidor.
+ * La API key está en variable de entorno del servidor (más seguro).
+ * Requiere autenticación de Firebase.
+ */
+export const subirImagen = onRequest(
+  {cors: true},
+  async (req, res) => {
+    try {
+      // Verificar autenticación
+      const authHeader = req.headers.authorization;
+      if (!authHeader?.startsWith('Bearer ')) {
+        res.status(401).json({ok: false, error: 'No autorizado'});
+        return;
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      const auth = getAuth();
+      const decoded = await auth.verifyIdToken(token);
+
+      // Opcional: verificar que el usuario sea admin
+      // Descomentar si quieres restringir solo a administradores
+      const email = decoded.email;
+      if (!email || (!email.includes('@apexamerica.com') && !email.includes('@clarovtr.cl'))) {
+        res.status(403).json({ok: false, error: 'Solo usuarios autorizados pueden subir imágenes'});
+        return;
+      }
+
+      // Obtener la imagen del body (base64)
+      const {image, name} = req.body;
+      if (!image) {
+        res.status(400).json({ok: false, error: 'Falta la imagen'});
+        return;
+      }
+
+      // Subir a imgbb con la API key del servidor
+      const IMGBB_API_KEY = process.env.IMGBB_API_KEY;
+      if (!IMGBB_API_KEY) {
+        res.status(500).json({ok: false, error: 'API key no configurada en servidor'});
+        return;
+      }
+
+      const body = new FormData();
+      body.append('key', IMGBB_API_KEY);
+      body.append('image', image);
+      if (name) body.append('name', String(name).slice(0, 80));
+
+      const response = await fetch('https://api.imgbb.com/1/upload', {
+        method: 'POST',
+        body,
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        res.status(500).json({ok: false, error: 'Error al subir a imgbb'});
+        return;
+      }
+
+      // Devolver la URL del CDN (i.ibb.co)
+      const url = data.data?.url || data.data?.display_url;
+      res.json({ok: true, url});
+    } catch (err) {
+      logger.error('Error subiendo imagen', err);
+      res.status(500).json({ok: false, error: String(err)});
+    }
+  }
+);

@@ -34,9 +34,9 @@ datos sin autenticarse. Recomendaciones:
 
 | Elemento | Dónde | Riesgo | Recomendación |
 |---|---|---|---|
-| Config web de Firebase | `App.jsx` y scripts | **Bajo**: la config web es pública por diseño | Restringir la API key por dominio (HTTP referrers) y habilitar **App Check** |
-| `IMGBB_API_KEY` | `App.jsx` | Medio: embebida en el cliente | Restringir por dominio o mover el *upload* a una Cloud Function |
-| URL de Apps Script (`/exec`) | `App.jsx` | Medio: endpoint público con escritura | Validar/añadir token; aplicar `clean_()` (ya presente) |
+| Config web de Firebase | `App.tsx` y scripts | **Bajo**: la config web es pública por diseño | Restringir la API key por dominio (HTTP referrers) y habilitar **App Check** |
+| `IMGBB_API_KEY` | Cloud Function (servidor) | **Bajo**: ahora está en el servidor | ✅ Ya migrado a Cloud Function `subirImagen` (2026-10-24) |
+| URL de Apps Script (`/exec`) | `App.tsx` | Medio: endpoint público con escritura | Validar/añadir token; aplicar `clean_()` (ya presente) |
 | Credenciales de portales internos | `CLARO VTR CHILE ENLACES ID *.md` | **Alto** | Mantener **fuera** de Git (ya en `.gitignore`) |
 | Claves Inbenta | `vtr-web/scripts/_inbenta_knowledge.js` | Alto | Mantener fuera de Git (ya en `.gitignore`); rotar si se filtraron |
 
@@ -69,6 +69,9 @@ evitar añadir datos personales de clientes reales y revisarlo antes de dar acce
 - Proveedores en Firebase Auth: **Google** y **Email/Password**.
 - La lista de administradores se controla en la colección `admins_autorizados`
   (`adminsAutorizados.js`), con un admin principal configurado.
+- Dominios corporativos admitidos para registrarse como administrador:
+  `@apexamerica.com` y `@clarovtr.cl` (lista en `DOMINIOS_ADMIN`). El acceso con
+  Google exige además correo verificado y presencia en el registro.
 - La autorización real depende hoy de listas en Firestore y del cliente, no de reglas
   estrictas del servidor. Al cerrar las reglas, conviene basar la autorización en
   `request.auth` (custom claims o `admins_autorizados`).
