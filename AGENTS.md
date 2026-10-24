@@ -41,9 +41,12 @@ firebase deploy --only functions
 
 ## Estructura de Archivos Clave
 
-- `vtr-web/src/App.jsx` — Shell principal del portal
-- `vtr-web/src/AdminPage.jsx` — Panel de administración
-- `vtr-web/src/components/` — Componentes de UI
+- `vtr-web/src/App.tsx` — Shell principal del portal
+- `vtr-web/src/AdminPage.tsx` — Panel de administración
+- `vtr-web/src/FormulariosPage.tsx` — Formularios de migraciones
+- `vtr-web/src/VentasIslaPage.tsx` — Página de Ventas Isla
+- `vtr-web/src/components/` — Componentes de UI (.jsx y .tsx)
+- `vtr-web/src/juegos/` — Juegos integrados (.jsx)
 - `vtr-web/src/asistente/` — Motor del asistente de IA + corpus de conocimiento
 - `functions/src/index.ts` — Cloud Functions
 - `firebase.json` — Configuración de Firebase
@@ -52,7 +55,7 @@ firebase deploy --only functions
 ## Convenciones de Código
 
 - **Idioma:** español para UI y comentarios
-- **Componentes React:** archivos `.jsx` en `src/components/`
+- **Componentes React:** archivos `.jsx` y `.tsx` en `src/components/` y `src/juegos/`
 - **Estado compartido:** stores en `src/*Store.js` o módulos `*Live.js`
 - **Estilos:** Tailwind CSS, respetar modo claro/oscuro (`dark:`)
 - **Firestore:** patrón *semilla + en vivo* (valor por defecto en código, override desde Firestore)
@@ -115,9 +118,8 @@ Ver `docs/` para documentación específica:
 - GitHub Actions en `.github/workflows/node.js.yml`
 - Ejecuta en push/PR a `main`
 - Prueba con Node 18.x, 20.x, 22.x
-- Ejecuta `npm ci`, `npm run build --if-present`, `npm test`
-- Pendiente: el workflow no fija `working-directory` y la raíz no tiene `package.json`,
-  por lo que `npm ci` falla en la raíz — apuntar el job a `vtr-web`/`functions`
+- Compila `vtr-web/` y `functions/` en cada versión de Node
+- Valida que ambos módulos compilen correctamente
 
 ## Notas Importantes
 
@@ -125,3 +127,5 @@ Ver `docs/` para documentación específica:
 - La configuración de Firebase está embebida en el código del cliente
 - Existen scripts de scraping y generación de datos en `vtr-web/scripts/`
 - La base de conocimiento del asistente está en `IA PARA VTR/`
+- Existen componentes de juegos en `vtr-web/src/juegos/` (Geometry Dash, Purble Place, Zuma Deluxe, SNES Emulator)
+- La página `/ventas-isla` gestiona el registro de Ventas Isla y transferencias al S2 14111

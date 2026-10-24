@@ -51,6 +51,8 @@ No es un sitio público de autoservicio para clientes: es una **herramienta de t
 | **Medidor de velocidad** | Test de velocidad (objetivos Fast.com) |
 | **Formularios** (`/formularios`) | Registro de migraciones por cambio de tecnología y de clientes que **no aceptan** el cambio a fibra |
 | **Admin** (`/admin`) | Gestión de catálogos, usuarios, conocimiento de IA y tipificaciones |
+| **Ventas Isla** (`/ventas-isla`) | Registro de Ventas Isla y transferencias al S2 14111 |
+| **Juegos** | Juegos integrados (Geometry Dash, Purble Place, Zuma Deluxe, SNES Emulator) |
 
 ## Marca: VTR y Claro
 

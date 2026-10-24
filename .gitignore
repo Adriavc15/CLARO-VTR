@@ -101,6 +101,8 @@ PS5reborn_saVantCZ/
 *.sfc
 *.smc
 *.zip
+*.gba
+*.nds
 
 # --- Archivos con credenciales / secretos reales ---
 CLARO VTR CHILE ENLACES ID *.md

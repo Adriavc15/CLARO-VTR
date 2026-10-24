@@ -22,7 +22,7 @@ cd functions && npm install && npm run build  # backend
 
 - **Idioma de la UI:** español (nombres de variables y textos en español, coherente con el
   resto del código).
-- **Componentes React:** archivos `.jsx` en `src/components/`; el estado compartido y los
+- **Componentes React:** archivos `.jsx` y `.tsx` en `src/components/` y `src/juegos/`; el estado compartido y los
   accesos a Firestore viven en stores (`src/*Store.js`) o módulos `*Live.js`.
 - **Tailwind** para estilos; respetar el modo claro/oscuro (`dark:`).
 - **Firestore:** seguir el patrón *semilla + en vivo* (valor por defecto en el código, override
@@ -134,11 +134,10 @@ El proyecto usa **GitHub Actions** para validación automática en cada PR hacia
 - **Pasos:**
   1. Checkout del código
   2. Setup de Node.js con cache de npm
-  3. `npm ci` (instalación limpia)
-  4. `npm run build --if-present`
-  5. `npm test`
+  3. Instala dependencias y compila `vtr-web/` (React + Vite)
+  4. Instala dependencias y compila `functions/` (TypeScript)
 
-**Nota:** El workflow actual usa `npm ci` en la raíz del proyecto. Si el proyecto tiene múltiples `package.json` (vtr-web y functions), se debe actualizar el workflow para compilar ambos.
+Esto valida que ambos módulos (`vtr-web` y `functions`) compilen correctamente en las versiones de Node soportadas.
 
 ## Reglas de oro
 

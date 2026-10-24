@@ -53,7 +53,9 @@ vtr/
 │  │  ├─ App.tsx            # Shell principal del portal
 │  │  ├─ AdminPage.tsx      # Panel de administración (/admin)
 │  │  ├─ FormulariosPage.tsx# Formulario de migraciones (/formularios)
+│  │  ├─ VentasIslaPage.tsx # Página de Ventas Isla (/ventas-isla)
 │  │  ├─ components/        # Componentes de UI (chat, simuladores, etc.)
+│  │  ├─ juegos/            # Juegos integrados (Geometry Dash, Purble Place, etc.)
 │  │  ├─ asistente/         # Motor del asistente de IA + corpus de conocimiento
 │  │  ├─ hooks/             # Hooks de React
 │  │  └─ *Store.js          # Stores de Firestore (asesores, tipificaciones, …)
@@ -142,11 +144,13 @@ Detalles y alternativas en [docs/08-despliegue.md](docs/08-despliegue.md).
 ## Integración continua
 
 `.github/workflows/node.js.yml` se dispara en cada push y PR contra `main`, con una matriz
-de Node **18.x, 20.x y 22.x**: `npm ci` → `npm run build --if-present` → `npm test`.
+de Node **18.x, 20.x y 22.x**: compila `vtr-web` y `functions` en cada versión.
 
-> ⚠️ El workflow todavía no fija `working-directory` y la raíz del repositorio no tiene
-> `package.json`, por lo que `npm ci` falla en la raíz. Pendiente: apuntar el job a
-> `vtr-web` (o `functions`) para que la CI valide el build real.
+El workflow:
+1. Instala dependencias y compila `vtr-web/` (React + Vite)
+2. Instala dependencias y compila `functions/` (TypeScript)
+
+Esto valida que ambos módulos compilen correctamente en las versiones de Node soportadas.
 
 ---
 
@@ -172,6 +176,7 @@ La configuración de Firebase está embebida en el código del cliente
 | `/` | Portal principal (`App.tsx`) |
 | `/admin` | Panel de administración (`AdminPage.tsx`) |
 | `/formularios` | Formulario de migraciones (`FormulariosPage.tsx`) |
+| `/ventas-isla` | Página de Ventas Isla (`VentasIslaPage.tsx`) |
 
 El enrutado es manual, por `pathname`/`hash`, en `vtr-web/src/main.tsx`.
 

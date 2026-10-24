@@ -94,4 +94,5 @@ cd functions && npm run serve            # solo functions
 | `vtr-web/dist/`, `functions/lib/` | `npm run build` |
 | `.firebase/` | cache local de Firebase |
 | `vtr-web/public/sc-assets/` | scripts de scraping de "Somos Clave" |
+| ROMs de videojuegos (`*.sfc`, `*.smc`, `*.zip`, `*.gba`, `*.nds`) | copiar localmente |
 | Archivos con credenciales (`CLARO VTR CHILE ENLACES ID*.md`, `_inbenta_knowledge.js`) | mantener en local |
