@@ -10,25 +10,76 @@ El proyecto es **interno** y maneja información operativa. Hay tres focos de ri
 2. **Claves/credenciales** en el código o en archivos locales.
 3. **Datos sensibles** (capturas de sistemas internos, documentos con credenciales).
 
-## 1. Reglas de Firestore (crítico)
+## 1. Reglas de Firestore
 
-`firestore.rules` está en modo desarrollo:
+**Estado:** ✅ **ACTUALIZADO** (25 de octubre de 2026)
+
+Las reglas de Firestore han sido configuradas con un balance entre accesibilidad pública para formularios y seguridad para datos administrativos.
+
+### Colecciones Públicas (solo lectura)
 
 ```javascript
-allow read, write: if true;
+match /noticias/{id} {
+  allow read: if true;
+  allow write: if false;  // Solo desde admin/Cloud Functions
+}
 ```
 
-Cualquier persona con la configuración del proyecto puede **leer y escribir** toda la base de
-datos sin autenticarse. Recomendaciones:
+Aplica también para: `catalogo_planes`, `sucursalesHorarios`, `guiasPortal`, `filtroMarca`, `grillaCanales`.
 
-- Restringir la escritura a usuarios autenticados (`request.auth != null`).
-- Limitar colecciones sensibles (por ejemplo `admins_autorizados`, `tipificaciones_bloc`,
-  `chat_conversations`) a correos/campos concretos.
-- Validar tipos y tamaños en las reglas.
-- Separar reglas por entorno (dev/prod).
+### Formularios Públicos (escritura con validación)
 
-> Existe la skill `firebase-security-rules-auditor` en `.agents/skills/` para auditar y
-> puntuar las reglas.
+```javascript
+match /migraciones/{id} {
+  allow read: if request.auth != null;  // Solo admin
+  allow create: if request.resource.data.keys().hasAll(['asesor', 'rutCliente', 'fechaIngreso', 'creado'])
+                && request.resource.data.asesor is string
+                && request.resource.data.rutCliente is string
+                && request.resource.data.fechaIngreso is string;
+  allow update, delete: if request.auth != null;  // Solo admin
+}
+```
+
+Aplica también para: `no_acepta_fibra`, `no_venta_islas_movil`.
+
+**Ventajas de seguridad:**
+- ✅ Usuarios públicos solo pueden **crear** registros (no modificar/eliminar)
+- ✅ Validación de campos obligatorios y tipos de datos
+- ✅ Lectura solo para usuarios autenticados (reportes admin)
+- ✅ Modificación/eliminación solo para usuarios autenticados
+
+### Colecciones Privadas (autenticación requerida)
+
+```javascript
+match /tipificaciones_bloc/{id} {
+  allow read, write: if request.auth != null;
+}
+```
+
+Aplica también para: `messenger_chats`, `apex_memoria`, `apex_aprendizaje`, `lectores`, `lecturas`.
+
+### Colecciones Administrativas (permisos específicos)
+
+```javascript
+match /admins_autorizados/{email} {
+  allow read: if request.auth != null;
+  allow write: if (
+    request.auth.token.email == 'adriangamervc@gmail.com' ||
+    exists(/databases/$(database)/documents/admins_autorizados/$(request.auth.token.email)) ||
+    (request.resource.data.email.endsWith('@apexamerica.com') || 
+     request.resource.data.email.endsWith('@clarovtr.cl'))
+  );
+}
+```
+
+### Recomendaciones adicionales
+
+- [ ] Habilitar **App Check** (web) para Firestore y Functions
+- [ ] Monitorear uso de colecciones públicas para detectar abuso
+- [ ] Revisar logs de Firestore periódicamente
+- [ ] Considerar límites de rate (quota) por IP para escritura pública
+
+> Ver `docs/11-diagnostico-fixes-2026-10.md` para detalles del fix de Firestore Rules de octubre 2026.
 
 ## 2. Claves y credenciales
 
@@ -78,10 +129,16 @@ evitar añadir datos personales de clientes reales y revisarlo antes de dar acce
 
 ## 6. Checklist recomendado
 
-- [ ] Cerrar `firestore.rules` (autenticación + validación por colección).
-- [ ] Habilitar **App Check** (web) para Firestore y Functions.
-- [ ] Restringir la API key de Firebase y de imgbb por dominio.
-- [ ] Rotar cualquier clave que haya estado expuesta.
-- [ ] Revisar `public/` y el historial de Git en busca de datos personales o credenciales.
-- [ ] Mantener `.env.local` y los archivos con credenciales fuera de Git.
-- [ ] Limitar colaboradores del repositorio privado.
+- [x] **Cerrar `firestore.rules`** (autenticación + validación por colección) — ✅ **COMPLETADO** (2026-10-25)
+- [ ] Habilitar **App Check** (web) para Firestore y Functions
+- [ ] Restringir la API key de Firebase y de imgbb por dominio
+- [ ] Rotar cualquier clave que haya estado expuesta
+- [ ] Revisar `public/` y el historial de Git en busca de datos personales o credenciales
+- [x] Mantener `.env.local` y los archivos con credenciales fuera de Git — ✅ **COMPLETADO**
+- [ ] Limitar colaboradores del repositorio privado
+- [ ] Monitorear logs de Firestore para detectar escrituras anómalas en formularios públicos
+
+---
+
+**Última actualización:** 25 de octubre de 2026  
+**Cambios recientes:** Firestore Rules actualizadas con escritura pública validada para formularios

@@ -173,3 +173,33 @@ git checkout -- <archivo>
 git stash
 git stash pop
 ```
+
+
+---
+
+## Historial de Bugs Resueltos
+
+### Octubre 2026 — Formularios públicos no guardaban en Firestore
+
+**Problema:** Los formularios de `/formularios` (Migraciones, No acepta fibra, Ventas Isla) no guardaban datos en Firestore.
+
+**Causa raíz:** Firestore Rules bloqueaban escritura pública — solo permitían escritura con autenticación.
+
+**Solución:**
+- Actualizadas reglas de Firestore para permitir escritura pública con validación de campos
+- Corregido `await` faltante en `noVentaIslasMovilStore.js`
+- Agregado manejo de errores en formularios
+
+**Ver:** `docs/11-diagnostico-fixes-2026-10.md` para detalles completos.
+
+---
+
+## Recursos
+
+- [Documentación completa](docs/) — arquitectura, despliegue, seguridad
+- [Firestore Rules actualizadas](firestore.rules) — 25/10/2026
+- [AGENTS.md](AGENTS.md) — información para agentes de IA
+
+---
+
+**Última actualización:** 25 de octubre de 2026
