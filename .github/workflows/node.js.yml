@@ -25,6 +25,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: |
+          vtr-web/package-lock.json
+          functions/package-lock.json
 
     - name: Install and build vtr-web
       working-directory: ./vtr-web
