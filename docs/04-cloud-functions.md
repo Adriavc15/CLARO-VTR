@@ -19,7 +19,7 @@ functions/
 - **Lint:** `npm run lint` (ESLint con config de Google + TypeScript).
 - **Predeploy** (`firebase.json`): `npm run lint` y luego `npm run build`.
 - `setGlobalOptions({ maxInstances: 10 })` limita la concurrencia.
-- Dependencias: `firebase-admin`, `firebase-functions` v7 (usa `firebase-functions/v2/https`).
+- Dependencias: `firebase-admin`, `firebase-functions`, `@google-cloud/firestore` (requerido por firebase-admin v14+).
 - Usa el `fetch` global (sin axios) y `Buffer` de Node.
 - Región de despliegue: `us-central1`.
 

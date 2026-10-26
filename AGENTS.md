@@ -32,6 +32,8 @@ npm install
 npm run build            # Compila TypeScript a lib/
 ```
 
+**Dependencias clave:** `firebase-admin`, `firebase-functions`, `@google-cloud/firestore` (requerido por firebase-admin v14+)
+
 ### Despliegue
 ```bash
 firebase deploy          # Hosting + Functions + Firestore
