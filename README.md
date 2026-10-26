@@ -63,7 +63,9 @@ vtr/
 │  ├─ scripts/              # Utilidades de scraping / generación de datos
 │  └─ index.html            # Punto de entrada de Vite
 ├─ functions/               # Cloud Functions (TypeScript)
-│  └─ src/index.ts          # Funciones HTTP (noticias, comunicados, fastTargets)
+│  ├─ src/index.ts          # Funciones HTTP (noticias, comunicados, fastTargets)
+│  ├─ package.json          # Dependencias (firebase-admin, firebase-functions, @google-cloud/firestore)
+│  └─ lib/                  # Salida compilada (no versionada)
 ├─ IA PARA VTR/             # Base de conocimiento y datasets del asistente
 ├─ firebase.json            # Configuración de Hosting, Functions, Firestore y Auth
 ├─ firestore.rules          # Reglas de seguridad de Firestore
