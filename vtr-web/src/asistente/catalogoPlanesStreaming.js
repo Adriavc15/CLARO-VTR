@@ -1,69 +1,34 @@
 /**
  * Catálogo Planes + Streaming del portal Apex → docs para el chatbot.
- * (Misma data comercial que la sección Planes / Streaming de la web.)
+ *
+ * Los planes NO se duplican acá: se leen de los seeds que usa la web
+ * (`planesSeed.js` para VTR y `planesClaro.js` para Claro). Así el asistente
+ * nunca queda desfasado respecto de las tarjetas de la sección Planes.
+ *
+ * Fuente comercial: Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04).
  */
 import { SHOWCASE_SEED } from './streamingShowcaseLive.js'
 import { resumenGrilla } from './grillaCanales.js'
+import { CABLE_PACKS } from './packsCable.js'
+import { PLANES_SEED, STREAM_PACKS, STREAM_NAMES as STREAM_NAMES_BASE } from './planesSeed.js'
+import { PLANES_CLARO, CLARO_PACKS_PREMIUM } from './planesClaro.js'
 
-export const TV_PREMIUM_I_STREAMS = [
-  '/stream/disney.png',
-  '/stream/hbo-max.png',
-  '/stream/prime-video.png',
-  '/stream/atresplayer.png',
-  '/stream/universal.png',
-  '/stream/cindie.png',
-  '/stream/riivi.png',
-  '/stream/teatrix.png',
-]
-
-export const TV_PREMIUM_II_STREAMS = [
-  '/stream/netflix.png',
-  '/stream/hbo-max.png',
-  '/stream/prime-video.png',
-  '/stream/atresplayer.png',
-  '/stream/universal.png',
-  '/stream/cindie.png',
-  '/stream/riivi.png',
-  '/stream/teatrix.png',
-]
-
-export const TV_FULL_STREAMS = [
-  '/stream/disney.png',
-  '/stream/netflix.png',
-  '/stream/hbo-max.png',
-  '/stream/prime-video.png',
-  '/stream/atresplayer.png',
-  '/stream/universal.png',
-  '/stream/cindie.png',
-  '/stream/riivi.png',
-  '/stream/teatrix.png',
-]
-
-export const VTR_LEGACY_STREAMS = [
-  '/stream/prime-video.png',
-  '/stream/hbo-max.png',
-  '/stream/riivi.png',
-  '/stream/atresplayer.png',
-  '/stream/cindie.png',
-  '/stream/teatrix.png',
-]
+export const TV_PREMIUM_I_STREAMS = STREAM_PACKS.premiumI
+export const TV_PREMIUM_II_STREAMS = STREAM_PACKS.premiumII
+export const TV_FULL_STREAMS = STREAM_PACKS.full
+export const VTR_LEGACY_STREAMS = STREAM_PACKS.vtrLegacy
 
 export const STREAM_NAMES = {
-  '/stream/disney.png': 'Disney+',
-  '/stream/netflix.png': 'Netflix',
-  '/stream/hbo-max.png': 'HBO Max',
-  '/stream/prime-video.png': 'Prime Video',
-  '/stream/atresplayer.png': 'Atresplayer',
-  '/stream/universal.png': 'Universal+',
-  '/stream/cindie.png': 'Cindie',
-  '/stream/riivi.png': 'Riivi',
-  '/stream/teatrix.png': 'Teatrix',
+  ...STREAM_NAMES_BASE,
   'Prime Video': 'Prime Video',
   'HBO Max': 'HBO Max',
   'Riivi': 'Riivi',
   'Atresplayer': 'Atresplayer',
   'Cindie': 'Cindie',
   'Teatrix': 'Teatrix',
+  'TVN Play': 'TVN Play',
+  'OndaMedia': 'OndaMedia',
+  'Storytel': 'Storytel',
 }
 
 export const PLATAFORMAS_STREAMING = SHOWCASE_SEED.map((p) => ({
@@ -74,429 +39,72 @@ export const PLATAFORMAS_STREAMING = SHOWCASE_SEED.map((p) => ({
   href: p.href || '',
 }))
 
-export const CABLE_PACKS = [
-  {
-    id: 'espn',
-    name: 'ESPN',
-    img: '/espn.png',
-    items: ['ESPN', 'ESPN 2', 'ESPN 3', 'ESPN Extra (ESPN 4)', 'ESPN 4 (ESPN 5)', 'Fox Sports 3 (ESPN 6)'],
-  },
-  {
-    id: 'hbo',
-    name: 'HBO (cable)',
-    img: '/stream/hbo-max.png',
-    items: ['HBO', 'HBO Family', 'HBO Mundi', 'HBO Signature', 'HBO Plus', 'HBO Xtreme', 'HBO Pop'],
-  },
-  {
-    id: 'discovery',
-    name: 'Discovery',
-    img: '/DiscoveryWorld.png',
-    items: ['Discovery Science', 'Discovery World', 'Discovery Theater'],
-  },
-  {
-    id: 'otros',
-    name: 'Otros canales cable',
-    img: '/Paramount.png',
-    items: [
-      'Paramount',
-      'Comedy Central',
-      'Universal',
-      'Studio Universal',
-      'USA',
-      'Entertainment Television',
-      'Dreamworks',
-      'Warner',
-      'Telemundo',
-      'MTV',
-      'Cinemax',
-    ],
-  },
-]
+// Los packs cable viven en `packsCable.js` (los usa también la ficha del plan).
+export { CABLE_PACKS }
 
-const planes1pInternet = [
-  { comercial: 'Fibra 600 Megas', andes: 'Fibra Hogar Residencial 0226F', normal: '$21.990', promo: '$14.990' },
-  { comercial: 'Fibra 800 Megas', andes: 'Fibra Avanzado Residencial 0226F', normal: '$23.990', promo: '$15.990' },
-  { comercial: 'Fibra 940 Megas', andes: 'Fibra Experto Residencial 0226F', normal: '$29.990', promo: '$19.990' },
-]
+/** Grupos del seed de VTR → etiqueta que usa el asistente para agrupar. */
+const GRUPOS_VTR = {
+  '1p-internet': '1P Internet',
+  '1p-stream': '1P Stream',
+  '1p-tv': '1P TV',
+  '1p-fono': '1P Telefonía',
+  '2p-tv': '2P Fibra+TV',
+  '2p-fono': '2P Fibra+Fono',
+  '3p': '3P',
+  cable: 'Cable VTR',
+  legacy: 'VTR Legacy',
+}
 
-const planes1pStream = [
-  {
-    comercial: 'Fibra 600 Megas + Disney+',
-    andes: 'Fibra Hogar Stream Residencial 1225F',
-    normal: '$29.990',
-    promo: '$19.990',
-    tags: ['Disney+'],
-    streams: ['/stream/disney.png'],
-  },
-  {
-    comercial: 'Fibra 600 Megas + Netflix',
-    andes: 'Fibra Hogar Stream 3 N0726F',
-    normal: '$29.990',
-    promo: '$19.990',
-    tags: ['Netflix'],
-    streams: ['/stream/netflix.png'],
-  },
-  {
-    comercial: 'Fibra 800 Megas + Disney+',
-    andes: 'Fibra Avanzado Stream Residencial 1225F',
-    normal: '$31.990',
-    promo: '$20.990',
-    tags: ['Disney+'],
-    streams: ['/stream/disney.png'],
-  },
-  {
-    comercial: 'Fibra 800 Megas + Netflix',
-    andes: 'Fibra Avanzado Stream 3 N0726F',
-    normal: '$31.990',
-    promo: '$20.990',
-    tags: ['Netflix'],
-    streams: ['/stream/netflix.png'],
-  },
-  {
-    comercial: 'Fibra 940 Megas + Disney+',
-    andes: 'Fibra Experto Stream Residencial 1225F',
-    normal: '$37.990',
-    promo: '$24.990',
-    tags: ['Disney+'],
-    streams: ['/stream/disney.png'],
-  },
-  {
-    comercial: 'Fibra 940 Megas + Netflix',
-    andes: 'Fibra Experto Stream 3 N0724F',
-    normal: '$37.990',
-    promo: '$24.990',
-    tags: ['Netflix'],
-    streams: ['/stream/netflix.png'],
-  },
-]
+/** Etiqueta de red de los planes VTR (Octubre 2026). */
+const RED_LABEL = {
+  HFC: 'HFC',
+  FTTH: 'Fibra Óptica (FTTH)',
+}
 
-const planes1pTv = [
-  { comercial: 'Stream TV Inicia', andes: 'TV Inicia Residencial 0325hd', normal: null, promo: null },
-  { comercial: 'Stream TV Plus', andes: 'Stream TV Plus 0324hd', normal: '$22.990', promo: '$22.990' },
-  {
-    comercial: 'Stream TV Premium I',
-    andes: 'Stream TV Premium 0226F',
-    normal: '$28.990',
-    promo: '$28.990',
-    tags: ['Disney+'],
-    streams: TV_PREMIUM_I_STREAMS,
-  },
-  {
-    comercial: 'Stream TV Premium Residencial 2',
-    andes: 'TV Premium 2 Residencial N0726F',
-    normal: '$28.990',
-    promo: '$28.990',
-    tags: ['Netflix'],
-    streams: TV_PREMIUM_II_STREAMS,
-  },
-  {
-    comercial: 'Stream TV Premium Residencial 3',
-    andes: 'TV Premium 3 Residencial N0726F',
-    normal: '$33.990',
-    promo: '$33.990',
-    tags: ['Disney+', 'Netflix'],
-    streams: TV_FULL_STREAMS,
-  },
-]
+/** Detalle legible de una fila del seed (red + canales + extras). */
+const detalleDeSeed = (row) => {
+  const partes = [RED_LABEL[row.red], row.canales, row.hd].filter(Boolean)
+  if (row.incluyeExtras) partes.push('incluye extras cable')
+  return partes.join(' · ')
+}
 
-const planes2pTv = [
-  { comercial: 'Fibra 600 + TV Inicia', andes: '2P Fibra Hogar mas TV Inicia 0224F', normal: '$41.990', promo: '$41.990' },
-  { comercial: 'Fibra 600 + TV Plus', andes: '2P Fibra Hogar mas Stream TV Plus 0225F', normal: '$41.990', promo: '$30.990' },
-  {
-    comercial: 'Fibra 600 + TV Premium I',
-    andes: '2P Fibra Hogar mas Stream TV Premium 0225F',
-    normal: '$46.990',
-    promo: '$29.990',
-    tags: ['Disney+'],
-    streams: TV_PREMIUM_I_STREAMS,
-  },
-  {
-    comercial: 'Fibra 600 + TV Premium II',
-    andes: '2P Fibra Hogar mas TV Premium 2 Residencial N0726F',
-    normal: '$46.990',
-    promo: '$29.990',
-    tags: ['Netflix'],
-    streams: TV_PREMIUM_II_STREAMS,
-  },
-  {
-    comercial: 'Fibra 600 + TV Full',
-    andes: '2P Fibra Hogar mas TV Premium 3 Residencial N0726F',
-    normal: '$51.990',
-    promo: '$37.990',
-    tags: ['Disney+', 'Netflix'],
-    streams: TV_FULL_STREAMS,
-  },
-  { comercial: 'Fibra 800 + TV Inicia', andes: '2P Fibra Avanzado mas TV Inicia 0224F', normal: '$42.990', promo: '$42.990' },
-  { comercial: 'Fibra 800 + TV Plus', andes: '2P Fibra Avanzado mas Stream TV Plus 0225F', normal: '$42.990', promo: '$31.990' },
-  {
-    comercial: 'Fibra 800 + TV Premium I',
-    andes: '2P Fibra Avanzado mas Stream TV Premium 0225F',
-    normal: '$47.990',
-    promo: '$30.990',
-    tags: ['Disney+'],
-    streams: TV_PREMIUM_I_STREAMS,
-  },
-  {
-    comercial: 'Fibra 800 + TV Premium II',
-    andes: '2P Fibra Avanzado mas TV Premium 2 Residencial N0726F',
-    normal: '$47.990',
-    promo: '$30.990',
-    tags: ['Netflix'],
-    streams: TV_PREMIUM_II_STREAMS,
-  },
-  {
-    comercial: 'Fibra 800 + TV Full',
-    andes: '2P Fibra Avanzado mas TV Premium 3 Residencial N0726F',
-    normal: '$52.990',
-    promo: '$38.990',
-    tags: ['Disney+', 'Netflix'],
-    streams: TV_FULL_STREAMS,
-  },
-  { comercial: 'Fibra 940 + TV Inicia', andes: '2P Fibra Experto mas TV Inicia 0226F', normal: '$47.990', promo: '$47.990' },
-  { comercial: 'Fibra 940 + TV Plus', andes: '2P Fibra Experto mas Stream TV Plus 0225F', normal: '$47.990', promo: '$35.990' },
-  {
-    comercial: 'Fibra 940 + TV Premium I',
-    andes: '2P Fibra Experto mas Stream TV Premium 0225F',
-    normal: '$52.990',
-    promo: '$34.990',
-    tags: ['Disney+'],
-    streams: TV_PREMIUM_I_STREAMS,
-  },
-  {
-    comercial: 'Fibra 940 + TV Premium II',
-    andes: '2P Fibra Experto mas TV Premium 2 Residencial N0726F',
-    normal: '$52.990',
-    promo: '$34.990',
-    tags: ['Netflix'],
-    streams: TV_PREMIUM_II_STREAMS,
-  },
-  {
-    comercial: 'Fibra 940 + TV Full',
-    andes: '2P Fibra Experto mas TV Premium 3 Residencial N0726F',
-    normal: '$57.990',
-    promo: '$42.990',
-    tags: ['Disney+', 'Netflix'],
-    streams: TV_FULL_STREAMS,
-  },
-]
+/** Detalle de los planes VTR Legacy (no viene en el seed, queda solo para el RAG). */
+const DETALLE_LEGACY = {
+  '2P Internet Hogar mas Fono 0225': 'Internet MEGA 500MBPS + Telefonía',
+  'Doble Pack Finix 0322hd': 'Internet + TV',
+  'Triple Pack Plus 0322hd': 'Internet + TV + Telefonía',
+  'VTR Wifi 0822F': 'Internet 500 MBPS',
+  'VTR Plus 3 0522hd': 'MEGA 500 Mbps + TV Full Digital HD + Fono ilimitado',
+}
 
-const planes2pFono = [
-  { comercial: 'Fibra 600 + Telefonía', andes: '2P Fibra Hogar mas Fono 0226F', normal: '$23.990', promo: '$23.990' },
-  { comercial: 'Fibra 800 + Telefonía', andes: '2P Fibra Avanzado mas Fono 0226F', normal: '$26.990', promo: '$26.990' },
-  { comercial: 'Fibra 940 + Telefonía', andes: '2P Fibra Experto mas Fono 0226F', normal: '$35.990', promo: '$35.990' },
-]
+/** Filas VTR listas para el generador de docs RAG. */
+const filasVtr = () =>
+  PLANES_SEED.map((row) => ({
+    comercial: row.comercial,
+    andes: row.andes,
+    normal: row.normal,
+    promo: row.promo,
+    streams: row.streams || [],
+    tags: row.tags || [],
+    detalle: detalleDeSeed(row) || DETALLE_LEGACY[row.comercial] || '',
+    nota: row.nota || '',
+    grupo: GRUPOS_VTR[row.grupo] || row.grupo,
+  }))
 
-const planes3p = [
-  {
-    comercial: 'Fibra 600 + TV Inicia + Telefonía',
-    andes: '3P Fibra Hogar mas TV Inicia 0224F',
-    normal: '$46.990',
-    promo: '$46.990',
-  },
-  {
-    comercial: 'Fibra 600 + TV Plus + Telefonía',
-    andes: '3P Fibra Hogar mas Stream TV Plus 0225F',
-    normal: '$46.990',
-    promo: '$35.990',
-  },
-  {
-    comercial: 'Fibra 600 + TV Premium I + Telefonía',
-    andes: '3P Fibra Hogar mas Stream TV Premium 0225F',
-    normal: '$51.990',
-    promo: '$36.990',
-    tags: ['Disney+'],
-    streams: TV_PREMIUM_I_STREAMS,
-  },
-  {
-    comercial: 'Fibra 600 + TV Premium II + Telefonía',
-    andes: '3P Fibra Hogar mas TV Premium 2 Residencial N0726F',
-    normal: '$51.990',
-    promo: '$36.990',
-    tags: ['Netflix'],
-    streams: TV_PREMIUM_II_STREAMS,
-  },
-  {
-    comercial: 'Fibra 600 + TV Full + Telefonía',
-    andes: '3P Fibra Hogar mas TV Premium 3 Residencial N0726F',
-    normal: '$56.990',
-    promo: '$44.990',
-    tags: ['Disney+', 'Netflix'],
-    streams: TV_FULL_STREAMS,
-  },
-  {
-    comercial: 'Fibra 800 + TV Inicia + Telefonía',
-    andes: '3P Fibra Avanzado mas TV Inicia 0224F',
-    normal: '$47.990',
-    promo: '$47.990',
-  },
-  {
-    comercial: 'Fibra 800 + TV Plus + Telefonía',
-    andes: '3P Fibra Avanzado mas Stream TV Plus 0225F',
-    normal: '$47.990',
-    promo: '$36.990',
-  },
-  {
-    comercial: 'Fibra 800 + TV Premium I + Telefonía',
-    andes: '3P Fibra Avanzado mas Stream TV Premium 0225F',
-    normal: '$53.990',
-    promo: '$37.990',
-    tags: ['Disney+'],
-    streams: TV_PREMIUM_I_STREAMS,
-  },
-  {
-    comercial: 'Fibra 800 + TV Premium II + Telefonía',
-    andes: '3P Fibra Avanzado mas TV Premium 2 Residencial N0726F',
-    normal: '$53.990',
-    promo: '$37.990',
-    tags: ['Netflix'],
-    streams: TV_PREMIUM_II_STREAMS,
-  },
-  {
-    comercial: 'Fibra 800 + TV Full + Telefonía',
-    andes: '3P Fibra Avanzado mas TV Premium 3 Residencial N0726F',
-    normal: '$58.990',
-    promo: '$45.990',
-    tags: ['Disney+', 'Netflix'],
-    streams: TV_FULL_STREAMS,
-  },
-  {
-    comercial: 'Fibra 940 + TV Inicia + Telefonía',
-    andes: '3P Fibra Experto mas TV Inicia 0224F',
-    normal: '$52.990',
-    promo: '$52.990',
-  },
-  {
-    comercial: 'Fibra 940 + TV Plus + Telefonía',
-    andes: '3P Fibra Experto mas Stream TV Plus 0225F',
-    normal: '$52.990',
-    promo: '$40.990',
-  },
-  {
-    comercial: 'Fibra 940 + TV Premium I + Telefonía',
-    andes: '3P Fibra Experto mas Stream TV Premium 0225F',
-    normal: '$58.990',
-    promo: '$40.990',
-    tags: ['Disney+'],
-    streams: TV_PREMIUM_I_STREAMS,
-  },
-  {
-    comercial: 'Fibra 940 + TV Premium II + Telefonía',
-    andes: '3P Fibra Experto mas TV Premium 2 Residencial N0726F',
-    normal: '$58.990',
-    promo: '$40.990',
-    tags: ['Netflix'],
-    streams: TV_PREMIUM_II_STREAMS,
-  },
-  {
-    comercial: 'Fibra 940 + TV Full + Telefonía',
-    andes: '3P Fibra Experto mas TV Premium 3 Residencial N0726F',
-    normal: '$63.990',
-    promo: '$48.990',
-    tags: ['Disney+', 'Netflix'],
-    streams: TV_FULL_STREAMS,
-  },
-]
-
-const planesCableVtr = [
-  {
-    comercial: 'TV Inicia (Cable)',
-    andes: 'TV Inicia Residencial',
-    normal: '$20.990',
-    promo: null,
-    detalle: '74 canales · 57 HD',
-    streams: [],
-  },
-  {
-    comercial: 'TV Plus (Cable)',
-    andes: 'Stream TV Plus',
-    normal: '$22.990',
-    promo: null,
-    detalle: '101 canales · 82 HD · incluye extras cable',
-    streams: [],
-  },
-  {
-    comercial: 'TV Premium (Cable)',
-    andes: 'Stream TV Premium',
-    normal: '$28.990',
-    promo: null,
-    detalle: '101 canales · 82 HD · incluye extras cable',
-    tags: ['Disney+'],
-    streams: TV_PREMIUM_I_STREAMS,
-  },
-  {
-    comercial: 'TV Premium 2 (Cable)',
-    andes: 'TV Premium 2',
-    normal: '$28.990',
-    promo: null,
-    detalle: '101 canales · 82 HD · incluye extras cable',
-    tags: ['Netflix'],
-    streams: TV_PREMIUM_II_STREAMS,
-  },
-  {
-    comercial: 'TV Full / Premium 3 (Cable)',
-    andes: 'TV Full / Premium 3',
-    normal: '$33.990',
-    promo: null,
-    detalle: '74 canales · 68 HD · incluye extras cable',
-    tags: ['Disney+', 'Netflix'],
-    streams: TV_FULL_STREAMS,
-  },
-]
-
-const planesVtrLegacy = [
-  {
-    comercial: '2P Internet Hogar mas Stream TV Plus 0225hd',
-    andes: '2P Internet Hogar mas Stream TV Plus 0225hd',
-    normal: null,
-    promo: null,
-    detalle: 'Internet MEGA 500MBPS + Stream TV Plus',
-    tags: ['Prime Video', 'HBO Max', 'Riivi', 'Atresplayer', 'Cindie', 'Teatrix'],
-    streams: VTR_LEGACY_STREAMS,
-  },
-  {
-    comercial: '2P Internet Hogar mas Fono 0225',
-    andes: '2P Internet Hogar mas Fono 0225',
-    normal: '$22.228',
-    promo: '$22.228',
-    detalle: 'Internet MEGA 500MBPS + Telefonía',
-    streams: [],
-  },
-  {
-    comercial: 'Doble Pack Finix 0322hd',
-    andes: 'Doble Pack Finix 0322hd',
-    normal: null,
-    promo: null,
-    detalle: 'Internet + TV',
-    tags: ['Prime Video', 'HBO Max', 'Riivi', 'Atresplayer', 'Cindie', 'Teatrix'],
-    streams: VTR_LEGACY_STREAMS,
-  },
-  {
-    comercial: 'Triple Pack Plus 0322hd',
-    andes: 'Triple Pack Plus 0322hd',
-    normal: null,
-    promo: null,
-    detalle: 'Internet + TV + Telefonía',
-    tags: ['Prime Video', 'HBO Max', 'Riivi', 'Atresplayer', 'Cindie', 'Teatrix'],
-    streams: VTR_LEGACY_STREAMS,
-  },
-  {
-    comercial: 'VTR Wifi 0822F',
-    andes: 'VTR Wifi 0822F',
-    normal: '$13.990',
-    promo: '$13.990',
-    detalle: 'Internet 500 MBPS',
-    streams: [],
-  },
-  {
-    comercial: 'VTR Plus 3 0522hd',
-    andes: 'VTR Plus 3 0522hd',
-    normal: null,
-    promo: null,
-    detalle: 'MEGA 500 Mbps + TV Full Digital HD + Fono ilimitado',
-    tags: ['Prime Video', 'HBO Max', 'Riivi', 'Atresplayer', 'Cindie', 'Teatrix'],
-    streams: VTR_LEGACY_STREAMS,
-  },
-]
+/** Filas Claro listas para el generador de docs RAG. */
+const filasClaro = () =>
+  PLANES_CLARO.map((row) => ({
+    comercial: row.comercial,
+    andes: row.andes,
+    normal: row.precio,
+    promo: row.promo === '-' ? null : row.promo,
+    descuento: row.descuento === '-' ? null : row.descuento,
+    streams: row.streams || [],
+    tags: row.tags || [],
+    detalle: [row.tecnologia, row.megas !== '-' ? row.megas : null].filter(Boolean).join(' · '),
+    nota: row.nota || '',
+    grupo: `Claro ${row.tecnologia} ${row.pack}`,
+  }))
 
 const slug = (s) =>
   String(s || '')
@@ -510,17 +118,7 @@ const slug = (s) =>
 const nombresStreaming = (streams = []) =>
   streams.map((s) => STREAM_NAMES[s] || s).filter(Boolean)
 
-const nombresStreamingFromTags = (tags = []) =>
-  tags.map((t) => {
-    // Check if it's an image path
-    if (t.startsWith('/stream/')) {
-      return STREAM_NAMES[t] || t
-    }
-    // If it's already a name, return it
-    return t
-  }).filter(Boolean)
-
-function docDesdePlan(row, grupo) {
+function docDesdePlan(row, grupo, prefijo = '') {
   const titulo = row.comercial
   const streams = row.streams || []
   const tags = row.tags || nombresStreaming(streams)
@@ -539,10 +137,13 @@ function docDesdePlan(row, grupo) {
   } else {
     bloqueCostos.push('Costo / precio: consultar tarifa vigente en catálogo (sin precio fijado en tarjeta).')
   }
+  if (row.descuento) bloqueCostos.push(`Descuento respecto de lista: ${row.descuento}`)
 
   // For legacy plans with tags as platform names instead of image paths
   const streamingTags = Array.isArray(tags) ? tags : []
   const streamingNames = streamingTags.length ? streamingTags : nombresStreaming(streams)
+
+  const canales = [row.canales, row.hd].filter(Boolean).join(' · ')
 
   const contenido = [
     ...bloqueCostos,
@@ -550,7 +151,9 @@ function docDesdePlan(row, grupo) {
     `Nombre Andes (copiar exacto): ${row.andes}`,
     `Grupo: ${grupo}`,
     row.detalle ? `Detalle: ${row.detalle}` : null,
+    canales ? `Canales: ${canales}` : null,
     streamingNames.length ? `Streaming incluido: ${streamingNames.join(', ')}` : 'Sin plataformas de streaming incluidas en la tarjeta.',
+    row.nota ? `Aviso: ${row.nota}` : null,
     'Para cambio de plan: copia el nombre Andes y pégalo en Actualizar promoción.',
   ].filter(Boolean)
 
@@ -563,7 +166,7 @@ function docDesdePlan(row, grupo) {
     .slice(0, 14)
 
   return {
-    id: `plan-${slug(titulo)}`,
+    id: `plan-${prefijo}${slug(titulo)}`,
     titulo,
     categoria: 'PLANES',
     tipo: 'plan',
@@ -618,19 +221,86 @@ export function docsPlanesYStreaming() {
       'cuanto cuesta',
     ],
     contenido: [
-      'Catálogo comercial Apex: Internet 1P, Internet+Streaming, TV sola, 2P (fibra+TV o fibra+fono), 3P y Cable VTR.',
-      'Referencia de precios (promo / lista según tarjeta):',
+      'Catálogo comercial Apex (Octubre 2026): Internet 1P (HFC 500 o fibra FTTH), Internet+Streaming, 2P (internet+TV o internet+fono), 3P y Cable VTR.',
+      'Referencia de precios VTR (promo / lista según tarjeta):',
+      '· Internet 500 (HFC): promo $14.990 · lista $21.990',
       '· Fibra 600: promo $14.990 · lista $21.990',
       '· Fibra 800: promo $15.990 · lista $23.990',
       '· Fibra 940: promo $19.990 · lista $29.990',
       '· Fibra 600 + Netflix/Disney+: promo $19.990 · lista $29.990',
-      '· Stream TV Premium I / Premium 2: $28.990',
-      '· Stream TV Premium 3 / Full: $33.990',
-      '· TV Inicia (cable): $20.990 · TV Plus: $22.990',
+      '· Internet 500 + Netflix/Disney+: promo $19.990 · lista $29.990',
+      '· Internet 500 + TV Premium: promo $29.990 · lista $46.990',
       'Fibra 600 → Andes Fibra Hogar · 800 → Avanzado · 940 → Experto.',
+      'Los planes de HFC 500 Mbps y TV Premium agregados en Octubre 2026 tienen nombre Andes referencial: hay que validarlo en Andes antes de copiarlo a APEX.',
       'Pregunta por un plan concreto para ver costo exacto + nombre Andes.',
     ],
     imagenes: ['/stream/disney.png', '/stream/netflix.png', '/stream/hbo-max.png'],
+    fuente: 'portal-planes',
+  })
+
+  docs.push({
+    id: 'menu-planes-claro',
+    titulo: 'Menú Planes Claro (HFC y Fibra)',
+    categoria: 'PLANES',
+    tipo: 'plan',
+    seccionPortal: 'Planes → Claro',
+    sinonimos: [
+      'planes claro',
+      'claro hogar',
+      'claro hfc',
+      'claro fibra',
+      'ofertas claro',
+      'internet 500 claro',
+      'tv premium claro',
+      'precios claro',
+    ],
+    contenido: [
+      'Catálogo Claro Hogar (Octubre 2026), separado por red: HFC (Internet 500 Megas) y Fibra Óptica FTTH (600 / 800 / 940 Megas).',
+      'Referencia de precios Claro (promo / lista):',
+      '· Internet 500 Megas (HFC): promo $14.990 · lista $21.990',
+      '· Fibra 600: promo $14.990 · lista $21.990',
+      '· Fibra 800: promo $15.990 · lista $23.990',
+      '· Fibra 940: promo $19.990 · lista $29.990',
+      '· Internet 500 + TV Inicia (HFC): promo $26.990 · lista $36.990',
+      '· Internet 500 + TV Premium (HFC): promo $29.990 · lista $46.990',
+      '· Fibra 600/800/940 + TV Premium: promo $29.990 / $30.990 / $34.990',
+      '· Fibra 600/800/940 + TV Full: promo $37.990 / $38.990 / $42.990',
+      'Claro TV Premium incluye Disney+; TV Premium II incluye Netflix; TV Full incluye ambos. Netflix es plan Estándar (2 pantallas, Full HD): upgrade a Premium 4K +$3.000.',
+      'TVN Play, OndaMedia y Storytel son exclusivos de Claro (no vienen en los packs VTR).',
+      'Streaming por tipo de TV en Claro: TV Inicia trae HBO Max, Prime Video y Universal+; TV Premium suma Disney+, Atresplayer, Teatrix, Cindie, Riivi, TVN Play, OndaMedia y Storytel; TV Premium II cambia Disney+ por Netflix y TV Full trae Disney+ y Netflix.',
+      'Box TV incluido sin costo en todos los planes con televisión.',
+      'Instalación gratuita, salvo 1P solo cable/telefonía y 2P cable+telefonía ($50.000). Precios con IVA; promoción usualmente de 12 meses.',
+    ],
+    imagenes: ['/stream/tvn-play.png', '/stream/disney.png', '/stream/netflix.png'],
+    fuente: 'portal-planes',
+  })
+
+  docs.push({
+    id: 'packs-premium-claro',
+    titulo: 'Packs premium adicionales de Claro (pago extra)',
+    categoria: 'PLANES',
+    tipo: 'plan',
+    seccionPortal: 'Planes → Claro',
+    sinonimos: [
+      'packs premium claro',
+      'hotpack',
+      'pack adulto claro',
+      'espn premium',
+      'tnt sports premium',
+      'venus',
+      'pack premium',
+      'canales extra claro',
+    ],
+    contenido: [
+      'Packs opcionales de Claro, se contratan por separado sobre el plan hired (no son planes).',
+      ...CLARO_PACKS_PREMIUM.map(
+        (p) => `· ${p.nombre}: ${p.precio} al mes · ${p.canales} · ${p.notas}.`
+      ),
+      'Venus y el Pack Adulto Premium solo están disponibles en la red HFC.',
+      'En la grilla: Pack Adulto / Hotpack / Venus / Playboy aparece en Claro y VTR, pero los diales 301, 302 y 305 solo se muestran en Claro. ESPN Premium aparece en ambos; los diales 473, 477, 478, 479 y 480 solo en Claro. TNT Sports Premium aparece en ambos sin número de canal (Claro SD 190 / HD 490; VTR SD 165 / HD 855; pack $13.990). Universal+ solo en Claro, rangos 280-285 y 780-785.',
+      'Los packs premium adicionales (Hotpack, ESPN Premium, TNT Sports Premium, etc.) son opcionales y de pago extra.',
+    ],
+    imagenes: [],
     fuente: 'portal-planes',
   })
 
@@ -654,12 +324,14 @@ export function docsPlanesYStreaming() {
       'canales hd',
     ],
     contenido: [
-      'TV FULL es la misma grilla para VTR TV Full y Claro TV Full. La grilla TV INICIA es propia de Claro TV Inicia; los mismos números cambian de señal entre una grilla y otra.',
-      'VTR TV FULL y Claro TV FULL: 74 canales (68 HD). CLARO TV INICIA: 77 canales (66 HD).',
-      'VTR TV Inicia usa la grilla base de 74 canales (57 HD); VTR TV Plus / Premium / Premium 2 suman los packs de cable (101 canales, 82 HD).',
-      'TV PREMIUM no aparece en esas imágenes: no marcar ningún canal como Premium sin evidencia.',
+      'Conteo oficial del Plan Comercial Octubre 2026: VTR TV Inicia 74 canales (57 HD); VTR TV Premium / Premium II / Full 101 canales (84 HD). Claro TV Inicia 77 canales (66 HD); Claro TV Premium / Premium II / Full 74 canales (68 HD).',
+      'TV Premium incluye Disney+, TV Premium II incluye Netflix y TV Full incluye ambos. Conteo del plan comercial de Octubre 2026: TV Premium 9 plataformas en VTR y 10 en Claro; TV Full 9 en VTR y 11 en Claro. En el portal los packs premium de Claro suman además Storytel (TVN Play y OndaMedia ya venían en el plan comercial).',
+      'VTR tiene más canales lineales en Premium/Full (101 únicos / 84 HD) que Claro (74 / 68); Claro tiene más canales en TV Inicia (77 vs 74) y más HD (66 vs 57).',
+      'Los números de canal por plan salen de la lista oficial del Plan Comercial (pág. 39 Claro y pág. 40 VTR), no de la lectura de imágenes del portal: cada proveedor numera distinto y un mismo número puede ser una señal diferente en VTR y en Claro.',
+      'De la tabla oficial de VTR TV Premium: 102 señales sobre 100 diales (el 822 y el 785 transmiten dos señales cada uno); el plan declara 101 canales (84 HD y 17 SD). Los diales menores a 500 son SD y los de 500 o más son HD, salvo el 497 (Sony Channel), que va en HD.',
       resumenGrilla('vtr:full', 40),
       resumenGrilla('claro:inicia', 40),
+      resumenGrilla('claro:full', 40),
     ],
     fuente: 'portal-planes',
   })
@@ -727,18 +399,10 @@ export function docsPlanesYStreaming() {
     fuente: 'portal-streaming',
   })
 
-  const grupos = [
-    [planes1pInternet, '1P Internet'],
-    [planes1pStream, '1P Stream'],
-    [planes1pTv, '1P TV'],
-    [planes2pTv, '2P Fibra+TV'],
-    [planes2pFono, '2P Fibra+Fono'],
-    [planes3p, '3P'],
-    [planesCableVtr, 'Cable VTR'],
-    [planesVtrLegacy, 'VTR Legacy'],
-  ]
-  for (const [lista, grupo] of grupos) {
-    for (const row of lista) docs.push(docDesdePlan(row, grupo))
+  // Planes VTR y Claro: los docs se generan desde los seeds que usa la web.
+  const filas = [...filasVtr(), ...filasClaro()]
+  for (const row of filas) {
+    docs.push(docDesdePlan(row, row.grupo, row.grupo.startsWith('Claro') ? 'claro-' : ''))
   }
 
   for (const p of PLATAFORMAS_STREAMING) {
@@ -775,22 +439,29 @@ export function docsPlanesYStreaming() {
     })
   }
 
-  // Resumen por plataforma OTT incluida en packs TV
+  // Resumen por plataforma OTT incluida en packs TV.
+  // `STREAM_NAMES` tiene los mismos nombres por ruta y por etiqueta: se agrupa
+  // por etiqueta para no generar dos docs con el mismo id.
+  const clavesPorEtiqueta = new Map()
   for (const [key, label] of Object.entries(STREAM_NAMES)) {
+    if (!clavesPorEtiqueta.has(label)) clavesPorEtiqueta.set(label, key)
+  }
+
+  const MAX_PLANES_POR_PLATAFORMA = 24
+
+  for (const [label, key] of clavesPorEtiqueta.entries()) {
     const planesCon = []
-    for (const [lista, grupo] of grupos) {
-      for (const row of lista) {
-        if ((row.streams || []).includes(key) || (row.tags || []).includes(label)) {
-          const precio =
-            row.promo && row.normal && row.promo !== row.normal
-              ? `promo ${row.promo} / lista ${row.normal}`
-              : row.promo || row.normal || 'sin precio en tarjeta'
-          planesCon.push({
-            texto: `${row.comercial} (${grupo}) — ${precio}`,
-            pregunta: row.comercial,
-          })
-        }
-      }
+    for (const row of filas) {
+      const coincide = (row.streams || []).includes(key) || (row.tags || []).includes(label)
+      if (!coincide) continue
+      const precio =
+        row.promo && row.normal && row.promo !== row.normal
+          ? `promo ${row.promo} / lista ${row.normal}`
+          : row.promo || row.normal || 'sin precio en tarjeta'
+      planesCon.push({
+        texto: `${row.comercial} (${row.grupo}) — ${precio}`,
+        pregunta: row.comercial,
+      })
     }
     if (!planesCon.length) continue
     docs.push({
@@ -810,8 +481,10 @@ export function docsPlanesYStreaming() {
       ],
       contenido: [
         `${label} viene en estos planes (con costos del catálogo):`,
-        ...planesCon.slice(0, 18).map((t) => `· ${t.texto}`),
-        planesCon.length > 18 ? `· …y ${planesCon.length - 18} más en la sección Planes.` : null,
+        ...planesCon.slice(0, MAX_PLANES_POR_PLATAFORMA).map((t) => `· ${t.texto}`),
+        planesCon.length > MAX_PLANES_POR_PLATAFORMA
+          ? `· …y ${planesCon.length - MAX_PLANES_POR_PLATAFORMA} más en la sección Planes.`
+          : null,
         'Pregunta por el nombre comercial exacto para ver el nombre Andes a copiar.',
       ].filter(Boolean),
       imagenes: [key],

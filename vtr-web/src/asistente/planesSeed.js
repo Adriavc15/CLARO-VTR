@@ -1,6 +1,9 @@
-/** Catálogo comercial de Planes (seed). El admin puede editarlo en Firestore. */
+/** Catálogo comercial de Planes (seed). El admin puede editarlo en Firestore.
+ *  Fuente: Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04). */
 
 export const STREAM_PACKS = {
+  // Pack básico de TV Inicia: HBO Max, Prime Video y Universal+.
+  basico: ['/stream/hbo-max.png', '/stream/prime-video.png', '/stream/universal.png'],
   disney: ['/stream/disney.png'],
   netflix: ['/stream/netflix.png'],
   premiumI: [
@@ -54,16 +57,23 @@ export const STREAM_OPTIONS = [
   { src: '/stream/cindie.png', name: 'Cindie' },
   { src: '/stream/riivi.png', name: 'Riivi' },
   { src: '/stream/teatrix.png', name: 'Teatrix' },
+  // Plataformas exclusivas de Claro (no vienen en los packs VTR).
+  { src: '/stream/tvn-play.png', name: 'TVN Play' },
+  { src: '/onmedia.png', name: 'OndaMedia' },
+  { src: '/STORYTEL.png', name: 'Storytel' },
 ]
 
+/** Ruta del logo → nombre de la plataforma (fuente única para web, RAG y scripts). */
+export const STREAM_NAMES = Object.fromEntries(
+  STREAM_OPTIONS.map((o) => [o.src, o.name])
+)
+
 export const PLANES_GRUPOS = [
-  { id: '1p-internet', label: 'Internet Solo Fibra (FTTH)', tag: '1P' },
-  { id: '1p-stream', label: 'Internet + Stream', tag: '1P' },
-  { id: '1p-tv', label: 'Televisión Sola (Stream TV)', tag: '1P' },
+  { id: '1p-internet', label: 'Internet Solo (HFC / Fibra FTTH)', tag: '1P' },
+  { id: '1p-stream', label: 'Internet + Stream (Disney+/Netflix)', tag: '1P' },
   { id: '2p-tv', label: 'Doble Pack Internet + TV', tag: '2P' },
-  { id: '2p-fono', label: 'Internet + Telefonía', tag: '2P' },
+  { id: '2p-fono', label: 'Internet o TV + Telefonía', tag: '2P' },
   { id: '3p', label: 'Triple Pack (Internet + TV + Telefonía)', tag: '3P' },
-  { id: 'cable', label: 'Planes Cable VTR', tag: 'Cable' },
   { id: 'legacy', label: 'Planes VTR Legacy', tag: 'Legacy' },
 ]
 
@@ -75,6 +85,18 @@ const slug = (s) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
     .slice(0, 72)
+
+/**
+ * Los planes agregados en Octubre 2026 (HFC 500 Mbps y TV Premium) no traen el
+ * nombre de Andes en el plan comercial: el de abajo es referencial y hay que
+ * validarlo en Andes antes de copiarlo a APEX.
+ */
+const NOTA_ANDES =
+  'Nombre Andes referencial (Octubre 2026): validar en Andes antes de copiar a APEX.'
+
+/** El plan comercial de Octubre 2026 no informa el nombre Andes de este plan. */
+const NOTA_ANDES_PENDIENTE =
+  'El plan comercial de Octubre 2026 no informa el nombre Andes: validar en Andes antes de copiar a APEX.'
 
 const plan = (grupo, tag, comercial, andes, normal, promo, extra = {}, orden) => ({
   id: extra.id || `${grupo}__${slug(comercial)}`,
@@ -89,76 +111,63 @@ const plan = (grupo, tag, comercial, andes, normal, promo, extra = {}, orden) =>
   canales: extra.canales || '',
   hd: extra.hd || '',
   incluyeExtras: !!extra.incluyeExtras,
+  red: extra.red || '',
+  nota: extra.nota || '',
   orden: orden ?? 0,
 })
 
 export const PLANES_SEED = [
-  plan('1p-internet', '1P', 'Fibra 600 Megas', 'Fibra Hogar Residencial 0226F', '$21.990', '$14.990', {}, 1),
-  plan('1p-internet', '1P', 'Fibra 800 Megas', 'Fibra Avanzado Residencial 0226F', '$23.990', '$15.990', {}, 2),
-  plan('1p-internet', '1P', 'Fibra 940 Megas', 'Fibra Experto Residencial 0226F', '$29.990', '$19.990', {}, 3),
+  plan('1p-internet', '1P', 'Internet 500 Megas', 'Internet Hogar 0425', '$21.990', '$14.990', { red: 'HFC', nota: NOTA_ANDES }, 1),
+  plan('1p-internet', '1P', 'Fibra 600 Megas', 'Fibra Hogar Residencial 0226F', '$21.990', '$14.990', { red: 'FTTH' }, 2),
+  plan('1p-internet', '1P', 'Fibra 800 Megas', 'Fibra Avanzado Residencial 0226F', '$23.990', '$15.990', { red: 'FTTH' }, 3),
+  plan('1p-internet', '1P', 'Fibra 940 Megas', 'Fibra Experto Residencial 0226F', '$29.990', '$19.990', { red: 'FTTH' }, 4),
 
-  plan('1p-stream', '1P', 'Fibra 600 Megas + Disney+', 'Fibra Hogar Stream Residencial 1225F', '$29.990', '$19.990', { tags: ['Disney+'], streams: STREAM_PACKS.disney }, 1),
-  plan('1p-stream', '1P', 'Fibra 600 Megas + Netflix', 'Fibra Hogar Stream 3 N0726F', '$29.990', '$19.990', { tags: ['Netflix'], streams: STREAM_PACKS.netflix }, 2),
-  plan('1p-stream', '1P', 'Fibra 800 Megas + Disney+', 'Fibra Avanzado Stream Residencial 1225F', '$31.990', '$20.990', { tags: ['Disney+'], streams: STREAM_PACKS.disney }, 3),
-  plan('1p-stream', '1P', 'Fibra 800 Megas + Netflix', 'Fibra Avanzado Stream 3 N0726F', '$31.990', '$20.990', { tags: ['Netflix'], streams: STREAM_PACKS.netflix }, 4),
-  plan('1p-stream', '1P', 'Fibra 940 Megas + Disney+', 'Fibra Experto Stream Residencial 1225F', '$37.990', '$24.990', { tags: ['Disney+'], streams: STREAM_PACKS.disney }, 5),
-  plan('1p-stream', '1P', 'Fibra 940 Megas + Netflix', 'Fibra Experto Stream 3 N0724F', '$37.990', '$24.990', { tags: ['Netflix'], streams: STREAM_PACKS.netflix }, 6),
+  plan('1p-stream', '1P', 'Internet 500 Megas + Disney+', 'Internet Hogar Stream 1225', '$29.990', '$19.990', { red: 'HFC', tags: ['Disney+'], streams: STREAM_PACKS.disney, nota: NOTA_ANDES }, 1),
+  plan('1p-stream', '1P', 'Internet 500 Megas + Netflix', 'Internet Hogar Stream 3 N0726', '$29.990', '$19.990', { red: 'HFC', tags: ['Netflix'], streams: STREAM_PACKS.netflix, nota: NOTA_ANDES }, 2),
+  plan('1p-stream', '1P', 'Fibra 600 Megas + Disney+', 'Fibra Hogar Stream Residencial 1225F', '$29.990', '$19.990', { red: 'FTTH', tags: ['Disney+'], streams: STREAM_PACKS.disney }, 3),
+  plan('1p-stream', '1P', 'Fibra 600 Megas + Netflix', 'Fibra Hogar Stream 3 N0726F', '$29.990', '$19.990', { red: 'FTTH', tags: ['Netflix'], streams: STREAM_PACKS.netflix }, 4),
+  plan('1p-stream', '1P', 'Fibra 800 Megas + Disney+', 'Fibra Avanzado Stream Residencial 1225F', '$31.990', '$20.990', { red: 'FTTH', tags: ['Disney+'], streams: STREAM_PACKS.disney }, 5),
+  plan('1p-stream', '1P', 'Fibra 800 Megas + Netflix', 'Fibra Avanzado Stream 3 N0726F', '$31.990', '$20.990', { red: 'FTTH', tags: ['Netflix'], streams: STREAM_PACKS.netflix }, 6),
+  plan('1p-stream', '1P', 'Fibra 940 Megas + Disney+', 'Fibra Experto Stream Residencial 1225F', '$37.990', '$24.990', { red: 'FTTH', tags: ['Disney+'], streams: STREAM_PACKS.disney }, 7),
+  plan('1p-stream', '1P', 'Fibra 940 Megas + Netflix', 'Fibra Experto Stream 3 N0724F', '$37.990', '$24.990', { red: 'FTTH', tags: ['Netflix'], streams: STREAM_PACKS.netflix }, 8),
 
-  plan('1p-tv', '1P', 'Stream TV Inicia', 'TV Inicia Residencial 0325hd', '', '', {}, 1),
-  plan('1p-tv', '1P', 'Stream TV Plus', 'Stream TV Plus 0324hd', '$22.990', '$22.990', {}, 2),
-  plan('1p-tv', '1P', 'Stream TV Premium I', 'Stream TV Premium 0226F', '$28.990', '$28.990', { tags: ['Disney+'], streams: STREAM_PACKS.premiumI }, 3),
-  plan('1p-tv', '1P', 'Stream TV Premium Residencial 2', 'TV Premium 2 Residencial N0726F', '$28.990', '$28.990', { tags: ['Netflix'], streams: STREAM_PACKS.premiumII }, 4),
-  plan('1p-tv', '1P', 'Stream TV Premium Residencial 3', 'TV Premium 3 Residencial N0726F', '$33.990', '$33.990', { tags: ['Disney+', 'Netflix'], streams: STREAM_PACKS.full }, 5),
+  plan('2p-tv', '2P', 'Internet 500 + TV Inicia', '2P Internet Hogar mas TV Inicia 0225hd', '$41.990', '', { red: 'HFC', nota: NOTA_ANDES, streams: STREAM_PACKS.basico, tags: ['HBO Max', 'Prime Video', 'Universal+'] }, 1),
+  plan('2p-tv', '2P', 'Internet 500 + TV Premium', '2P Internet Hogar mas TV Premium 0225hd', '$46.990', '$29.990', { red: 'HFC', tags: ['Disney+'], streams: STREAM_PACKS.premiumI, nota: NOTA_ANDES }, 2),
+  plan('2p-tv', '2P', 'Fibra 600 + TV Inicia', '2P Fibra Hogar mas TV Inicia 0224F', '$41.990', '$41.990', { red: 'FTTH', streams: STREAM_PACKS.basico, tags: ['HBO Max', 'Prime Video', 'Universal+'] }, 3),
+  plan('2p-tv', '2P', 'Fibra 600 + TV Premium I', '2P Fibra Hogar mas Stream TV Premium 0225F', '$46.990', '$29.990', { red: 'FTTH', tags: ['Disney+'], streams: STREAM_PACKS.premiumI }, 4),
+  plan('2p-tv', '2P', 'Fibra 600 + TV Premium II', '2P Fibra Hogar mas TV Premium 2 Residencial N0726F', '$46.990', '$29.990', { red: 'FTTH', tags: ['Netflix'], streams: STREAM_PACKS.premiumII }, 5),
+  plan('2p-tv', '2P', 'Fibra 600 + TV Full', '2P Fibra Hogar mas TV Premium 3 Residencial N0726F', '$51.990', '$37.990', { red: 'FTTH', tags: ['Disney+', 'Netflix'], streams: STREAM_PACKS.full }, 6),
+  plan('2p-tv', '2P', 'Fibra 800 + TV Inicia', '2P Fibra Avanzado mas TV Inicia 0224F', '$42.990', '$42.990', { red: 'FTTH', streams: STREAM_PACKS.basico, tags: ['HBO Max', 'Prime Video', 'Universal+'] }, 7),
+  plan('2p-tv', '2P', 'Fibra 800 + TV Premium I', '2P Fibra Avanzado mas Stream TV Premium 0225F', '$47.990', '$30.990', { red: 'FTTH', tags: ['Disney+'], streams: STREAM_PACKS.premiumI }, 8),
+  plan('2p-tv', '2P', 'Fibra 800 + TV Premium II', '2P Fibra Avanzado mas TV Premium 2 Residencial N0726F', '$47.990', '$30.990', { red: 'FTTH', tags: ['Netflix'], streams: STREAM_PACKS.premiumII }, 9),
+  plan('2p-tv', '2P', 'Fibra 800 + TV Full', '2P Fibra Avanzado mas TV Premium 3 Residencial N0726F', '$52.990', '$38.990', { red: 'FTTH', tags: ['Disney+', 'Netflix'], streams: STREAM_PACKS.full }, 10),
+  plan('2p-tv', '2P', 'Fibra 940 + TV Inicia', '2P Fibra Experto mas TV Inicia 0226F', '$47.990', '$47.990', { red: 'FTTH', streams: STREAM_PACKS.basico, tags: ['HBO Max', 'Prime Video', 'Universal+'] }, 11),
+  plan('2p-tv', '2P', 'Fibra 940 + TV Premium I', '2P Fibra Experto mas Stream TV Premium 0225F', '$52.990', '$34.990', { red: 'FTTH', tags: ['Disney+'], streams: STREAM_PACKS.premiumI }, 12),
+  plan('2p-tv', '2P', 'Fibra 940 + TV Premium II', '2P Fibra Experto mas TV Premium 2 Residencial N0726F', '$52.990', '$34.990', { red: 'FTTH', tags: ['Netflix'], streams: STREAM_PACKS.premiumII }, 13),
+  plan('2p-tv', '2P', 'Fibra 940 + TV Full', '2P Fibra Experto mas TV Premium 3 Residencial N0726F', '$57.990', '$42.990', { red: 'FTTH', tags: ['Disney+', 'Netflix'], streams: STREAM_PACKS.full }, 14),
 
-  plan('2p-tv', '2P', 'Fibra 600 + TV Inicia', '2P Fibra Hogar mas TV Inicia 0224F', '$41.990', '$41.990', {}, 1),
-  plan('2p-tv', '2P', 'Fibra 600 + TV Plus', '2P Fibra Hogar mas Stream TV Plus 0225F', '$41.990', '$30.990', {}, 2),
-  plan('2p-tv', '2P', 'Fibra 600 + TV Premium I', '2P Fibra Hogar mas Stream TV Premium 0225F', '$46.990', '$29.990', { tags: ['Disney+'], streams: STREAM_PACKS.premiumI }, 3),
-  plan('2p-tv', '2P', 'Fibra 600 + TV Premium II', '2P Fibra Hogar mas TV Premium 2 Residencial N0726F', '$46.990', '$29.990', { tags: ['Netflix'], streams: STREAM_PACKS.premiumII }, 4),
-  plan('2p-tv', '2P', 'Fibra 600 + TV Full', '2P Fibra Hogar mas TV Premium 3 Residencial N0726F', '$51.990', '$37.990', { tags: ['Disney+', 'Netflix'], streams: STREAM_PACKS.full }, 5),
-  plan('2p-tv', '2P', 'Fibra 800 + TV Inicia', '2P Fibra Avanzado mas TV Inicia 0224F', '$42.990', '$42.990', {}, 6),
-  plan('2p-tv', '2P', 'Fibra 800 + TV Plus', '2P Fibra Avanzado mas Stream TV Plus 0225F', '$42.990', '$31.990', {}, 7),
-  plan('2p-tv', '2P', 'Fibra 800 + TV Premium I', '2P Fibra Avanzado mas Stream TV Premium 0225F', '$47.990', '$30.990', { tags: ['Disney+'], streams: STREAM_PACKS.premiumI }, 8),
-  plan('2p-tv', '2P', 'Fibra 800 + TV Premium II', '2P Fibra Avanzado mas TV Premium 2 Residencial N0726F', '$47.990', '$30.990', { tags: ['Netflix'], streams: STREAM_PACKS.premiumII }, 9),
-  plan('2p-tv', '2P', 'Fibra 800 + TV Full', '2P Fibra Avanzado mas TV Premium 3 Residencial N0726F', '$52.990', '$38.990', { tags: ['Disney+', 'Netflix'], streams: STREAM_PACKS.full }, 10),
-  plan('2p-tv', '2P', 'Fibra 940 + TV Inicia', '2P Fibra Experto mas TV Inicia 0226F', '$47.990', '$47.990', {}, 11),
-  plan('2p-tv', '2P', 'Fibra 940 + TV Plus', '2P Fibra Experto mas Stream TV Plus 0225F', '$47.990', '$35.990', {}, 12),
-  plan('2p-tv', '2P', 'Fibra 940 + TV Premium I', '2P Fibra Experto mas Stream TV Premium 0225F', '$52.990', '$34.990', { tags: ['Disney+'], streams: STREAM_PACKS.premiumI }, 13),
-  plan('2p-tv', '2P', 'Fibra 940 + TV Premium II', '2P Fibra Experto mas TV Premium 2 Residencial N0726F', '$52.990', '$34.990', { tags: ['Netflix'], streams: STREAM_PACKS.premiumII }, 14),
-  plan('2p-tv', '2P', 'Fibra 940 + TV Full', '2P Fibra Experto mas TV Premium 3 Residencial N0726F', '$57.990', '$42.990', { tags: ['Disney+', 'Netflix'], streams: STREAM_PACKS.full }, 15),
+  plan('2p-fono', '2P', 'Internet 500 + Telefonía', '2P Internet Hogar mas Fono 0225', '$23.990', '', { red: 'HFC', nota: NOTA_ANDES }, 1),
+  plan('2p-fono', '2P', 'TV Premium + Telefonía', '2P TV Premium mas Telefonia 0225', '$38.990', '', { nota: NOTA_ANDES, streams: STREAM_PACKS.premiumI, tags: ['Disney+'] }, 2),
+  plan('2p-fono', '2P', 'Fibra 600 + Telefonía', '2P Fibra Hogar mas Fono 0226F', '$23.990', '$23.990', { red: 'FTTH' }, 3),
+  plan('2p-fono', '2P', 'Fibra 800 + Telefonía', '2P Fibra Avanzado mas Fono 0226F', '$26.990', '$26.990', { red: 'FTTH' }, 4),
+  plan('2p-fono', '2P', 'Fibra 940 + Telefonía', '2P Fibra Experto mas Fono 0226F', '$35.990', '$35.990', { red: 'FTTH' }, 5),
 
-  plan('2p-fono', '2P', 'Fibra 600 + Telefonía', '2P Fibra Hogar mas Fono 0226F', '$23.990', '$23.990', {}, 1),
-  plan('2p-fono', '2P', 'Fibra 800 + Telefonía', '2P Fibra Avanzado mas Fono 0226F', '$26.990', '$26.990', {}, 2),
-  plan('2p-fono', '2P', 'Fibra 940 + Telefonía', '2P Fibra Experto mas Fono 0226F', '$35.990', '$35.990', {}, 3),
-
-  plan('3p', '3P', 'Fibra 600 + TV Inicia + Telefonía', '3P Fibra Hogar mas TV Inicia 0224F', '$46.990', '$46.990', {}, 1),
-  plan('3p', '3P', 'Fibra 600 + TV Plus + Telefonía', '3P Fibra Hogar mas Stream TV Plus 0225F', '$46.990', '$35.990', {}, 2),
-  plan('3p', '3P', 'Fibra 600 + TV Premium I + Telefonía', '3P Fibra Hogar mas Stream TV Premium 0225F', '$51.990', '$36.990', { tags: ['Disney+'], streams: STREAM_PACKS.premiumI }, 3),
-  plan('3p', '3P', 'Fibra 600 + TV Premium II + Telefonía', '3P Fibra Hogar mas TV Premium 2 Residencial N0726F', '$51.990', '$36.990', { tags: ['Netflix'], streams: STREAM_PACKS.premiumII }, 4),
-  plan('3p', '3P', 'Fibra 600 + TV Full + Telefonía', '3P Fibra Hogar mas TV Premium 3 Residencial N0726F', '$56.990', '$44.990', { tags: ['Disney+', 'Netflix'], streams: STREAM_PACKS.full }, 5),
-  plan('3p', '3P', 'Fibra 800 + TV Inicia + Telefonía', '3P Fibra Avanzado mas TV Inicia 0224F', '$47.990', '$47.990', {}, 6),
-  plan('3p', '3P', 'Fibra 800 + TV Plus + Telefonía', '3P Fibra Avanzado mas Stream TV Plus 0225F', '$47.990', '$36.990', {}, 7),
-  plan('3p', '3P', 'Fibra 800 + TV Premium I + Telefonía', '3P Fibra Avanzado mas Stream TV Premium 0225F', '$53.990', '$37.990', { tags: ['Disney+'], streams: STREAM_PACKS.premiumI }, 8),
-  plan('3p', '3P', 'Fibra 800 + TV Premium II + Telefonía', '3P Fibra Avanzado mas TV Premium 2 Residencial N0726F', '$53.990', '$37.990', { tags: ['Netflix'], streams: STREAM_PACKS.premiumII }, 9),
-  plan('3p', '3P', 'Fibra 800 + TV Full + Telefonía', '3P Fibra Avanzado mas TV Premium 3 Residencial N0726F', '$58.990', '$45.990', { tags: ['Disney+', 'Netflix'], streams: STREAM_PACKS.full }, 10),
-  plan('3p', '3P', 'Fibra 940 + TV Inicia + Telefonía', '3P Fibra Experto mas TV Inicia 0224F', '$52.990', '$52.990', {}, 11),
-  plan('3p', '3P', 'Fibra 940 + TV Plus + Telefonía', '3P Fibra Experto mas Stream TV Plus 0225F', '$52.990', '$40.990', {}, 12),
-  plan('3p', '3P', 'Fibra 940 + TV Premium I + Telefonía', '3P Fibra Experto mas Stream TV Premium 0225F', '$58.990', '$40.990', { tags: ['Disney+'], streams: STREAM_PACKS.premiumI }, 13),
-  plan('3p', '3P', 'Fibra 940 + TV Premium II + Telefonía', '3P Fibra Experto mas TV Premium 2 Residencial N0726F', '$58.990', '$40.990', { tags: ['Netflix'], streams: STREAM_PACKS.premiumII }, 14),
-  plan('3p', '3P', 'Fibra 940 + TV Full + Telefonía', '3P Fibra Experto mas TV Premium 3 Residencial N0726F', '$63.990', '$48.990', { tags: ['Disney+', 'Netflix'], streams: STREAM_PACKS.full }, 15),
-
-  plan('cable', 'Cable', 'TV Inicia', 'TV Inicia Residencial', '$20.990', '', { canales: '74 canales', hd: '57 HD', incluyeExtras: false }, 1),
-  plan('cable', 'Cable', 'TV Plus', 'Stream TV Plus', '$22.990', '', { canales: '101 canales', hd: '82 HD', incluyeExtras: true }, 2),
-  plan('cable', 'Cable', 'TV Premium', 'Stream TV Premium', '$28.990', '', { canales: '101 canales', hd: '82 HD', incluyeExtras: true, streams: STREAM_PACKS.premiumI }, 3),
-  plan('cable', 'Cable', 'TV Premium 2', 'TV Premium 2', '$28.990', '', { canales: '101 canales', hd: '82 HD', incluyeExtras: true, streams: STREAM_PACKS.premiumII }, 4),
-  plan('cable', 'Cable', 'TV Full / Premium 3', 'TV Full / Premium 3', '$33.990', '', { canales: '74 canales', hd: '68 HD', incluyeExtras: true, streams: STREAM_PACKS.full }, 5),
-
-  // Planes VTR Legacy
-  plan('legacy', 'Legacy', '2P Internet Hogar mas Stream TV Plus 0225hd', '2P Internet Hogar mas Stream TV Plus 0225hd', '', '', { tags: ['Prime Video', 'HBO Max', 'Riivi', 'Atresplayer', 'Cindie', 'Teatrix'], streams: STREAM_PACKS.vtrLegacy }, 1),
-  plan('legacy', 'Legacy', '2P Internet Hogar mas Fono 0225', '2P Internet Hogar mas Fono 0225', '$22.228', '$22.228', {}, 2),
-  plan('legacy', 'Legacy', 'Doble Pack Finix 0322hd', 'Doble Pack Finix 0322hd', '', '', { tags: ['Prime Video', 'HBO Max', 'Riivi', 'Atresplayer', 'Cindie', 'Teatrix'], streams: STREAM_PACKS.vtrLegacy }, 3),
-  plan('legacy', 'Legacy', 'Triple Pack Plus 0322hd', 'Triple Pack Plus 0322hd', '', '', { tags: ['Prime Video', 'HBO Max', 'Riivi', 'Atresplayer', 'Cindie', 'Teatrix'], streams: STREAM_PACKS.vtrLegacy }, 4),
-  plan('legacy', 'Legacy', 'VTR Wifi 0822F', 'VTR Wifi 0822F', '$13.990', '$13.990', {}, 5),
-  plan('legacy', 'Legacy', 'VTR Plus 3 0522hd', 'VTR Plus 3 0522hd', '', '', { tags: ['Prime Video', 'HBO Max', 'Riivi', 'Atresplayer', 'Cindie', 'Teatrix'], streams: STREAM_PACKS.vtrLegacy }, 6),
+  plan('3p', '3P', 'Internet 500 + TV Inicia + Fono', '3P Internet Hogar mas TV Inicia 0225hd', '$46.990', '', { red: 'HFC', nota: NOTA_ANDES, streams: STREAM_PACKS.basico, tags: ['HBO Max', 'Prime Video', 'Universal+'] }, 1),
+  plan('3p', '3P', 'Internet 500 + TV Premium + Fono', '3P Internet Hogar mas TV Premium 0225hd', '$51.990', '$36.990', { red: 'HFC', tags: ['Disney+'], streams: STREAM_PACKS.premiumI, nota: NOTA_ANDES }, 2),
+  plan('3p', '3P', 'Internet 500 + TV Premium II + Fono', '3P Internet Hogar mas TV Premium 2 N0726', '$51.990', '$36.990', { red: 'HFC', tags: ['Netflix'], streams: STREAM_PACKS.premiumII, nota: NOTA_ANDES }, 3),
+  plan('3p', '3P', 'Internet 500 + TV Full + Fono', '3P Internet Hogar mas TV Premium 3 N0726', '$56.990', '$44.990', { red: 'HFC', tags: ['Disney+', 'Netflix'], streams: STREAM_PACKS.full, nota: NOTA_ANDES }, 4),
+  plan('3p', '3P', 'Fibra 600 + TV Inicia + Telefonía', '3P Fibra Hogar mas TV Inicia 0224F', '$46.990', '$46.990', { red: 'FTTH', streams: STREAM_PACKS.basico, tags: ['HBO Max', 'Prime Video', 'Universal+'] }, 5),
+  plan('3p', '3P', 'Fibra 600 + TV Premium I + Telefonía', '3P Fibra Hogar mas Stream TV Premium 0225F', '$51.990', '$36.990', { red: 'FTTH', tags: ['Disney+'], streams: STREAM_PACKS.premiumI }, 6),
+  plan('3p', '3P', 'Fibra 600 + TV Premium II + Telefonía', '3P Fibra Hogar mas TV Premium 2 Residencial N0726F', '$51.990', '$36.990', { red: 'FTTH', tags: ['Netflix'], streams: STREAM_PACKS.premiumII }, 7),
+  plan('3p', '3P', 'Fibra 600 + TV Full + Telefonía', '3P Fibra Hogar mas TV Premium 3 Residencial N0726F', '$56.990', '$42.990', { red: 'FTTH', tags: ['Disney+', 'Netflix'], streams: STREAM_PACKS.full }, 8),
+  plan('3p', '3P', 'Fibra 800 + TV Inicia + Telefonía', '3P Fibra Avanzado mas TV Inicia 0224F', '$47.990', '$47.990', { red: 'FTTH', streams: STREAM_PACKS.basico, tags: ['HBO Max', 'Prime Video', 'Universal+'] }, 9),
+  plan('3p', '3P', 'Fibra 800 + TV Premium I + Telefonía', '3P Fibra Avanzado mas Stream TV Premium 0225F', '$53.990', '$38.990', { red: 'FTTH', tags: ['Disney+'], streams: STREAM_PACKS.premiumI }, 10),
+  plan('3p', '3P', 'Fibra 800 + TV Premium II + Telefonía', '3P Fibra Avanzado mas TV Premium 2 Residencial N0726F', '$53.990', '$38.990', { red: 'FTTH', tags: ['Netflix'], streams: STREAM_PACKS.premiumII }, 11),
+  plan('3p', '3P', 'Fibra 800 + TV Full + Telefonía', '3P Fibra Avanzado mas TV Premium 3 Residencial N0726F', '$58.990', '$44.990', { red: 'FTTH', tags: ['Disney+', 'Netflix'], streams: STREAM_PACKS.full }, 12),
+  plan('3p', '3P', 'Fibra 940 + TV Inicia + Telefonía', '3P Fibra Experto mas TV Inicia 0224F', '$52.990', '$52.990', { red: 'FTTH', streams: STREAM_PACKS.basico, tags: ['HBO Max', 'Prime Video', 'Universal+'] }, 13),
+  plan('3p', '3P', 'Fibra 940 + TV Premium I + Telefonía', '3P Fibra Experto mas Stream TV Premium 0225F', '$58.990', '$41.990', { red: 'FTTH', tags: ['Disney+'], streams: STREAM_PACKS.premiumI }, 14),
+  plan('3p', '3P', 'Fibra 940 + TV Premium II + Telefonía', '3P Fibra Experto mas TV Premium 2 Residencial N0726F', '$58.990', '$41.990', { red: 'FTTH', tags: ['Netflix'], streams: STREAM_PACKS.premiumII }, 15),
+  plan('3p', '3P', 'Fibra 940 + TV Full + Telefonía', '3P Fibra Experto mas TV Premium 3 Residencial N0726F', '$63.990', '$48.990', { red: 'FTTH', tags: ['Disney+', 'Netflix'], streams: STREAM_PACKS.full }, 16),
 ]
 
 export function vacioPlan(grupo = '1p-internet') {
@@ -176,6 +185,8 @@ export function vacioPlan(grupo = '1p-internet') {
     canales: '',
     hd: '',
     incluyeExtras: false,
+    red: '',
+    nota: '',
     orden: 99,
   }
 }

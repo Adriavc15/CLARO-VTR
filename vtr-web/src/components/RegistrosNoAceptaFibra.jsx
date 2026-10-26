@@ -23,7 +23,13 @@ import {
   MOTIVOS_NO_ACEPTA,
 } from '../noAceptaFibraStore'
 
-const COLORS = ['#f69100', '#14b8a6', '#0ea5e9', '#8b5cf6', '#ef4444', '#10b981', '#f59e0b', '#6366f1']
+const COLORS = ['#f97316', '#14b8a6', '#0ea5e9', '#8b5cf6', '#ef4444', '#10b981', '#eab308', '#84cc16', '#ec4899', '#06b6d4']
+
+/** Colores fijos por motivo para consistencia entre gráfico y torta. */
+const COLOR_MOTIVO = {}
+MOTIVOS_NO_ACEPTA.forEach((m, i) => {
+  COLOR_MOTIVO[m] = COLORS[i % COLORS.length]
+})
 
 function fmtNum(n) {
   return Number(n || 0).toLocaleString('es-CL')
@@ -92,10 +98,11 @@ function rankingAsesoresDe(items) {
   const map = new Map()
   for (const m of items || []) {
     const nombre = String(m.asesor || '').trim().replace(/\s+/g, ' ')
-    const k = normNombre(nombre) || 'sin asesor'
+    const nombreLimpio = nombre.replace(/\s*-\s*LEGAJO\s+.+$/i, '').trim()
+    const k = normNombre(nombreLimpio) || 'sin asesor'
     const prev = map.get(k)
     if (prev) prev.valor += 1
-    else map.set(k, { key: nombre || 'Sin asesor', valor: 1 })
+    else map.set(k, { key: nombreLimpio || 'Sin asesor', valor: 1 })
   }
   return [...map.values()].sort((a, b) => b.valor - a.valor)
 }
@@ -151,15 +158,15 @@ function Donut({ data, centerSub }) {
   })
 
   const hoveredSlice = hoveredIdx !== null && slices[hoveredIdx] ? slices[hoveredIdx] : null
-  const size = 180
+  const size = 240
   const cx = size / 2
   const cy = size / 2
-  const rOuter = 80
-  const rInner = 52
+  const rOuter = 110
+  const rInner = 70
 
   return (
     <div className="relative flex flex-col sm:flex-row items-center gap-4">
-      <div className="relative w-44 h-44 shrink-0 flex items-center justify-center">
+      <div className="relative w-56 h-56 shrink-0 flex items-center justify-center">
         <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full overflow-visible">
           {slices.map((s, i) => {
             const isHover = hoveredIdx === i
@@ -197,7 +204,7 @@ function Donut({ data, centerSub }) {
         </div>
       </div>
 
-      <ul className="space-y-1 min-w-0 flex-1 w-full max-h-56 overflow-y-auto pr-1">
+      <ul className="space-y-1 min-w-0 flex-1 w-full">
         {slices.map((d, i) => {
           const isHover = hoveredIdx === i
           return (
@@ -263,8 +270,8 @@ function BarrasHoriz({ data, color, destacado = '' }) {
   )
 }
 
-/** Tendencia de registros en los últimos 30 días (área). */
-function TendenciaDias({ items, color = '#f69100' }) {
+/** Tendencia de registros en los últimos 30 días (área con series por motivo). */
+function TendenciaDias({ items }) {
   const [hoveredIdx, setHoveredIdx] = useState(null)
 
   const dias = useMemo(() => {
@@ -273,17 +280,27 @@ function TendenciaDias({ items, color = '#f69100' }) {
       const d = new Date()
       d.setHours(0, 0, 0, 0)
       d.setDate(d.getDate() - i)
-      out.push({ key: ymd(d), iso: d.toISOString(), valor: 0 })
+      const key = ymd(d)
+      const obj = { key, iso: d.toISOString() }
+      MOTIVOS_NO_ACEPTA.forEach((m) => {
+        obj[m] = 0
+      })
+      out.push(obj)
     }
     const map = new Map(out.map((x) => [x.key, x]))
     for (const m of items) {
       const k = diaDe(m)
-      if (k && map.has(k)) map.get(k).valor += 1
+      if (k && map.has(k)) {
+        const motivo = m.motivoNoAcepta || 'OTRO'
+        if (map.get(k)[motivo] !== undefined) {
+          map.get(k)[motivo] += 1
+        }
+      }
     }
     return out
   }, [items])
 
-  const total = dias.reduce((a, d) => a + d.valor, 0)
+  const total = dias.reduce((a, d) => a + MOTIVOS_NO_ACEPTA.reduce((sum, m) => sum + (d[m] || 0), 0), 0)
 
   if (!total) {
     return (
@@ -307,25 +324,40 @@ function TendenciaDias({ items, color = '#f69100' }) {
   const padB = 26
   const innerW = W - padL - padR
   const innerH = H - padT - padB
-  const max = Math.max(3, ...dias.map((d) => d.valor))
+  const max = Math.max(3, ...dias.map((d) => MOTIVOS_NO_ACEPTA.reduce((sum, m) => sum + (d[m] || 0), 0)))
   const n = dias.length
   const x = (i) => padL + (n === 1 ? 0 : (i / (n - 1)) * innerW)
   const y = (v) => padT + innerH - (v / max) * innerH
   const baseY = padT + innerH
 
-  const pts = dias.map((d, i) => ({ x: x(i), y: y(d.valor), count: d.valor, iso: d.iso, key: d.key }))
-  const linePath = pts
-    .map((p, i) => {
-      if (i === 0) return `M ${p.x} ${p.y}`
-      const prev = pts[i - 1]
-      const dx = (p.x - prev.x) * 0.35
-      return `C ${prev.x + dx} ${prev.y}, ${p.x - dx} ${p.y}, ${p.x} ${p.y}`
-    })
-    .join(' ')
-  const areaPath = `${linePath} L ${pts[n - 1].x} ${baseY} L ${pts[0].x} ${baseY} Z`
+  // Series por motivo
+  const series = MOTIVOS_NO_ACEPTA.map((m) => ({
+    key: m,
+    label: m,
+    color: COLOR_MOTIVO[m],
+  }))
+
+  const seriesData = series.map((s) => {
+    const pts = dias.map((d, i) => ({
+      x: x(i),
+      y: y(d[s.key]),
+      count: d[s.key],
+      iso: d.iso,
+      key: d.key,
+    }))
+    const linePath = pts
+      .map((p, i) => {
+        if (i === 0) return `M ${p.x} ${p.y}`
+        const prev = pts[i - 1]
+        const dx = (p.x - prev.x) * 0.35
+        return `C ${prev.x + dx} ${prev.y}, ${p.x - dx} ${p.y}, ${p.x} ${p.y}`
+      })
+      .join(' ')
+    return { ...s, pts, linePath }
+  })
 
   const hoy = ymd(new Date())
-  const hovered = hoveredIdx !== null ? pts[hoveredIdx] : null
+  const hovered = hoveredIdx !== null ? seriesData[0].pts[hoveredIdx] : null
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect()
@@ -333,7 +365,7 @@ function TendenciaDias({ items, color = '#f69100' }) {
     const relX = ((e.clientX - rect.left) / rect.width) * W
     let closest = 0
     let minD = Infinity
-    pts.forEach((p, i) => {
+    seriesData[0].pts.forEach((p, i) => {
       const d = Math.abs(p.x - relX)
       if (d < minD) {
         minD = d
@@ -364,51 +396,46 @@ function TendenciaDias({ items, color = '#f69100' }) {
     >
       <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="w-full h-56 sm:h-64 block" role="img">
         <defs>
-          <linearGradient id="gradNoAcepta" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.5" />
-            <stop offset="100%" stopColor={color} stopOpacity="0.05" />
-          </linearGradient>
+          {seriesData.map((s, i) => (
+            <linearGradient key={s.key} id={`gradNoAcepta${i}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={s.color} stopOpacity="0.5" />
+              <stop offset="100%" stopColor={s.color} stopOpacity="0.05" />
+            </linearGradient>
+          ))}
         </defs>
 
         {ticks.map((val) => {
           const yVal = y(val)
           return (
-            <g key={val}>
-              <line
-                x1={padL}
-                x2={W - padR}
-                y1={yVal}
-                y2={yVal}
-                stroke="currentColor"
-                className="text-gray-200 dark:text-gray-700/60"
-                strokeWidth="1"
-                strokeDasharray="4 4"
-                vectorEffect="non-scaling-stroke"
-              />
-              <text
-                x={padL - 6}
-                y={yVal + 3}
-                textAnchor="end"
-                className="fill-gray-400 dark:fill-gray-500 font-medium"
-                style={{ fontSize: 10 }}
-              >
-                {val}
-              </text>
-            </g>
+            <line
+              key={val}
+              x1={padL}
+              x2={W - padR}
+              y1={yVal}
+              y2={yVal}
+              stroke="currentColor"
+              className="text-gray-200 dark:text-gray-700/60"
+              strokeWidth="1"
+              strokeDasharray="4 4"
+              vectorEffect="non-scaling-stroke"
+            />
           )
         })}
 
-        <path d={areaPath} fill="url(#gradNoAcepta)" className="mfa-fade" />
-        <path
-          className="mfa-draw"
-          pathLength="1"
-          d={linePath}
-          fill="none"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-          vectorEffect="non-scaling-stroke"
-        />
+        {/* Áreas por motivo */}
+        {seriesData.map((s, i) => {
+          const pts = s.pts
+          const areaPath = `${s.linePath} L ${pts[n - 1].x} ${baseY} L ${pts[0].x} ${baseY} Z`
+          return (
+            <path
+              key={s.key}
+              d={areaPath}
+              fill={`url(#gradNoAcepta${i})`}
+              className="mfa-fade"
+              style={{ animationDelay: `${i * 100}ms` }}
+            />
+          )
+        })}
 
         {hovered && (
           <line
@@ -427,26 +454,47 @@ function TendenciaDias({ items, color = '#f69100' }) {
 
       {/* Puntos */}
       <div className="absolute inset-x-0 top-1 bottom-6 pointer-events-none">
-        {pts.map((p, i) => {
-          const esHoy = p.key === hoy
-          const esHover = hoveredIdx === i
-          if (p.count === 0 && !esHoy && !esHover) return null
+        {seriesData.map((s) =>
+          s.pts.map((p, i) => {
+            const esHoy = p.key === hoy
+            const esHover = hoveredIdx === i
+            if (p.count === 0 && !esHoy && !esHover) return null
+            return (
+              <div
+                key={`${s.key}-${p.key}`}
+                style={{
+                  left: `${(p.x / W) * 100}%`,
+                  top: `${(p.y / H) * 100}%`,
+                  backgroundColor: s.color,
+                }}
+                className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white dark:border-gray-800 transition-all duration-150 ${
+                  esHover ? 'w-4 h-4 ring-4 shadow-md z-10' : esHoy ? 'w-3 h-3 ring-2 shadow-sm' : 'w-2.5 h-2.5'
+                }`}
+              />
+            )
+          })
+        )}
+      </div>
+
+      {/* Números del eje Y en HTML (sin distorsión) */}
+      <div className="absolute left-0 top-4 bottom-6 w-12 pointer-events-none select-none overflow-visible">
+        {ticks.map((val) => {
+          const yVal = y(val)
           return (
-            <div
-              key={p.key}
-              style={{ left: `${(p.x / W) * 100}%`, top: `${(p.y / H) * 100}%`, backgroundColor: color }}
-              className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white dark:border-gray-800 transition-all duration-150 ${
-                esHover ? 'w-4 h-4 ring-4 shadow-md z-10' : esHoy ? 'w-3 h-3 ring-2 shadow-sm' : 'w-2.5 h-2.5'
-              }`}
-            />
+            <span
+              key={val}
+              style={{ top: `${(yVal / H) * 100}%` }}
+              className="absolute text-[10px] font-medium text-gray-400 dark:text-gray-500"
+            >
+              {val}
+            </span>
           )
         })}
       </div>
 
       {/* Fechas eje inferior */}
       <div className="absolute bottom-0 left-0 right-0 h-6 pointer-events-none select-none overflow-visible px-8">
-        {pts.map((p, i) => {
-          if (i % 4 !== 0 && i !== n - 1) return null
+        {seriesData[0].pts.map((p, i) => {
           return (
             <span
               key={`lbl-${p.key}`}
@@ -461,7 +509,7 @@ function TendenciaDias({ items, color = '#f69100' }) {
         })}
       </div>
 
-      {/* Tooltip */}
+      {/* Cápsula flotante (Tag / Tooltip interactivo) */}
       {hovered && (
         <div
           className="absolute pointer-events-none z-30 transition-all duration-75 ease-out"
@@ -471,11 +519,34 @@ function TendenciaDias({ items, color = '#f69100' }) {
             transform: `translate(${hovered.x < 120 ? '0%' : hovered.x > W - 120 ? '-100%' : '-50%'}, ${hovered.y < 100 ? '30%' : '-135%'})`,
           }}
         >
-          <div className="flex items-center gap-2 p-3 rounded-xl bg-gray-950/95 dark:bg-black/95 text-white shadow-2xl border border-gray-700/80 dark:border-amber-500/50 backdrop-blur-md text-xs font-semibold">
-            <span className="w-2 h-2 rounded-full bg-[#f69100] shrink-0" />
-            <span className="text-gray-100 font-medium">{fechaCapsula(hovered.iso)}</span>
-            <span className="text-gray-400">·</span>
-            <span className="font-extrabold text-white">{hovered.count}</span>
+          <div className="flex flex-col gap-1.5 p-3 rounded-xl bg-gray-950/95 dark:bg-black/95 text-white shadow-2xl border border-gray-700/80 dark:border-amber-500/50 backdrop-blur-md text-xs font-semibold animate-in fade-in zoom-in-95 duration-150 min-w-[180px] max-w-[200px]">
+            <div className="flex items-center gap-2 pb-1.5 border-b border-gray-700/50">
+              <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0 shadow-[0_0_8px_rgba(251,191,36,0.9)] animate-pulse" />
+              <span className="text-gray-100 font-medium">{fechaCapsula(hovered.iso)}</span>
+            </div>
+            {seriesData.map((s) => {
+              const count = s.pts[hoveredIdx].count
+              return (
+                <div key={s.key} className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className="w-1.5 h-1.5 rounded-full shrink-0"
+                      style={{ backgroundColor: s.color }}
+                    />
+                    <span className="text-gray-300 font-medium">{s.label}</span>
+                  </div>
+                  <span className="font-extrabold" style={{ color: s.color }}>
+                    {count}
+                  </span>
+                </div>
+              )
+            })}
+            <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-gray-700/50">
+              <span className="text-gray-400 font-medium">Total</span>
+              <span className="font-extrabold text-white">
+                {seriesData.reduce((sum, s) => sum + s.pts[hoveredIdx].count, 0)}
+              </span>
+            </div>
           </div>
         </div>
       )}
@@ -622,7 +693,10 @@ export default function RegistrosNoAceptaFibra({ db = null, onToast, esUsuario =
     return [...map.entries()]
       .map(([key, valor]) => ({ key, valor }))
       .sort((a, b) => b.valor - a.valor)
-      .map((d, i) => ({ ...d, color: COLORS[i % COLORS.length] }))
+      .map((d) => ({
+        ...d,
+        color: COLOR_MOTIVO[d.key] || COLORS[Math.floor(Math.random() * COLORS.length)],
+      }))
   }, [filtrados])
 
   const stamp = new Date().toISOString().slice(0, 10)
@@ -649,12 +723,9 @@ export default function RegistrosNoAceptaFibra({ db = null, onToast, esUsuario =
   )
 
   const tituloPanel = (Icon, texto, sub) => (
-    <div className="flex items-center gap-2 mb-4">
-      <Icon size={18} className="text-[#f69100] shrink-0" />
-      <div>
-        <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100">{texto}</h4>
-        {sub && <p className="text-[11px] text-gray-400 dark:text-gray-500">{sub}</p>}
-      </div>
+    <div className="text-center mb-4">
+      <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100">{texto}</h4>
+      {sub && <p className="text-[11px] text-gray-400 dark:text-gray-500">{sub}</p>}
     </div>
   )
 
@@ -805,6 +876,16 @@ export default function RegistrosNoAceptaFibra({ db = null, onToast, esUsuario =
       {/* Tendencia 30 días */}
       <Card>
         {tituloPanel(CalendarRange, 'Registros por día', 'Últimos 30 días')}
+
+        {/* Leyenda de motivos (arriba del gráfico) */}
+        <div className="flex flex-wrap gap-3 justify-center pb-2">
+          {MOTIVOS_NO_ACEPTA.map((m) => (
+            <div key={m} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700">
+              <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: COLOR_MOTIVO[m] }} />
+              <span className="text-[11px] font-medium text-gray-700 dark:text-gray-300">{m}</span>
+            </div>
+          ))}
+        </div>
         <TendenciaDias items={filtrados} />
       </Card>
 
@@ -838,10 +919,10 @@ export default function RegistrosNoAceptaFibra({ db = null, onToast, esUsuario =
       <Card>
         {tituloPanel(Wallet, 'Últimos registros', `${filtrados.length} en el filtro actual`)}
         <div className="overflow-x-auto">
-          <table className="w-full text-xs border-collapse min-w-[720px]">
+          <table className="w-full text-xs border-collapse min-w-[800px]">
             <thead>
               <tr className="bg-gray-50 dark:bg-gray-900/40 border-b border-gray-200 dark:border-gray-700">
-                {['Fecha', 'Asesor', 'Supervisor', 'RUT cliente', 'Motivo no acepta', 'Registrado'].map((h) => (
+                {['RUT asesor', 'Fecha', 'Asesor', 'Supervisor', 'RUT cliente', 'Motivo', 'Detalle / Tipificación', 'Registrado'].map((h) => (
                   <th key={h} className="text-left font-bold text-gray-500 dark:text-gray-400 py-2 px-2 whitespace-nowrap">
                     {h}
                   </th>
@@ -852,28 +933,39 @@ export default function RegistrosNoAceptaFibra({ db = null, onToast, esUsuario =
             <tbody>
               {filtrados.length === 0 && (
                 <tr>
-                  <td colSpan={esUsuario ? 6 : 7} className="text-center text-gray-400 dark:text-gray-500 py-8">
+                  <td colSpan={esUsuario ? 8 : 9} className="text-center text-gray-400 dark:text-gray-500 py-8">
                     Sin registros en el filtro actual
                   </td>
                 </tr>
               )}
-              {filtrados.map((m) => (
+              {filtrados.map((m) => {
+                const asesorLimpio = m.asesor ? String(m.asesor).replace(/\s*-\s*LEGAJO\s+.+$/i, '').trim() : m.asesor
+                return (
                 <tr key={m.id} className="border-b border-gray-100 dark:border-gray-700/60 hover:bg-gray-50 dark:hover:bg-gray-700/30">
+                  <td className="py-2 px-2 whitespace-nowrap text-gray-600 dark:text-gray-300 tabular-nums">{m.legajoAsesor || '—'}</td>
                   <td className="py-2 px-2 whitespace-nowrap text-gray-800 dark:text-gray-100">{m.fecha || '—'}</td>
-                  <td className="py-2 px-2 whitespace-nowrap text-gray-800 dark:text-gray-100">{m.asesor || '—'}</td>
+                  <td className="py-2 px-2 whitespace-nowrap text-gray-800 dark:text-gray-100 font-medium">{asesorLimpio || '—'}</td>
                   <td className="py-2 px-2 whitespace-nowrap text-gray-600 dark:text-gray-300">{m.supervisor || '—'}</td>
                   <td className="py-2 px-2 whitespace-nowrap text-gray-600 dark:text-gray-300">{m.rutCliente || '—'}</td>
                   <td className="py-2 px-2">
                     <span className="inline-block rounded-full bg-[#f69100]/15 text-[#b26a00] dark:text-amber-300 px-2.5 py-1 text-[11px] font-semibold">
                       {m.motivoNoAcepta || '—'}
                     </span>
-                    {m.detalleError && (
-                      <span
-                        title={m.detalleError}
-                        className="mt-1 block max-w-[260px] truncate text-[11px] font-medium text-gray-600 dark:text-gray-300"
-                      >
-                        {m.detalleError}
-                      </span>
+                  </td>
+                  <td className="py-2 px-2">
+                    {m.detalleError ? (
+                      <div className="group relative inline-block max-w-[260px]">
+                        <span className="block truncate text-[11px] font-medium text-gray-600 dark:text-gray-300 cursor-help border-b border-dotted border-gray-400 dark:border-gray-500 pb-0.5">
+                          {m.detalleError}
+                        </span>
+                        <div className="absolute left-0 bottom-full mb-2 w-72 bg-gray-900 dark:bg-gray-950 text-white text-xs rounded-lg p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                          <div className="font-medium mb-1 text-gray-300">Detalle / Tipificación:</div>
+                          <div className="text-gray-100">{m.detalleError}</div>
+                          <div className="absolute left-4 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-950"></div>
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-gray-400 dark:text-gray-500">—</span>
                     )}
                   </td>
                   <td className="py-2 px-2 whitespace-nowrap text-gray-400 dark:text-gray-500">
@@ -892,7 +984,8 @@ export default function RegistrosNoAceptaFibra({ db = null, onToast, esUsuario =
                     </td>
                   )}
                 </tr>
-              ))}
+                )
+              })}
             </tbody>
           </table>
         </div>

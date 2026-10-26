@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react'
-import { ArrowLeft, Moon, Sun, User, Lock, Eye, EyeOff, LogOut, Loader2, AlertCircle, Upload, Save, Settings, Mail, KeyRound, X, Users, Bot, Database, CreditCard, Image, Megaphone, ChevronLeft, ChevronRight, ClipboardList, BarChart3 } from 'lucide-react'
+import { ArrowLeft, Moon, Sun, User, Lock, Eye, EyeOff, LogOut, Loader2, AlertCircle, Upload, Save, Settings, Mail, KeyRound, X, Users, Bot, Database, CreditCard, Image, Megaphone, ChevronLeft, ChevronRight, BarChart3 } from 'lucide-react'
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth'
 import { AdminPanel, Modal, Toast, suscribirNoticias, suscribirPerfilAdmin, guardarPerfilAdmin, subirImagenImgbb, db, normalizarHistorialAvatares, cargarHistorialAvataresAdmin, guardarHistorialAvataresAdminLocal } from './App.tsx'
+import { avatarImgProps } from './asistente/messengerAvatar'
 import AdminConocimientoIA from './components/AdminConocimientoIA.jsx'
 import AdminIdsClave from './components/AdminIdsClave.jsx'
 import AdminPlanes from './components/AdminPlanes.jsx'
 import AdminStreamingShowcase from './components/AdminStreamingShowcase.jsx'
-import AdminTipificaciones from './components/AdminTipificaciones.jsx'
 import MigracionesTabs from './components/MigracionesTabs.jsx'
 import PersonasTabs from './components/PersonasTabs.jsx'
 import BotonGoogle from './components/BotonGoogle.jsx'
-import { entrarConGoogleAdmin, esAdminPrincipal, DOMINIOS_ADMIN_TEXTO } from './adminsAutorizados'
+import BotonMicrosoft from './components/BotonMicrosoft.jsx'
+import { entrarConGoogleAdmin, entrarConMicrosoftAdmin, esAdminPrincipal, DOMINIOS_ADMIN_TEXTO } from './adminsAutorizados'
 import AvatarPerfilPicker from './components/AvatarPerfilPicker.jsx'
 
 const ADMIN_NAV = [
   { id: 'publicar', label: 'Comunicados', icon: Megaphone },
   { id: 'personas', label: 'Personas', icon: Users },
-  { id: 'tipificaciones', label: 'Tipificaciones', icon: ClipboardList },
   { id: 'migraciones', label: 'Migraciones', icon: BarChart3 },
   { id: 'ia', label: 'Conocimiento IA', icon: Bot },
   { id: 'ids', label: 'IDs Clave', icon: Database },
@@ -53,6 +53,7 @@ const AdminPage = () => {
   const [errorLogin, setErrorLogin] = useState('')
   const [cargandoLogin, setCargandoLogin] = useState(false)
   const [entrandoGoogle, setEntrandoGoogle] = useState(false)
+  const [entrandoMicrosoft, setEntrandoMicrosoft] = useState(false)
   const [emailSesion, setEmailSesion] = useState('')
   const [uid, setUid] = useState('')
 
@@ -366,6 +367,27 @@ const AdminPage = () => {
     }
   }
 
+  // Acceso con Microsoft: exige dominio corporativo habilitado Y estar en el registro
+  const handleLoginMicrosoft = async () => {
+    setErrorLogin('')
+    setEntrandoMicrosoft(true)
+    try {
+      const auth = getAuth()
+      const email = await entrarConMicrosoftAdmin(auth, db)
+      if (email) {
+        // identidad para el resto del portal (p. ej. /formularios)
+        localStorage.setItem('vtr-lector-email', email)
+        setContrasenaActual('')
+      }
+    } catch (err) {
+      setErrorLogin(err?.message || 'No se pudo iniciar sesión con Microsoft.')
+      // Si Firebase ya publicó la sesión antes de validar, la revertimos
+      setAuthEstado((prev) => (prev === 'loggedIn' ? 'loggedOut' : prev))
+    } finally {
+      setEntrandoMicrosoft(false)
+    }
+  }
+
   const openImageModal = (src, size = 'large', disableZoom = false) => {
     setModalImage(src)
     setModalSize(size)
@@ -507,9 +529,17 @@ const AdminPage = () => {
               etiquetaCargando="Validando acceso…"
             />
 
+            <BotonMicrosoft
+              onClick={handleLoginMicrosoft}
+              entrando={entrandoMicrosoft}
+              disabled={cargandoLogin}
+              etiqueta="Iniciar sesión con Microsoft"
+              etiquetaCargando="Validando acceso…"
+            />
+
             <p className="text-[11px] leading-relaxed text-gray-500 dark:text-gray-400 text-center">
               Solo cuentas corporativas <strong>{DOMINIOS_ADMIN_TEXTO}</strong> registradas en el registro de
-              administradores pueden entrar con Google.
+              administradores pueden entrar con Google o Microsoft.
             </p>
           </div>
         </div>
@@ -744,8 +774,8 @@ const AdminPage = () => {
     return renderCargando()
   }
 
-  // Evita pintar el panel mientras Google valida dominio + registro de administradores
-  if (entrandoGoogle) {
+  // Evita pintar el panel mientras Google o Microsoft valida dominio + registro de administradores
+  if (entrandoGoogle || entrandoMicrosoft) {
     return renderCargando()
   }
 
@@ -758,7 +788,7 @@ const AdminPage = () => {
       <aside
         onMouseEnter={() => setSidebarHover(true)}
         onMouseLeave={() => setSidebarHover(false)}
-        className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white shadow-xl fixed h-full z-40 left-0 overflow-visible transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]`}
+        className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white shadow-[0_12px_48px_rgba(0,0,0,0.25)] fixed top-4 bottom-4 z-40 left-4 overflow-visible transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] rounded-3xl`}
       >
         <div className="h-full flex flex-col">
           <div className="border-b border-gray-100 flex items-center justify-center p-4 h-20 relative shrink-0">
@@ -805,7 +835,7 @@ const AdminPage = () => {
                     <button
                       type="button"
                       onClick={() => setSeccion(item.id)}
-                      className={`btn-cyan-hover nav-side-btn w-full flex items-center py-3 rounded-full transition-[transform,box-shadow,gap,padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer ${
+                      className={`btn-cyan-hover nav-side-btn w-full flex items-center py-2 rounded-full transition-[transform,box-shadow,gap,padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer ${
                         sidebarOpen ? 'gap-3 px-4' : 'gap-0 px-0 justify-center'
                       } ${
                         activa
@@ -828,40 +858,50 @@ const AdminPage = () => {
             </ul>
           </nav>
 
-          <div
-            className={`shrink-0 border-t border-gray-100 dark:border-gray-800 ${
-              sidebarOpen ? 'px-3 py-3' : 'px-2 py-3 flex justify-center'
-            }`}
-          >
-            <div className={`flex items-center min-w-0 ${sidebarOpen ? 'gap-3' : ''}`}>
-              <AvatarPerfilPicker
-                avatarUrl={avatarUrl}
-                avataresUsados={avatarHistorial}
-                onCambiarFoto={handleSubirAvatar}
-                onElegirAvatar={elegirAvatarAdmin}
-                onToast={showToast}
-                size="sm"
-                menuAlign={sidebarOpen ? 'left' : 'center'}
-                menuPlacement="top"
-              />
-              <button
-                type="button"
-                onClick={() => setConfigModalOpen(true)}
-                title="Ir a configuración"
-                className={`text-left min-w-0 flex-1 cursor-pointer group overflow-hidden whitespace-nowrap transition-[max-width,opacity] duration-300 ${
-                  sidebarOpen ? 'max-w-44 opacity-100' : 'max-w-0 opacity-0 pointer-events-none'
+          <div className={`shrink-0 border-t border-gray-100 dark:border-gray-800 p-4 pt-2`}>
+            <button
+              type="button"
+              onClick={() => setConfigModalOpen(true)}
+              title="Configuración"
+              aria-label="Configuración"
+              className={`nav-side-btn w-full flex items-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer ${
+                sidebarOpen ? 'gap-3 px-4 py-2' : 'gap-0 px-0 py-2 justify-center'
+              }`}
+            >
+              <div
+                className={`min-w-0 flex items-center transition-[gap] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  sidebarOpen ? 'gap-3' : 'gap-0 justify-center'
                 }`}
               >
-                <p className="text-sm font-bold text-gray-900 dark:text-gray-100 truncate leading-tight group-hover:text-emerald-700 dark:group-hover:text-emerald-300">
-                  {nombreUsuario || 'Administrador'}
-                </p>
-                {emailSesion && (
-                  <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate leading-tight">
-                    {emailSesion}
-                  </p>
-                )}
-              </button>
-            </div>
+                {(() => {
+                  const av = avatarImgProps(avatarUrl, { fallbackMessenger: true })
+                  return (
+                    <span
+                      className={`relative w-8 h-8 shrink-0 flex items-center justify-center border-0 p-0 ${
+                        av.isMessenger
+                          ? 'bg-transparent overflow-visible'
+                          : 'rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200'
+                      }`}
+                    >
+                      {av.src ? (
+                        <img
+                          src={av.src}
+                          alt=""
+                          className={av.isMessenger ? 'messenger-avatar-img' : 'w-full h-full object-cover'}
+                          style={av.style}
+                        />
+                      ) : (
+                        <User size={20} className="text-gray-400" />
+                      )}
+                    </span>
+                  )
+                })()}
+                <div className={`flex flex-col overflow-hidden transition-[max-width,opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${sidebarOpen ? 'max-w-40 opacity-100 translate-x-0' : 'max-w-0 opacity-0 -translate-x-2'}`}>
+                  <span className="text-sm font-medium truncate">{nombreUsuario || 'Administrador'}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 truncate">{emailSesion}</span>
+                </div>
+              </div>
+            </button>
           </div>
         </div>
 
@@ -882,26 +922,7 @@ const AdminPage = () => {
         </button>
       </aside>
 
-      <main className={`flex-1 transition-[margin] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
-        <header className="bg-white shadow-sm sticky top-0 z-30 flex justify-end items-center gap-3 px-6 py-3">
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              title={darkMode ? 'Modo claro' : 'Modo oscuro'}
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 transition-colors cursor-pointer"
-            >
-              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-            <button
-              onClick={handleLogout}
-              title="Cerrar sesión"
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors cursor-pointer"
-            >
-              <LogOut size={18} />
-            </button>
-          </div>
-        </header>
-
+      <main className={`flex-1 transition-[margin] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${sidebarOpen ? 'ml-64' : 'ml-20'} pl-4`}>
         <div className="p-4 lg:p-8">
         {seccion === 'publicar' ? (
           <AdminPanel
@@ -943,8 +964,6 @@ const AdminPage = () => {
             esSuperAdmin={esSuperAdmin}
             correoSesion={emailSesion}
           />
-        ) : seccion === 'tipificaciones' ? (
-          <AdminTipificaciones db={db} onToast={showToast} />
         ) : seccion === 'migraciones' ? (
           <MigracionesTabs db={db} onToast={showToast} />
         ) : seccion === 'ia' || seccion === 'aprendizaje' ? (
@@ -985,6 +1004,31 @@ const AdminPage = () => {
               >
                 <X size={20} />
               </button>
+              <div className="flex items-center justify-between px-6 pt-5 pb-0">
+                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                  <Settings size={16} className="text-emerald-600 dark:text-emerald-400" />
+                  <span className="font-semibold text-gray-700 dark:text-gray-200">Mi cuenta</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setDarkMode(!darkMode)}
+                    title={darkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+                    className="flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 transition-colors cursor-pointer"
+                  >
+                    {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setConfigModalOpen(false); handleLogout() }}
+                    title="Cerrar sesión"
+                    className="flex items-center gap-2 px-3 h-9 rounded-full bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors cursor-pointer text-sm font-medium"
+                  >
+                    <LogOut size={16} />
+                    <span className="hidden sm:inline">Cerrar sesión</span>
+                  </button>
+                </div>
+              </div>
               <div className="p-6">
                 {renderConfiguracion()}
               </div>

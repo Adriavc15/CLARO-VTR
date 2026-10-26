@@ -17,6 +17,7 @@ import AndroidTvInterface from './components/AndroidTvInterface'
 import AndesSimulador from './components/AndesSimulador'
 import IconoAndroid from './components/IconoAndroid'
 import BuscadorTipificacion from './components/BuscadorTipificacion'
+import AvatarPerfilPicker from './components/AvatarPerfilPicker.jsx'
 import { rutaTipificacion } from './tipificacionesCatalogo'
 import {
   CONTROL_REMOTO_IMG_BASE,
@@ -54,27 +55,6 @@ const app = initializeApp(firebaseConfig)
 const analytics = getAnalytics(app)
 const db = getFirestore(app)
 const auth = getAuth(app)
-
-// URL de la aplicación web de Google Apps Script (termina en /exec).
-// Pega aquí la URL que obtengas al publicar el script (ver CODIGO_APPS_SCRIPT_GOOGLE_SHEETS.gs)
-const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbw9YoO7pCH6bVb0gjSuOvDMhbpqtxjtt1Xdg0c8ZcXJuaHgFRIpOamDL-uKRlqHukQ/exec'
-
-// Envía los datos del formulario a Google Sheets (Apps Script web app)
-const guardarEnSheets = async (data) => {
-  try {
-    const body = new URLSearchParams(data)
-    await fetch(GOOGLE_SHEETS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: body.toString(),
-    })
-    return true
-  } catch (err) {
-    console.error('Error al guardar en sheets:', err)
-    return false
-  }
-}
 
 // Publica una noticia en Firestore (tiempo real).
 const publicarNoticia = async ({ categoria, titulo, descripcion, driveUrl, popup }) => {
@@ -2271,6 +2251,235 @@ const PerfilLectorChip = ({
   )
 }
 
+/** Modal de configuración del lector: foto de perfil, datos de cuenta y cambio de tema. */
+const ModalConfiguracion = ({ open, onClose, lectorEmail, lectorAvatar, lectorAvatares, onAvatarChange, darkMode, onDarkModeChange, onToast }) => {
+  const [avatarPrev, setAvatarPrev] = useState('')
+  const [subiendoAvatar, setSubiendoAvatar] = useState(false)
+  const [guardandoAvatar, setGuardandoAvatar] = useState(false)
+  const [nombreLector, setNombreLector] = useState('')
+
+  useEffect(() => {
+    if (open) {
+      setAvatarPrev(lectorAvatar || '')
+      setNombreLector(nombreDesdeEmail(lectorEmail) || '')
+    }
+  }, [open, lectorAvatar, lectorEmail])
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, onClose])
+
+  const handleSubirAvatar = async (file) => {
+    if (!file?.type?.startsWith('image/')) {
+      onToast('Selecciona un archivo de imagen válido.')
+      return
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      onToast('La imagen debe pesar menos de 4 MB.')
+      return
+    }
+    setSubiendoAvatar(true)
+    try {
+      const url = await subirImagenImgbb(file)
+      setAvatarPrev(url)
+      onToast('Imagen subida. Pulsa Guardar para confirmar.')
+    } catch (err) {
+      onToast(err.message || 'Error al subir la imagen.')
+    } finally {
+      setSubiendoAvatar(false)
+    }
+  }
+
+  const handleGuardarAvatar = async () => {
+    if (!avatarPrev.trim()) {
+      onToast('Pega un enlace o sube una imagen primero.')
+      return
+    }
+    setGuardandoAvatar(true)
+    try {
+      const ok = await guardarPerfilLector(lectorEmail, { avatarUrl: avatarPrev })
+      if (!ok) throw new Error('No se pudo guardar')
+      onAvatarChange(avatarPrev)
+      onToast('¡Foto de usuario actualizada!')
+    } catch {
+      onToast('Error al guardar. Revisa la conexión e inténtalo de nuevo.')
+    } finally {
+      setGuardandoAvatar(false)
+    }
+  }
+
+  const elegirAvatar = async (url) => {
+    try {
+      const ok = await guardarPerfilLector(lectorEmail, { avatarUrl: url })
+      if (!ok) throw new Error('No se pudo guardar')
+      onAvatarChange(url)
+      setAvatarPrev(url)
+      onToast('Foto de perfil actualizada.')
+    } catch (err) {
+      onToast(err.message || 'No se pudo cambiar la foto.')
+    }
+  }
+
+  if (!open) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-[90] bg-black/50 backdrop-blur-[2px] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        className="w-full max-w-4xl rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-2xl p-6 max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-3 mb-6">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Configuración</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Define tu foto de perfil y ajusta la configuración de la cuenta
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-white"
+            aria-label="Cerrar"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* Foto de perfil */}
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6">
+            <div className="flex items-center gap-3 mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
+              <div className="p-2.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl">
+                <Image size={22} />
+              </div>
+              <div>
+                <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">Foto de perfil</h4>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Define la foto que se muestra en el portal
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center text-center">
+              <AvatarPerfilPicker
+                avatarUrl={avatarPrev || lectorAvatar}
+                avataresUsados={lectorAvatares}
+                onCambiarFoto={handleSubirAvatar}
+                onElegirAvatar={elegirAvatar}
+                onToast={onToast}
+                size="xl"
+                menuAlign="center"
+              />
+              <p className="mt-3 text-sm font-semibold text-gray-800 dark:text-gray-100">Cambiar</p>
+              <p className="text-[11px] text-gray-400 mt-0.5">Presiona la foto para cambiarla</p>
+            </div>
+
+            <div className="w-full space-y-3 mt-6">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
+                  O pega la URL de la imagen
+                </label>
+                <input
+                  type="url"
+                  value={avatarPrev}
+                  onChange={(e) => setAvatarPrev(e.target.value)}
+                  placeholder="https://i.imgbb.com/foto.jpg"
+                  className="w-full px-4 py-2.5 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm focus:outline-none"
+                />
+              </div>
+
+              <button
+                onClick={handleGuardarAvatar}
+                disabled={guardandoAvatar}
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+              >
+                <Save size={18} />
+                {guardandoAvatar ? 'Guardando...' : 'Guardar foto de usuario'}
+              </button>
+            </div>
+
+            {lectorEmail && (
+              <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                <User size={13} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
+                Sesión activa: <strong className="text-gray-700 dark:text-gray-200">{nombreLector || lectorEmail}</strong>
+              </div>
+            )}
+          </div>
+
+          {/* Datos de la cuenta y tema */}
+          <div className="space-y-6">
+            {/* Datos de la cuenta */}
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
+                <div className="p-2.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl">
+                  <User size={22} />
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">Datos de la cuenta</h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Se muestran tus datos actuales
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-2 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 px-4 py-3 mb-5">
+                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 min-w-0">
+                  <User size={13} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  <span className="shrink-0">Nombre actual:</span>
+                  <strong className="text-gray-800 dark:text-gray-100 truncate">{nombreLector || 'Sin nombre asignado'}</strong>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 min-w-0">
+                  <Mail size={13} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  <span className="shrink-0">Correo actual:</span>
+                  <strong className="text-gray-800 dark:text-gray-100 truncate">{lectorEmail || 'Sin correo'}</strong>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                Para cambiar tu nombre o correo, contáctate con el administrador del sistema.
+              </p>
+            </div>
+
+            {/* Cambio de tema */}
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
+                <div className="p-2.5 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-xl">
+                  {darkMode ? <Sun size={22} /> : <Moon size={22} />}
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">Apariencia</h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Elige entre modo claro y modo oscuro
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => onDarkModeChange(!darkMode)}
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+              >
+                {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                {darkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // Pop up de comunicados marcados como "Pop up" en el panel de administración.
 // Se muestra sobre la web al abrirla, con la imagen de la noticia.
 const NoticiaPopup = ({ noticias, index, onIndex, onClose, onVerImagen, lectorEmail = '', onIdentificar }) => {
@@ -2546,7 +2755,7 @@ const MobileNavigation = ({ navigationItems, activeSection, setActiveSection }) 
 )
 
 // Componente principal para móvil
-const MobileLayout = ({ children, darkMode, setDarkMode, navigationItems, activeSection, setActiveSection, modalImage, modalSize, modalDisableZoom, onClose, lectorEmail = '', lectorAvatar = '', onLectorAvatarChange, onToast }) => (
+const MobileLayout = ({ children, darkMode, setDarkMode, navigationItems, activeSection, setActiveSection, modalImage, modalSize, modalDisableZoom, onClose, lectorEmail = '', lectorAvatar = '', onLectorAvatarChange, onToast, onConfigModalOpen }) => (
   <div
     className={`bg-gray-50 ${
       activeSection === 'mensajes'
@@ -2559,14 +2768,6 @@ const MobileLayout = ({ children, darkMode, setDarkMode, navigationItems, active
       <div className="px-4 py-3">
         <div className="flex items-center">
           <div className="flex-1 flex justify-start">
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              title={darkMode ? 'Modo claro' : 'Modo oscuro'}
-              aria-label={darkMode ? 'Modo claro' : 'Modo oscuro'}
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 transition-colors cursor-pointer"
-            >
-              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
           </div>
           <div className="flex justify-center">
             <a
@@ -2587,11 +2788,21 @@ const MobileLayout = ({ children, darkMode, setDarkMode, navigationItems, active
           </div>
           <div className="flex-1 flex justify-end">
             {lectorEmail ? (
-              <PerfilLectorChip
-                email={lectorEmail}
-                avatarUrl={lectorAvatar}
-                compact
-              />
+              <button
+                type="button"
+                onClick={onConfigModalOpen}
+                title="Configuración"
+                aria-label="Configuración"
+                className="cursor-pointer"
+              >
+                <div className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-full px-3 py-1.5 transition-colors">
+                  <PerfilLectorChip
+                    email={lectorEmail}
+                    avatarUrl={lectorAvatar}
+                    compact
+                  />
+                </div>
+              </button>
             ) : null}
           </div>
         </div>
@@ -2618,7 +2829,7 @@ const MobileLayout = ({ children, darkMode, setDarkMode, navigationItems, active
 )
 
 // Componente principal para desktop
-const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActiveSection, sidebarOpen, setSidebarOpen, navigationItems, modalImage, modalSize, modalDisableZoom, onClose, lectorEmail = '', lectorAvatar = '', onLectorAvatarChange, onToast }) => {
+const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActiveSection, sidebarOpen, setSidebarOpen, navigationItems, modalImage, modalSize, modalDisableZoom, onClose, lectorEmail = '', lectorAvatar = '', onLectorAvatarChange, onToast, onConfigModalOpen }) => {
   const [sidebarHover, setSidebarHover] = useState(false)
   const [simuladoresOpen, setSimuladoresOpen] = useState(activeSection === 'androidtv' || activeSection === 'genesys' || activeSection === 'andes')
 
@@ -2628,7 +2839,7 @@ const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActi
     <aside
       onMouseEnter={() => setSidebarHover(true)}
       onMouseLeave={() => setSidebarHover(false)}
-      className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white shadow-xl fixed h-full z-40 left-0 overflow-visible transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]`}
+      className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white shadow-[0_12px_48px_rgba(0,0,0,0.25)] fixed top-4 bottom-4 z-40 left-4 overflow-visible transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] rounded-3xl`}
     >
       <div className="h-full overflow-y-auto overflow-x-hidden flex flex-col">
       <div className="border-b border-gray-100 flex items-center justify-center p-4 h-20 relative shrink-0">
@@ -2793,10 +3004,14 @@ const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActi
         </ul>
       </nav>
 
-      {/* Mismo diseño que los items del nav: pastilla con perfil (solo escritorio). El cambio de tema vive en el header. */}
+      {/* Mismo diseño que los items del nav: pastilla con perfil (solo escritorio). */}
       <div className={`shrink-0 border-t border-gray-100 p-4 pt-3 ${lectorEmail ? '' : 'hidden'}`}>
-        <div
-          className={`nav-side-btn flex items-center rounded-full text-gray-700 dark:text-gray-200 transition-[gap,padding,justify-content] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        <button
+          type="button"
+          onClick={onConfigModalOpen}
+          title="Configuración"
+          aria-label="Configuración"
+          className={`nav-side-btn w-full flex items-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer ${
             sidebarOpen ? 'gap-3 px-4 py-2' : 'gap-0 px-0 py-2 justify-center'
           }`}
         >
@@ -2830,18 +3045,18 @@ const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActi
                   </span>
                 )
               })()}
-              <span
-                className={`text-sm font-medium overflow-hidden whitespace-nowrap transition-[max-width,opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              <div className={`flex flex-col overflow-hidden transition-[max-width,opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                   sidebarOpen
                     ? 'max-w-40 opacity-100 translate-x-0'
                     : 'max-w-0 opacity-0 -translate-x-2'
                 }`}
               >
-                {nombreDesdeEmail(lectorEmail)}
-              </span>
+                <span className="text-sm font-medium truncate">{nombreDesdeEmail(lectorEmail)}</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400 truncate">{lectorEmail}</span>
+              </div>
             </div>
           ) : null}
-        </div>
+        </button>
       </div>
       </div>
 
@@ -2866,21 +3081,8 @@ const DesktopLayout = ({ children, darkMode, setDarkMode, activeSection, setActi
     <main
       className={`flex-1 flex flex-col transition-[margin] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
         sidebarOpen ? 'ml-64' : 'ml-20'
-      } ${activeSection === 'mensajes' || activeSection === 'androidtv' || activeSection === 'genesys' || activeSection === 'andes' ? 'h-screen min-h-0 overflow-hidden' : 'min-h-screen'}`}
+      } ${activeSection === 'mensajes' || activeSection === 'androidtv' || activeSection === 'genesys' || activeSection === 'andes' ? 'h-screen min-h-0 overflow-hidden' : 'min-h-screen'} pl-4`}
     >
-      {/* Header de escritorio: mismo estilo que el de /admin (tema claro/oscuro) */}
-      <header className="bg-white shadow-sm sticky top-0 z-30 flex justify-end items-center gap-3 px-6 py-3 shrink-0">
-        <button
-          type="button"
-          onClick={() => setDarkMode(!darkMode)}
-          title={darkMode ? 'Modo claro' : 'Modo oscuro'}
-          aria-label={darkMode ? 'Modo claro' : 'Modo oscuro'}
-          className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 transition-colors cursor-pointer"
-        >
-          {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
-      </header>
-
       {/* Content — mensajes, androidtv, genesys y andes a pantalla completa (sin card flotante ni padding) */}
       <div
         key={activeSection}
@@ -4797,6 +4999,7 @@ const App = () => {
   const [credencialModal, setCredencialModal] = useState(null)
   const [routerModalOpen, setRouterModalOpen] = useState(false)
   const [modalSomosClave, setModalSomosClave] = useState(null)
+  const [configModalOpen, setConfigModalOpen] = useState(false)
   const [lectorEmail, setLectorEmail] = useState(() => {
     if (typeof window === 'undefined') return ''
     return localStorage.getItem('vtr-lector-email') || ''
@@ -5378,25 +5581,18 @@ const App = () => {
                   />
                   <div className="min-w-0 space-y-2">
                     <p className="font-bold text-gray-900 text-sm lg:text-base">CÓMO COMUNICARSE CON CLARO</p>
-                    <p className="text-gray-700 text-xs lg:text-sm leading-relaxed">
-                      Llama a nuestro Canal de atención IVR <strong>*611</strong> o si eres cliente hogar al <strong>#400</strong>.
-                    </p>
-                    <p className="text-gray-700 text-xs lg:text-sm leading-relaxed">
-                      Claro Móvil Chile, marca <strong>105</strong> desde tu celular Claro para atención al cliente y reclamos.
-                    </p>
-                    <p className="text-gray-700 text-xs lg:text-sm leading-relaxed">
-                      Para contratación de planes, el número es <strong>800 171 800</strong>.
-                    </p>
                     <ul className="text-gray-600 text-xs lg:text-sm leading-relaxed space-y-1 list-disc list-inside">
                       <li>
-                        <strong>Atención al Cliente / Reclamos:</strong> Llama al <strong>105</strong> (desde tu celular Claro).
+                        <strong>IVR:</strong> <strong>*611</strong> (móvil) / <strong>#400</strong> (hogar)
                       </li>
                       <li>
-                        <strong>Desde teléfono fijo o red externa:</strong> Llama al <strong>800 171 171</strong> o al{' '}
-                        <strong>800 911 105</strong> / <strong>600 3100 105</strong>.
+                        <strong>Atención/Reclamos:</strong> <strong>105</strong> (desde celular Claro) / <strong>800 171 171</strong> / <strong>800 911 105</strong> / <strong>600 3100 105</strong>
                       </li>
                       <li>
-                        <strong>Activación Prepago:</strong> Llama al <strong>*103#</strong>.
+                        <strong>Contratación de planes:</strong> <strong>800 171 800</strong>
+                      </li>
+                      <li>
+                        <strong>Activación Prepago:</strong> <strong>*103#</strong>
                       </li>
                     </ul>
                   </div>
@@ -5415,14 +5611,13 @@ const App = () => {
                     <p className="font-bold text-gray-900 text-sm lg:text-base">CÓMO COMUNICARSE CON VTR (HOGAR)</p>
                     <ul className="text-gray-600 text-xs lg:text-sm leading-relaxed space-y-1 list-disc list-inside">
                       <li>
-                        <strong>Canales de Contacto:</strong> Llama al <strong>600 800 9000</strong> o{' '}
-                        <strong>2 2310 0200</strong>.
+                        <strong>Atención:</strong> <strong>600 800 9000</strong> / <strong>2 2310 0200</strong>
                       </li>
                       <li>
-                        <strong>Buzón de Voz:</strong> Configurable llamando al <strong>600 310 2000</strong>.
+                        <strong>Buzón de Voz:</strong> <strong>600 310 2000</strong>
                       </li>
                       <li>
-                        <strong>Número de VTR PyME:</strong> Llama al <strong>600 800 9009</strong>.
+                        <strong>VTR PyME:</strong> <strong>600 800 9009</strong>
                       </li>
                     </ul>
                   </div>
@@ -6793,9 +6988,21 @@ const App = () => {
           lectorAvatar={lectorAvatar}
           onLectorAvatarChange={setLectorAvatar}
           onToast={showToast}
+          onConfigModalOpen={() => setConfigModalOpen(true)}
         >
           {content}
         </MobileLayout>
+        <ModalConfiguracion
+          open={configModalOpen}
+          onClose={() => setConfigModalOpen(false)}
+          lectorEmail={lectorEmail}
+          lectorAvatar={lectorAvatar}
+          lectorAvatares={lectorAvatares}
+          onAvatarChange={setLectorAvatar}
+          darkMode={darkMode}
+          onDarkModeChange={setDarkMode}
+          onToast={showToast}
+        />
         {popupComunicados}
         <CredencialModal
           credencial={credencialModal}
@@ -6827,9 +7034,21 @@ const App = () => {
         lectorAvatar={lectorAvatar}
         onLectorAvatarChange={setLectorAvatar}
         onToast={showToast}
+        onConfigModalOpen={() => setConfigModalOpen(true)}
       >
         {content}
       </DesktopLayout>
+      <ModalConfiguracion
+        open={configModalOpen}
+        onClose={() => setConfigModalOpen(false)}
+        lectorEmail={lectorEmail}
+        lectorAvatar={lectorAvatar}
+        lectorAvatares={lectorAvatares}
+        onAvatarChange={setLectorAvatar}
+        darkMode={darkMode}
+        onDarkModeChange={setDarkMode}
+        onToast={showToast}
+      />
       {popupComunicados}
       <CredencialModal
         credencial={credencialModal}

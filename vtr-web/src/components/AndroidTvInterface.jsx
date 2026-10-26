@@ -951,7 +951,7 @@ export default function AndroidTvInterface({ onExit }) {
       detail: {
         items: [
           { name: 'RUT Titular', val: '18.452.912-K' },
-          { name: 'Plan Contratado', val: 'VTR Fibra 500 Megas + TV Plus' },
+          { name: 'Plan Contratado', val: 'VTR Fibra 500 Megas + TV Premium' },
           { name: 'Estado de la Cuenta', val: 'Al Día (Sin Deuda)' },
           { name: 'Modelo', val: 'Evo Fuse 4K / TiVo NextGen' },
           { name: 'Versión del Sistema', val: 'Android TV 11 (v2026.4)' }
@@ -2114,7 +2114,7 @@ export default function AndroidTvInterface({ onExit }) {
                 <div>9:00pm</div>
                 <div>9:30pm</div>
               </div>
-              {/* Table rows - VTR TV Plus Full 101 canales */}
+              {/* Table rows - VTR TV Premium Full 101 canales */}
               {[
                 // Infantil y Familiar
                 { num: '001', name: 'Portal VTR / Servicios', logo: 'VTR', prog830: 'Servicios', prog900: 'Servicios', prog930: 'Servicios', quality: 'SD' },
@@ -2884,7 +2884,7 @@ export default function AndroidTvInterface({ onExit }) {
                     </div>
                     <div className="flex justify-between py-1 border-b border-white/5">
                       <span className="text-gray-400">Plan contratado</span>
-                      <span className="font-semibold text-cyan-300">VTR Fibra 500 Megas + TV Plus</span>
+                      <span className="font-semibold text-cyan-300">VTR Fibra 500 Megas + TV Premium</span>
                     </div>
                     <div className="flex justify-between py-1 border-b border-white/5">
                       <span className="text-gray-400">Sincronización Google Play</span>

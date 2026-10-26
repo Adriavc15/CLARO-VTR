@@ -1,4 +1,5 @@
-// Auto-generado desde Somos Clave KM completo (342 IDs)
+// Auto-generado desde Somos Clave (HTML + dumps)
+// Regenerar: node scripts/syncIdsSomosClave.mjs
 export const IDS_CLAVE_SEED = [
   {
     "id": "34",
@@ -17,8 +18,14 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "67",
-    "nombre": "Procedimiento Anulación Venta Móvil Mercado Empresarial",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/67"
+    "nombre": "Procedimiento Anulación Venta Móvil Mercado Empresarial / Actualización completa del procedimiento.",
+    "enlace": "https://somosclave.cl/respuesta.php?q=empresa/67",
+    "categoria": "INFORMATIVO PARA EL ASESOR"
+  },
+  {
+    "id": "70",
+    "nombre": "Artículo 70",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/70"
   },
   {
     "id": "75",
@@ -57,8 +64,8 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "173",
-    "nombre": "Servicios IPTV Suspendidos por Deuda",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/173"
+    "nombre": "SOLUCIÓN INCONVENIENTES BOXTV CLARO",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/173"
   },
   {
     "id": "176",
@@ -79,6 +86,11 @@ export const IDS_CLAVE_SEED = [
     "id": "207",
     "nombre": "Cambio de Simcard para Clientes Migrados y con Simcard Obsoletas",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/207"
+  },
+  {
+    "id": "211",
+    "nombre": "Modelo de Atención",
+    "enlace": "https://somosclave.cl/respuesta.php?q=vende/211"
   },
   {
     "id": "212",
@@ -107,13 +119,18 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "253",
-    "nombre": "Atención: HORARIO DE CANALES DE ATENCIÓN DE FIESTAS PATRIAS ( Visitas Técnicas - Delivery - Horario de Sucursales)",
+    "nombre": "Salida de Mega Go de la oferta comercial.",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/253"
   },
   {
     "id": "254",
     "nombre": "Venta y Postventa de SmartTV",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/254"
+  },
+  {
+    "id": "292",
+    "nombre": "Artículo 292",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/292"
   },
   {
     "id": "301",
@@ -132,12 +149,12 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "323",
-    "nombre": "Horarios de Canales Atención",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/323"
+    "nombre": "schedule HORARIOS CALL CENTER",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/323"
   },
   {
     "id": "324",
-    "nombre": "SMA Clientes Apagado Nodos - Claro/VTR",
+    "nombre": "SMA Clientes Apagado de Nodos - Claro/VTR / Se actualiza base adjunta",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/324"
   },
   {
@@ -147,13 +164,19 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "335",
-    "nombre": "Plan Comercial Claro Móvil/Hogar - Oferta Comercial Prepago - Planilla de Precios - Oferta Comercial Pyme - Ofertas Tácticas",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/335"
+    "nombre": "Plan Comercial Claro Móvil/Hogar - Oferta Comercial Prepago - Planilla de Precios - Oferta Comercial Pyme - Ofertas Tácticas / Se actualiza Planilla de Precios",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/335",
+    "categoria": "INFORMATIVO PARA EL ASESOR"
   },
   {
     "id": "339",
     "nombre": "Retención PyME",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/339"
+  },
+  {
+    "id": "342",
+    "nombre": "Artículo 342",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/342"
   },
   {
     "id": "354",
@@ -162,13 +185,14 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "356",
-    "nombre": "[04-09-2026] Recordatorio: Devolución de Llamadas a Clientes",
+    "nombre": "Recordatorio: Devolución de Llamadas a Clientes",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/356"
   },
   {
     "id": "363",
-    "nombre": "Andes - Ingreso a BEC",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/363"
+    "nombre": "INGRESO A BEC",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/363",
+    "categoria": "ANDES"
   },
   {
     "id": "376",
@@ -176,14 +200,15 @@ export const IDS_CLAVE_SEED = [
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/376"
   },
   {
+    "id": "384",
+    "nombre": "VUELVE A INICIAR SESION EN HBO MAX",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/384",
+    "categoria": "CLARO VTR WEB"
+  },
+  {
     "id": "385",
     "nombre": "Plan Más Seguro - Control Parental SoyMomo (Cese de la Venta)",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/385"
-  },
-  {
-    "id": "391",
-    "nombre": "No Reconoce Cobro por Reajuste de IPC Fijo",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/391"
   },
   {
     "id": "405",
@@ -191,9 +216,15 @@ export const IDS_CLAVE_SEED = [
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/405"
   },
   {
+    "id": "411",
+    "nombre": "SUCURSAL VIRTUAL&nbsp;",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/411"
+  },
+  {
     "id": "413",
-    "nombre": "Inconvenientes Técnicos Servicio Móvil",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/413"
+    "nombre": "Artículo 413",
+    "enlace": "https://somosclave.cl/respuesta.php?q=movil/413",
+    "categoria": "MOVIL"
   },
   {
     "id": "418",
@@ -202,8 +233,8 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "430",
-    "nombre": "Conoce nuestra plataforma CLAVE",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/430"
+    "nombre": "Conoce CLAVE assistant",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/430"
   },
   {
     "id": "451",
@@ -222,8 +253,8 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "488",
-    "nombre": "Ingreso de Ticket (SDESK) Fijo",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/488"
+    "nombre": "INGRESO DE TICKETS.",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/488"
   },
   {
     "id": "489",
@@ -291,6 +322,11 @@ export const IDS_CLAVE_SEED = [
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/637"
   },
   {
+    "id": "669",
+    "nombre": "Protocolo de Atención",
+    "enlace": "https://somosclave.cl/respuesta.php?q=vende/669"
+  },
+  {
     "id": "683",
     "nombre": "Protocolos de Cierre de Venta Claro",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/683"
@@ -306,9 +342,16 @@ export const IDS_CLAVE_SEED = [
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/736"
   },
   {
+    "id": "991",
+    "nombre": "Artículo 991",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/991",
+    "categoria": "FACTURACIÓN"
+  },
+  {
     "id": "993",
-    "nombre": "Material de Apoyo: Preguntas Frecuentes Devolución de Equipo",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/993"
+    "nombre": "DEVOLUCION DE EQUIPOS",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/993",
+    "categoria": "INFORMATIVO PARA EL CLIENTE"
   },
   {
     "id": "994",
@@ -322,18 +365,20 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "996",
-    "nombre": "Inconvenientes con Televisión SMART (DBOX SMART- BOX TV)",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/996"
+    "nombre": "INCONVENIENTES CON TELEVISION SMART (DBOX SMART)",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/996",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "997",
-    "nombre": "Inconvenientes Internet FTTH - HFC",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/997"
+    "nombre": "INCONVENIENTES INTERNET FTTH / HFC",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/997",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "999",
     "nombre": "PaP",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/999"
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/999"
   },
   {
     "id": "1002",
@@ -347,22 +392,24 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1004",
-    "nombre": "Plan Comercial VTR",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1004"
+    "nombre": "PLAN COMERCIAL",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1004",
+    "categoria": "OFRECIMIENTO"
   },
   {
     "id": "1006",
-    "nombre": "Plan de Retención / Anulación",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1006"
+    "nombre": "PLANES DE RETENCIÓN perm_contact_calendar",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1006"
   },
   {
     "id": "1007",
-    "nombre": "Aplicaciones de Streaming",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1007"
+    "nombre": "PLATAFORMAS DE STREAMING",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1007",
+    "categoria": "OFRECIMIENTO"
   },
   {
     "id": "1010",
-    "nombre": "Activación y Solución Inconvenientes Disney",
+    "nombre": "Artículo 1010",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1010"
   },
   {
@@ -382,8 +429,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1016",
-    "nombre": "Convenios",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1016"
+    "nombre": "Convenios / Lanzamiento de Cotizador de Convenios Octubre",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1016",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1017",
@@ -402,8 +450,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1020",
-    "nombre": "Política de Venta de Servicios Fijos",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1020"
+    "nombre": "POLITICA DE VENTA DE SERVICIOS FIJOS",
+    "enlace": "https://somosclave.cl/respuesta.php?q=transversal/1020",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1021",
@@ -422,8 +471,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1024",
-    "nombre": "Visado y Calidad de Ventas en Andes",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1024"
+    "nombre": "POLITICAS DE ACREDITACION",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1024",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1025",
@@ -442,8 +492,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1028",
-    "nombre": "Explicación Boleta",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1028"
+    "nombre": "EXPLICACION DE BOLETA no reconoce cobro",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1028",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1029",
@@ -452,7 +503,7 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1030",
-    "nombre": "Protocolo de Transferencia Hogar",
+    "nombre": "Artículo 1030",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1030"
   },
   {
@@ -473,12 +524,14 @@ export const IDS_CLAVE_SEED = [
   {
     "id": "1035",
     "nombre": "Cambio de SIM Card Móvil",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1035"
+    "enlace": "https://somosclave.cl/respuesta.php?q=movil/1035",
+    "categoria": "MOVIL"
   },
   {
     "id": "1036",
-    "nombre": "Visitas Técnicas (Ingreso, Reagendamiento, Incumplimiento)",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1036"
+    "nombre": "VISITAS TECNICAS",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1036",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1037",
@@ -502,8 +555,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1041",
-    "nombre": "Protocolo Atención Video Llamada VSIGHT - ClaroVTR",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1041"
+    "nombre": "PROTOCOLO V-SIGHT",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1041",
+    "categoria": "TECNICO"
   },
   {
     "id": "1042",
@@ -517,8 +571,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1044",
-    "nombre": "App VTR Play TV",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1044"
+    "nombre": "APP VTR PLAY TV",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1044",
+    "categoria": "CLARO VTR WEB"
   },
   {
     "id": "1045",
@@ -527,8 +582,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1046",
-    "nombre": "Venta Fijo Sin Y Con Portabilidad",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1046"
+    "nombre": "VENTA CON Y SIN PORTABILIDAD",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1046",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1047",
@@ -537,18 +593,20 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1051",
-    "nombre": "Entrega de Atención para Titulares y/o Terceros",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1051"
+    "nombre": "AQUÍ",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1051"
   },
   {
     "id": "1052",
-    "nombre": "Inconvenientes Telefonía Fija HFC y FTTH",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1052"
+    "nombre": "INCONVENIENTES TELEFONIA FIJA HFC Y FTTH",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1052",
+    "categoria": "TECNICO"
   },
   {
     "id": "1054",
-    "nombre": "Glosario",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1054"
+    "nombre": "GLOSARIO DE ANDES",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1054",
+    "categoria": "ANDES"
   },
   {
     "id": "1055",
@@ -557,12 +615,13 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1057",
-    "nombre": "Sucursal Virtual",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1057"
+    "nombre": "SUCURSAL VIRTUAL",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1057",
+    "categoria": "CLARO VTR WEB"
   },
   {
     "id": "1058",
-    "nombre": "Traslado de Servicios (Cambio de Domicilio)",
+    "nombre": "TRASLADO DE SERVICIOS",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1058"
   },
   {
@@ -572,8 +631,13 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1067",
-    "nombre": "Protocolos de Cierre de Venta",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1067"
+    "nombre": "PROTOCOLOS DE CIERRE DE VENTA",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1067"
+  },
+  {
+    "id": "1069",
+    "nombre": "PAGO AUTÓMATICO (PAC – PAT).",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1069"
   },
   {
     "id": "1073",
@@ -587,13 +651,15 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1078",
-    "nombre": "Suspensión Voluntaria de Servicios",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1078"
+    "nombre": "SUSPENSION VOLUNTARIA DE SERVICIOS",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1078",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1079",
-    "nombre": "Ingreso de Reclamo",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1079"
+    "nombre": "INGRESO DE RECLAMO",
+    "enlace": "https://somosclave.cl/respuesta.php?q=retencion/1079",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1088",
@@ -647,18 +713,21 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1111",
-    "nombre": "Activación y Solución Inconvenientes NETFLIX",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1111"
+    "nombre": "Artículo 1111",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1111",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1112",
-    "nombre": "Activación y Solución Inconvenientes STORYTEL",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1112"
+    "nombre": "Artículo 1112",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1112",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1113",
-    "nombre": "Activación y Solución Inconvenientes CRUNCHYROLL",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1113"
+    "nombre": "Artículo 1113",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1113",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1114",
@@ -672,8 +741,8 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1116",
-    "nombre": "Activación y Solución Inconvenientes HBO MAX",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1116"
+    "nombre": "CÓMO VER EL DOM DEL CLIENTE",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1116"
   },
   {
     "id": "1117",
@@ -752,8 +821,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1148",
-    "nombre": "Navegar Entre Cuentas",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1148"
+    "nombre": "NAVEGAR ENTRE CUENTAS",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1148",
+    "categoria": "INFORMATIVO PARA EL ASESOR"
   },
   {
     "id": "1150",
@@ -773,12 +843,14 @@ export const IDS_CLAVE_SEED = [
   {
     "id": "1153",
     "nombre": "Gestión Clientes Netflix a la Carta",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1153"
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1153",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1156",
-    "nombre": "Reclamo Por Mala Atención – Daño a Domicilio - Integridad",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1156"
+    "nombre": "CONSTANCIA",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1156",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1157",
@@ -797,7 +869,7 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1161",
-    "nombre": "Procedimiento Atención Clientes Cornerstone",
+    "nombre": "Artículo 1161",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1161"
   },
   {
@@ -807,13 +879,15 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1166",
-    "nombre": "Protocolo de Atención a Clientes Fijo y Móvil",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1166"
+    "nombre": "PROTOCOLOS DE ATENCION (SPEECH)",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1166",
+    "categoria": "INFORMATIVO PARA EL ASESOR"
   },
   {
     "id": "1167",
-    "nombre": "Descuento No Cargado",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1167"
+    "nombre": "DESCUENTO NO CARGADO",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1167",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1168",
@@ -857,8 +931,8 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1180",
-    "nombre": "Estado del Servicio",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1180"
+    "nombre": "ESTADO DEL SERVICIO",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1180"
   },
   {
     "id": "1181",
@@ -872,8 +946,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1183",
-    "nombre": "Cómo Revisar la Deuda",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1183"
+    "nombre": "COMO REVISAR LA DEUDA",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1183",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1185",
@@ -887,13 +962,14 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1187",
-    "nombre": "Cómo Adjuntar Documentos",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1187"
+    "nombre": "CÓMO ADJUNTAR DOCUMENTOS",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1187"
   },
   {
     "id": "1188",
-    "nombre": "Procedimiento TV",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1188"
+    "nombre": "PROCEDIMIENTO TV HD CON RETORNO",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1188",
+    "categoria": "TECNICO"
   },
   {
     "id": "1189",
@@ -902,13 +978,19 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1191",
-    "nombre": "Generar Contrato – Llenado Contrato Manual",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1191"
+    "nombre": "Generar el contrato",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1191"
+  },
+  {
+    "id": "1192",
+    "nombre": "EXCEPCIONES A COBROS RECLAMADOS POR CLIENTE- CALL CENTER",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1192"
   },
   {
     "id": "1193",
     "nombre": "B2B Servicio de Internet Empresas",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1193"
+    "enlace": "https://somosclave.cl/respuesta.php?q=empresa/1193",
+    "categoria": "INFORMATIVO PARA EL ASESOR"
   },
   {
     "id": "1194",
@@ -937,8 +1019,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1200",
-    "nombre": "Fibra Optica - FTTH",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1200"
+    "nombre": "FIBRA OPTICA FTTH",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1200",
+    "categoria": "TECNICO"
   },
   {
     "id": "1201",
@@ -947,8 +1030,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1205",
-    "nombre": "App VTR Play",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1205"
+    "nombre": "APP VTR PLAY",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1205",
+    "categoria": "CLARO VTR WEB"
   },
   {
     "id": "1207",
@@ -956,19 +1040,26 @@ export const IDS_CLAVE_SEED = [
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1207"
   },
   {
+    "id": "1210",
+    "nombre": "RECLAMO 105 headset",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1210"
+  },
+  {
     "id": "1213",
-    "nombre": "Baja No Cursada",
+    "nombre": "BAJA NO CURSADA",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1213"
   },
   {
     "id": "1215",
-    "nombre": "Validaciones y Revisión de la Deuda en la Venta",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1215"
+    "nombre": "VALIDACIONES Y REVISION DE LA DEUDA EN LA VENTA",
+    "enlace": "https://somosclave.cl/respuesta.php?q=transversal/1215",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1216",
-    "nombre": "Modelos Control Remoto",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1216"
+    "nombre": "DESCONFIGURACION DEL CONTROL REMOTO",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1216",
+    "categoria": "TECNICO"
   },
   {
     "id": "1217",
@@ -982,13 +1073,13 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1220",
-    "nombre": "Reasignación de Solicitud de Servicio",
+    "nombre": "ADMINISTRAR SOLICITUDES DE SERVICIOS",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1220"
   },
   {
     "id": "1221",
-    "nombre": "Baja de Servicios",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1221"
+    "nombre": "PROCEDIMIENTO SOLICITUD DE BAJA DE SERVICIOS",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1221"
   },
   {
     "id": "1222",
@@ -1012,8 +1103,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1229",
-    "nombre": "Modelos D-Box",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1229"
+    "nombre": "MODELOS DE DBOX",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1229",
+    "categoria": "TECNICO"
   },
   {
     "id": "1230",
@@ -1027,13 +1119,15 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1232",
-    "nombre": "Cambio de HFC a Fibra Óptica",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1232"
+    "nombre": "CAMBIO DE TECNOLOGÍA A FTTH",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1232",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1233",
-    "nombre": "Reajuste IPC Hogar",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1233"
+    "nombre": "REAJUSTE IPC HOGAR",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1233",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1234",
@@ -1042,8 +1136,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1235",
-    "nombre": "Delivery - Auto Instalación",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1235"
+    "nombre": "MANUALES DE AUTOINSTALACION",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1235",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1236",
@@ -1052,8 +1147,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1240",
-    "nombre": "No Reconoce Cobros - Corte y Reposición de Servicios Fijos",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1240"
+    "nombre": "No Reconoce Cobros - Corte y Reposición",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1240",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1241",
@@ -1087,8 +1183,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1252",
-    "nombre": "Descuentos Días sin Servicio Fijo",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1252"
+    "nombre": "DESCUENTOS DE DIAS SIN SERVICIO FIJO/HOGAR",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1252",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1253",
@@ -1101,8 +1198,13 @@ export const IDS_CLAVE_SEED = [
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1254"
   },
   {
+    "id": "1255",
+    "nombre": "PREGUNTAS FRECUENTES help_outline",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1255"
+  },
+  {
     "id": "1260",
-    "nombre": "[17-08-2026] Warner presenta temporalmente subtítulos fijos en español por ajustes técnicos Claro/ VTR",
+    "nombre": "Warner presenta temporalmente subtítulos fijos en español por ajustes técnicos Claro/ VTR",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1260"
   },
   {
@@ -1122,12 +1224,13 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1264",
-    "nombre": "Índice de Solicitudes de Servicio",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1264"
+    "nombre": "INCONVENIENTES EN SERVICIO VTR",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1264",
+    "categoria": "TECNICO"
   },
   {
     "id": "1265",
-    "nombre": "Gestión de Pedidos",
+    "nombre": "PEDIDOS",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1265"
   },
   {
@@ -1142,7 +1245,7 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1268",
-    "nombre": "Actualización de Promoción Fijo",
+    "nombre": "Artículo 1268",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1268"
   },
   {
@@ -1162,8 +1265,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1275",
-    "nombre": "Modificación de Instalación Servicio Fijo",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1275"
+    "nombre": "PEDIDO DE MODIFICACIÓN",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1275",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1276",
@@ -1182,8 +1286,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1280",
-    "nombre": "Ciclos de Facturación (DOM) Fijos",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1280"
+    "nombre": "CICLOS DE FACTURACIÓN (DOM)",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1280",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1281",
@@ -1197,8 +1302,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1283",
-    "nombre": "Pago Duplicado",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1283"
+    "nombre": "PAGO DUPLICADO",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1283",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1284",
@@ -1247,8 +1353,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1303",
-    "nombre": "Inconveniente con Pago",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1303"
+    "nombre": "INCONVENIENTE CON EL PAGO",
+    "enlace": "https://somosclave.cl/respuesta.php?q=transversal/1303",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1305",
@@ -1277,13 +1384,15 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1310",
-    "nombre": "Cliente No Recibe Boleta- Método Distribución Boleta",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1310"
+    "nombre": "ENVÍO DE BOLETA",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1310",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1312",
-    "nombre": "Tipificaciones",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1312"
+    "nombre": "TIPIFICACIONES",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1312",
+    "categoria": "ANDES"
   },
   {
     "id": "1314",
@@ -1297,8 +1406,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1317",
-    "nombre": "Siguiente Mejor Acción (SMA)",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1317"
+    "nombre": "SIGUIENTE MEJOR ACCIÓN (SMA)",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1317",
+    "categoria": "INFORMATIVO PARA EL ASESOR"
   },
   {
     "id": "1319",
@@ -1312,8 +1422,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1321",
-    "nombre": "Anular Solicitudes de Servicio",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1321"
+    "nombre": "ANULAR SOLICITUDES DE SERVICIO",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1321",
+    "categoria": "TRANSFERENCIAS"
   },
   {
     "id": "1322",
@@ -1322,23 +1433,26 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1323",
-    "nombre": "Búsqueda de Cliente",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1323"
+    "nombre": "BUSQUEDA DE CLIENTES EN ANDES",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1323",
+    "categoria": "ANDES"
   },
   {
     "id": "1324",
-    "nombre": "Creación de Clientes",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1324"
+    "nombre": "CREACIÓN DE CLIENTES",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1324",
+    "categoria": "ANDES"
   },
   {
     "id": "1325",
-    "nombre": "Venta de Servicios de Valor Agregado (SVA) Fijos",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1325"
+    "nombre": "VENTA DE SERVICIOS DE VALOR AGREGADO (SVA) FIJOS",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1325"
   },
   {
     "id": "1326",
-    "nombre": "Ingreso de Solicitud de Servicio",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1326"
+    "nombre": "INGRESO DE SOLICITUDES DE SERVICIO",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1326",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1327",
@@ -1358,7 +1472,8 @@ export const IDS_CLAVE_SEED = [
   {
     "id": "1330",
     "nombre": "Procedimiento Atención Max IPTV",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1330"
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1330",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1333",
@@ -1377,8 +1492,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1339",
-    "nombre": "Lugares de Pago y Pago Automático PAC/PAT",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1339"
+    "nombre": "PAC - PAT",
+    "enlace": "https://somosclave.cl/respuesta.php?q=home/1339",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1341",
@@ -1457,8 +1573,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1360",
-    "nombre": "Vista 360",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1360"
+    "nombre": "VISTA 360°",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1360",
+    "categoria": "ANDES"
   },
   {
     "id": "1361",
@@ -1512,13 +1629,14 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1377",
-    "nombre": "Cancelación de Portabilidad",
+    "nombre": "CANCELACION DE PORTABILIDAD",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1377"
   },
   {
     "id": "1378",
-    "nombre": "Cobranza",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1378"
+    "nombre": "FLUJO DE INHIBICIÓN DE COBRANZA",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1378",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1381",
@@ -1527,8 +1645,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1387",
-    "nombre": "Estado de Solicitud de Servicio",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1387"
+    "nombre": "ESTADOS DE LAS SOLICITUDES DE SERVICIOS",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1387",
+    "categoria": "INFORMATIVO PARA EL ASESOR"
   },
   {
     "id": "1388",
@@ -1552,7 +1671,7 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1407",
-    "nombre": "[10-04-2025] Cómo Ver Si un Cliente Está Migrado a Fibra Óptica.",
+    "nombre": "Cómo Ver Si un Cliente Está Migrado a Fibra Óptica.",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1407"
   },
   {
@@ -1562,7 +1681,7 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1417",
-    "nombre": "[01-09-2026] Indisponibilidad temporal para la Activación de HBO Max y/o TNT Sport Premium – Servicios Fijo VTR",
+    "nombre": "Indisponibilidad temporal para la Activación de HBO Max y/o TNT Sport Premium – Servicios Fijo VTR",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1417"
   },
   {
@@ -1574,11 +1693,6 @@ export const IDS_CLAVE_SEED = [
     "id": "1424",
     "nombre": "Información Importante: Medidas Operacionales por Condiciones Climáticas - Servicios Fijos",
     "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1424"
-  },
-  {
-    "id": "1425",
-    "nombre": "[21-03-2025] Equinoccio Otoño 2025",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1425"
   },
   {
     "id": "1426",
@@ -1622,8 +1736,9 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1441",
-    "nombre": "Política de Validación de Identidad",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1441"
+    "nombre": "POLÍTICA DE VALIDACIÓN IDENTIDAD",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1441",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1443",
@@ -1632,13 +1747,15 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1444",
-    "nombre": "Recuperación de Contraseña Sucursal Virtual, APP y OTT - B2B",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1444"
+    "nombre": "RECUPERAR CONTRASEÑA DE SUCURSAL VIRTUAL",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1444",
+    "categoria": "CLARO VTR WEB"
   },
   {
     "id": "1445",
-    "nombre": "Plan Comercial Negocios",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1445"
+    "nombre": "PLAN COMERCIAL NEGOCIOS work",
+    "enlace": "https://somosclave.cl/respuesta.php?q=empresa/1445",
+    "categoria": "INFORMATIVO PARA EL ASESOR"
   },
   {
     "id": "1449",
@@ -1662,13 +1779,15 @@ export const IDS_CLAVE_SEED = [
   },
   {
     "id": "1458",
-    "nombre": "OTT a la Carta",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1458"
+    "nombre": "OTT A LA CARTA/VENDER STREAMING INDIVIDUAL",
+    "enlace": "https://somosclave.cl/respuesta.php?q=hogar/1458",
+    "categoria": "FACTURACIÓN"
   },
   {
     "id": "1459",
-    "nombre": "DBOX SMART- BOX TV TIENE MENSAJE DE BLOQUEO",
-    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1459"
+    "nombre": "DBOX LOCKED",
+    "enlace": "https://somosclave.cl/respuesta.php?q=actualizado/1459",
+    "categoria": "TECNICO"
   },
   {
     "id": "1461",

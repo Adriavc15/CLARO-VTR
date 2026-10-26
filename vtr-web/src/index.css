@@ -25,6 +25,69 @@ body {
   display: none;
 }
 
+/* Scrollbar global - tema claro */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 9999px;
+  border: 2px solid #f3f4f6;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Scrollbar global - tema oscuro */
+.dark ::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #404040;
+  border: 2px solid #1a1a1a;
+  background-clip: padding-box;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #525252;
+}
+
+/* Scrollbar para modales en tema oscuro - mayor especificidad */
+.dark .overflow-y-auto::-webkit-scrollbar-track,
+.dark .overflow-auto::-webkit-scrollbar-track,
+.dark .fixed::-webkit-scrollbar-track {
+  background: #1a1a1a !important;
+}
+.dark .overflow-y-auto::-webkit-scrollbar-thumb,
+.dark .overflow-auto::-webkit-scrollbar-thumb,
+.dark .fixed::-webkit-scrollbar-thumb {
+  background: #404040 !important;
+  border: 2px solid #1a1a1a !important;
+  background-clip: padding-box;
+}
+.dark .overflow-y-auto::-webkit-scrollbar-thumb:hover,
+.dark .overflow-auto::-webkit-scrollbar-thumb:hover,
+.dark .fixed::-webkit-scrollbar-thumb:hover {
+  background: #525252 !important;
+}
+
+/* Regla universal para todos los scrollbars en dark mode */
+.dark *::-webkit-scrollbar-track {
+  background: #1a1a1a !important;
+}
+.dark *::-webkit-scrollbar-thumb {
+  background: #404040 !important;
+  border: 2px solid #1a1a1a !important;
+  background-clip: padding-box;
+}
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: #525252 !important;
+}
+
 /* Overrides modo oscuro: grises neutros (sin tinte azul/slate) */
 .dark .bg-white { background-color: #1a1a1a !important; }
 .dark .bg-gray-50 { background-color: #0a0a0a !important; }
@@ -40,6 +103,14 @@ body {
 .dark .dark\:bg-gray-800\/60 { background-color: rgba(26, 26, 26, 0.6) !important; }
 .dark .dark\:bg-gray-700\/50 { background-color: rgba(42, 42, 42, 0.5) !important; }
 .dark .dark\:bg-gray-900\/40 { background-color: rgba(10, 10, 10, 0.4) !important; }
+
+/* Chips "invertidos" (fondo claro + texto oscuro en oscuro). El shim de arriba
+   remapea `bg-gray-900` y `text-gray-900` a oscuro, así que sin estas reglas el
+   texto queda oscuro sobre fondo oscuro y el chip se vuelve ilegible. */
+.dark .dark\:bg-gray-100 { background-color: #f3f4f6 !important; }
+.dark .dark\:bg-white { background-color: #ffffff !important; }
+.dark .dark\:text-gray-900 { color: #111827 !important; }
+.dark .dark\:text-gray-700 { color: #1f2937 !important; }
 
 /* Botón de Google. Por identidad de marca va en NEGRO con texto blanco en
    claro y en BLANCO con texto oscuro en oscuro. No puede usar `bg-white`
@@ -60,6 +131,24 @@ body {
   box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
 }
 .dark .boton-google:hover:not(:disabled) {
+  background-color: #e5e5e5 !important;
+}
+
+/* Botón de Microsoft. Sigue el mismo patrón que el botón de Google. */
+.boton-microsoft {
+  background-color: #00a4ef !important;
+  color: #000000 !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+.boton-microsoft:hover:not(:disabled) {
+  background-color: #0078d4 !important;
+}
+.dark .boton-microsoft {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+}
+.dark .boton-microsoft:hover:not(:disabled) {
   background-color: #e5e5e5 !important;
 }
 
@@ -298,6 +387,13 @@ body {
 /* El pill de "Promo" en tema claro se mantiene en negro */
 .plan-hover:hover .plan-promo-pill { color: #111827 !important; background-color: #d1fae5 !important; }
 .dark .plan-hover:hover .plan-promo-pill { color: #065f46 !important; background-color: #a7f3d0 !important; }
+/* Iconos de plataforma: el hover de la tarjeta fuerza el color de todo su
+   contenido, así que el tooltip (fondo oscuro) y el chip "+N" fijan su propio
+   color para no quedar ilegibles (texto oscuro sobre fondo oscuro en oscuro). */
+.plan-hover:hover .plan-stream-tip { color: #ffffff !important; }
+.dark .plan-hover:hover .plan-stream-tip { color: #ffffff !important; }
+.plan-hover:hover .plan-stream-more { color: #111827 !important; }
+.dark .plan-hover:hover .plan-stream-more { color: #e5e5e5 !important; }
 
 /* D-BOX / MODEM - gradientes claros -> oscuros neutros (sin azul) */
 .dark .from-emerald-50 { --tw-gradient-from: #1a1a1a !important; }

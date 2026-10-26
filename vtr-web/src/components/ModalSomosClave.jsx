@@ -226,7 +226,7 @@ function VistaTexto({ texto }) {
  * `item.marca` ('claro' | 'vtr') etiqueta la marca elegida en la tabla y filtra
  * el contenido de "Ver aquí", dejando solo lo de esa marca y lo compartido.
  */
-export default function ModalSomosClave({ item, onClose }) {
+export default function ModalSomosClave({ item, onCerrar }) {
   const [modo, setModo] = useState('elegir')
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState('')
@@ -250,11 +250,29 @@ export default function ModalSomosClave({ item, onClose }) {
   useEffect(() => {
     if (!item) return
     const onKey = (e) => {
-      if (e.key === 'Escape') onClose?.()
+      if (e.key === 'Escape') onCerrar?.()
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [item, onClose])
+    
+    // Bloquear scroll del body
+    document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${window.scrollY}px`
+    document.body.style.width = '100%'
+    
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      // Restaurar scroll del body
+      const scrollY = document.body.style.top
+      document.body.style.overflow = ''
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1)
+      }
+    }
+  }, [item, onCerrar])
 
   if (!item) return null
 
@@ -281,7 +299,7 @@ export default function ModalSomosClave({ item, onClose }) {
   return (
     <div
       className="sc-modal-overlay fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/55 backdrop-blur-[2px]"
-      onClick={onClose}
+      onClick={onCerrar}
       role="dialog"
       aria-modal="true"
       aria-label={item.nombre}
@@ -320,7 +338,7 @@ export default function ModalSomosClave({ item, onClose }) {
           )}
           <button
             type="button"
-            onClick={onClose}
+            onClick={onCerrar}
             className="absolute top-1/2 -translate-y-1/2 right-3 w-9 h-9 rounded-full flex items-center justify-center text-gray-500 hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer"
             aria-label="Cerrar"
           >

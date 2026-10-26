@@ -187,6 +187,29 @@ function mensajeErrorGoogle(code) {
   }
 }
 
+function mensajeErrorMicrosoft(code) {
+  switch (code) {
+    case 'auth/popup-closed-by-user':
+    case 'auth/cancelled-popup-request':
+      return 'Se canceló el inicio de sesión con Microsoft'
+    case 'auth/popup-blocked':
+    case 'auth/operation-not-supported-in-this-environment':
+      return 'El navegador bloqueó la ventana de Microsoft. Reintenta o usa el botón de nuevo.'
+    case 'auth/account-exists-with-different-credential':
+      return 'Ese correo ya está registrado con otro método de acceso'
+    case 'auth/too-many-requests':
+      return 'Demasiados intentos. Espera unos minutos e intenta de nuevo.'
+    case 'auth/network-request-failed':
+      return 'Sin conexión con el servidor'
+    case 'auth/unauthorized-domain':
+      return 'Esa cuenta no está autorizada para iniciar sesión en este portal'
+    case 'auth/operation-not-allowed':
+      return 'El proveedor de Microsoft no está habilitado en el proyecto'
+    default:
+      return 'No se pudo iniciar sesión con Microsoft'
+  }
+}
+
 /**
  * Valida la sesión de Google para el panel de administración:
  * dominio corporativo habilitado + verificado + presente en el registro.
@@ -205,6 +228,36 @@ async function validarAdminGoogle(db, user) {
     return {
       ok: false,
       motivo: `Google no confirmó "${mail}" como verificado. Revisa tu cuenta e inténtalo de nuevo.`,
+    }
+  }
+  const registrado = await existeAdminAutorizado(db, mail)
+  if (!registrado) {
+    return {
+      ok: false,
+      motivo: 'Usted no es administrador. Cuidado, no intentes ingresar si no estás registrado y sin autorización.',
+    }
+  }
+  return { ok: true, email: mail }
+}
+
+/**
+ * Valida la sesión de Microsoft para el panel de administración:
+ * dominio corporativo habilitado + verificado + presente en el registro.
+ */
+async function validarAdminMicrosoft(db, user) {
+  if (!user) return { ok: false, motivo: 'No hay sesión activa' }
+  const mail = normalizarEmail(user.email || '')
+  if (!mail) return { ok: false, motivo: 'Microsoft no devolvió el correo' }
+  if (!esCorreoAdmin(mail)) {
+    return {
+      ok: false,
+      motivo: `"${mail}" no cumple el requisito: solo se admiten correos corporativos ${DOMINIOS_ADMIN_TEXTO} verificados por Microsoft. Elige otra cuenta.`,
+    }
+  }
+  if (user.emailVerified !== true) {
+    return {
+      ok: false,
+      motivo: `Microsoft no confirmó "${mail}" como verificado. Revisa tu cuenta e inténtalo de nuevo.`,
     }
   }
   const registrado = await existeAdminAutorizado(db, mail)
@@ -247,6 +300,43 @@ export async function entrarConGoogleAdmin(auth, db) {
   }
 
   const chequeo = await validarAdminGoogle(db, user)
+  if (!chequeo.ok) {
+    await signOut(auth)
+    throw new Error(chequeo.motivo)
+  }
+  return chequeo.email
+}
+
+/**
+ * Inicia sesión con Microsoft y devuelve el correo corporativo ya validado.
+ * Lanza Error con el motivo si no puede entrar; devuelve null si pasó a
+ * flujo de redirección (popup bloqueado).
+ */
+export async function entrarConMicrosoftAdmin(auth, db) {
+  if (!auth) throw new Error('Autenticación no disponible')
+  const { OAuthProvider, signInWithPopup, signInWithRedirect, signOut } = await import('firebase/auth')
+
+  const provider = new OAuthProvider('microsoft.com')
+  provider.setCustomParameters({ prompt: 'select_account' })
+
+  if (auth.currentUser) {
+    await signOut(auth).catch(() => {})
+  }
+
+  let user
+  try {
+    const cred = await signInWithPopup(auth, provider)
+    user = cred.user
+  } catch (err) {
+    const code = (err && err.code) || ''
+    if (code === 'auth/popup-blocked') {
+      await signInWithRedirect(auth, provider)
+      return null
+    }
+    throw new Error(mensajeErrorMicrosoft(code))
+  }
+
+  const chequeo = await validarAdminMicrosoft(db, user)
   if (!chequeo.ok) {
     await signOut(auth)
     throw new Error(chequeo.motivo)

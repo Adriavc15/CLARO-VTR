@@ -6,6 +6,15 @@
 const LS_KEY = 'vtr-migraciones:local'
 const FS_COLLECTION = 'migraciones'
 
+const uid = () =>
+  typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0
+        const v = c === 'x' ? r : (r & 0x3) | 0x8
+        return v.toString(16)
+      })
+
 export const COMISION_MIGRACION = 5.5
 
 /** Estados de una migración (selector «Estado»). */
@@ -79,10 +88,32 @@ export function labelMigracion(key) {
   return LABELS_MIGRACION[key] || key
 }
 
-const uid = () =>
-  typeof crypto !== 'undefined' && crypto.randomUUID
-    ? crypto.randomUUID()
-    : `mig_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
+import { collection, getDocs, writeBatch, doc } from 'firebase/firestore'
+import { ASESORES_SEED } from './asesoresStore'
+
+function buildAsesoresLegajoMap() {
+  const map = new Map()
+  for (const a of ASESORES_SEED) {
+    const nombre = typeof a === 'string' ? a : a?.nombre
+    const legajo = typeof a === 'object' ? a?.legajo : ''
+    if (nombre && legajo) {
+      map.set(String(nombre).trim().toUpperCase(), String(legajo).trim())
+    }
+  }
+  return map
+}
+
+function obtenerLegajoAsesor(asesor) {
+  if (!asesor) return ''
+  const s = String(asesor).trim()
+  if (!s) return ''
+  if (/ - LEGAJO\s+/i.test(s)) {
+    const m = s.match(/ - LEGAJO\s+(.+)$/i)
+    return m?.[1]?.trim() || ''
+  }
+  const map = buildAsesoresLegajoMap()
+  return map.get(s.toUpperCase()) || ''
+}
 
 export function normalizarEmail(email) {
   return String(email || '').trim().toLowerCase()
@@ -115,12 +146,18 @@ function sanitizeMigracion(m) {
   const clean = sanitizeFirestore(m)
   if (!clean || typeof clean !== 'object') return null
   if (!clean.id) clean.id = uid()
-  clean.asesor = String(clean.asesor || '').trim()
-  clean.supervisor = String(clean.supervisor || '').trim()
+  clean.asesor = String(clean.asesor || '').trim().toUpperCase()
+  clean.supervisor = String(clean.supervisor || '').trim().toUpperCase()
   clean.rutCliente = String(clean.rutCliente || '').trim()
   clean.rangoHorario = String(clean.rangoHorario || '').trim()
   clean.nPedido = String(clean.nPedido || '').trim()
   clean.detalleError = String(clean.detalleError || '').trim()
+  // Legajo independiente del nombre del asesor
+  if (!clean.legajoAsesor) {
+    clean.legajoAsesor = obtenerLegajoAsesor(clean.asesor)
+  } else {
+    clean.legajoAsesor = String(clean.legajoAsesor).trim()
+  }
   // Normaliza fechaIngreso a YYYY-MM-DD (sin hora, sin zona horaria)
   let fechaIngreso = String(clean.fechaIngreso || '').trim()
   if (fechaIngreso && fechaIngreso.includes('T')) {
@@ -367,6 +404,13 @@ function valorCampo(m, key) {
 }
 
 /** Exporta como .xls (tabla HTML que Excel abre). */
+/** Extrae solo el nombre del asesor, eliminando " - LEGAJO ..." si está presente. */
+function nombreAsesorLimpio(asesor) {
+  if (!asesor) return ''
+  const s = String(asesor).trim()
+  return s.replace(/\s*-\s*LEGAJO\s+.+$/i, '').trim()
+}
+
 export function exportarMigracionesExcel(items, nombreArchivo = 'migraciones.xls') {
   const escapeHtml = (s) =>
     String(s ?? '')
@@ -375,16 +419,18 @@ export function exportarMigracionesExcel(items, nombreArchivo = 'migraciones.xls
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
   const cols = CAMPOS_MIGRACION
-  const headCols = ['Fecha registro', 'Hora', 'Asesor', 'Comisión (S/)', ...cols.map(labelMigracion)]
+  const headCols = ['Fecha registro', 'Hora', 'Asesor', 'RUT asesor', 'Comisión (S/)', ...cols.map(labelMigracion)]
     .map((h) => `<th>${escapeHtml(h)}</th>`)
     .join('')
   const rows = items
     .map((m) => {
       const { fecha, hora } = partesFechaHora(m.creado)
+      const asesorLimpio = nombreAsesorLimpio(m.asesor)
       const cells = [
         fecha,
         hora,
-        m.asesor || '',
+        asesorLimpio,
+        m.legajoAsesor || '',
         String(m.comision || COMISION_MIGRACION),
         ...cols.map((k) => valorCampo(m, k)),
       ]

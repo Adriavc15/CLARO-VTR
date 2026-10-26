@@ -32,6 +32,8 @@ export function normalizarPlan(raw, fallbackGrupo = '1p-internet') {
     canales: String(raw.canales || ''),
     hd: String(raw.hd || ''),
     incluyeExtras: !!raw.incluyeExtras,
+    red: String(raw.red || ''),
+    nota: String(raw.nota || ''),
     orden: Number(raw.orden) || 0,
     actualizadoEn: raw.actualizadoEn || new Date().toISOString(),
   }

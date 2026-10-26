@@ -1,293 +1,439 @@
 /**
  * Canales de TV.
  *
- * Tres fuentes distintas, conviven sin mezclarse:
+ * La fuente es el Plan Comercial de Octubre 2026:
  *
- * · GUÍA DE CANALES OFICIAL (`GUIA_CANALES`): lista categorizada con el número
- *   de canal real de cada señal. VTR se construye desde la grilla TV Plus / Full
- *   (que es la más completa) y además tiene el detalle por plan en `PLANES_VTR`.
- *   Claro mantiene su propia lista categorizada.
- * · GRILLAS DEL PORTAL (`GRILLAS_CANALES`): lectura de imágenes del decodificador,
- *   con otro orden de numeración. Los mismos números cambian de señal entre la
- *   grilla TV FULL y la de TV Inicia.
+ * · GUÍAS OFICIALES (`GUIA_CANALES`): lista categorizada con el número de canal
+ *   real de cada señal.
+ *   · VTR — página 40: grilla TV Premium (HFC/FTTH), 101 canales (84 HD y
+ *     17 SD), organizados por categoría. La tabla lista 102 señales sobre 100
+ *     diales: el 822 y el 785 transmiten dos señales cada uno.
+ *   · Claro — página 39: TV Inicia (77 canales, 66 HD) y TV Full / Premium /
+ *     Premium II (74 canales, 68 HD), más los packs premium de pago extra.
+ * · GRILLAS DEL PORTAL (`GRILLAS_CANALES`): una entrada por grilla, con las
+ *   señales y el conteo declarado por la fuente. Es lo que usa el modal.
  *
- * La numeración de la guía y la de las grillas NO coinciden: para responder
- * "¿en qué número sale X?" usar la guía; para mostrar la grilla visual del plan
- * usar `grilla()`.
+ * La fuente entrega el total de canales y de HD por plan, pero no marca la
+ * calidad señal por señal. En VTR el dial sí la define (ver `DIALES_SD_VTR`), así
+ * que ahí sí se puede filtrar por HD. En Claro la calidad se informa a nivel de
+ * grilla y no señal por señal.
  *
- * `CONFLICTOS_VTR` deja constancia de los números en que las fuentes se
- * contradicen. No se resuelven por defecto: hay que confirmarlos en
+ * `CONFLICTOS_VTR` deja constancia de los puntos donde la fuente se contradice o
+ * quedó desactualizada. No se resuelve por defecto: hay que confirmarlo en
  * vtr.com/guia-canales con la comuna del cliente.
  */
 
+/* ────────────────────────────────────────────────────────────────────────────
+ * LISTAS OFICIALES — Plan Comercial, Octubre 2026
+ * ──────────────────────────────────────────────────────────────────────────── */
+
 /**
- * GUÍA DE CANALES VTR — por plan. Grilla definitiva 2026.
+ * GRILLA VTR TV PREMIUM (HFC/FTTH) — página 40 del Plan Comercial.
  *
- * Fuente: grilla oficial VTR TV Plus / Full (vtr.com/cambiodegrilla, vtr.com/hd,
- * vtr.com/guia-canales). Reemplaza la lista 700-series anterior, que asignaba
- * otros nombres a los mismos números (705/706/707).
- *
- * `TV_PLUS` es la grilla más completa y es la base de `GUIA_CANALES.vtr`.
- * Los conteos se calculan sobre lo listado: no se inventan señales que la fuente
- * no detalla.
- *
- * Cambios de 2026 ya aplicados:
- * · Mega 2 y Mega Ficción (026, 029) vuelven a la parrilla: se revirtió la orden
- *   de salida. No están retiradas. Sus espejos HD no están confirmados.
- * · T13 En Vivo (050) ocupa el dial en reemplazo de FOX News.
- * · Bloque HD nacional corregido contra fuentes: 705 TV+ HD, 706 La Red HD,
- *   707 TVN HD, 709 Mega HD, 711 Chilevisión HD, 713 Canal 13 HD, 714 Canal 24
- *   Horas HD, 715 CNN Chile HD. El esquema 701/703/705/706/707 no aparece en
- *   ninguna fuente consultada.
- * · 009 es Nickelodeon Chile y 025 es MTV Chile; Universal Reality queda en 222.
- *
- * `retirado: true` queda libre: hoy ninguna señal de la lista lo lleva. Si alguna
- * vuelve a salir de circulación, se marca aquí en vez de borrarla, para no perder
- * el dial ni su historial.
+ * 101 canales (84 HD y 17 SD) según el plan, organizados por categoría. La tabla
+ * lista 102 señales sobre 100 diales: el 822 transmite dos señales (Telemundo
+ * Internacional y Art Cinema) y el 785 también (Space y TCM). Se listan todas.
  */
-
-/** Bloque de la grilla TV Plus / TV Full. `senales`: [número, nombre] */
-const VTR_BLOQUES = [
-  ['Infantil y Familiar (001-013)', [
-    [1, 'Portal VTR / Servicios'],
-    [7, 'Disney Junior'],
-    [8, 'Disney Channel'],
-    [9, 'Nickelodeon', false, 'Dial verificado contra grilla de Santiago. El 719 HD figura como Kidoo o Nickelodeon según la ciudad'],
-    [10, 'Discovery Kids'],
-    [11, 'Cartoonito'],
-    [12, 'Cartoon Network'],
-    [13, 'ETC TV'],
+const VTR_TV_PREMIUM = [
+  ['Cine & Series', [
+    [822, 'Telemundo Internacional'], [773, 'A3Series'], [774, 'A3Cine'], [823, 'TVN 3'],
+    [782, 'Cinemax'], [788, 'Universal Channel'], [743, 'Adult Swim'], [497, 'Sony Channel'],
+    [781, 'TNT'], [768, 'TNT Series'], [771, 'TNT Novelas'], [769, 'Universal Channel'],
+    [787, 'Universal Channel'], [822, 'Art Cinema'], [785, 'Space'], [824, 'STAR Channel'],
+    [784, 'AMC'], [772, 'Warner Channel'], [765, 'STAR Channel'],
+    [767, 'ID (Investigation Discovery)'], [764, 'Warner Channel'], [789, 'Studio Universal'],
+    [759, 'Warner Channel'], [763, 'Cinecanal'], [758, 'I-Sat'], [783, 'FX'], [748, 'TCM'],
+    [785, 'TCM'], [790, 'HBO'], [795, 'HBO 2'], [794, 'HBO Signature'], [796, 'HBO Pop'],
+    [797, 'HBO Family'], [791, 'HBO Mundi'], [792, 'HBO Plus'], [793, 'HBO'],
   ]],
-  ['Nacional, Noticias y Música (014-049)', [
-    [14, 'Canal 24 Horas'],
-    [15, 'CNN Chile'],
-    [16, 'Telecanal'],
-    [17, 'La Red'],
-    [18, 'TV+'],
-    [19, 'TVN'],
-    [20, 'Mega'],
-    [21, 'Chilevisión'],
-    [22, 'Canal 13'],
-    [23, 'Zona Latina'],
-    [24, 'Vía X'],
-    [25, 'MTV Chile'],
-    [26, 'Mega 2'],
-    [27, '13C'],
-    [28, 'E! Entertainment'],
-    [29, 'Mega Ficción'],
-    [44, 'Rec TV'],
-    [47, 'Agricultura TV'],
-    [49, 'ESPN (Básico)'],
+  ['Cultural', [
+    [737, '13C'], [730, 'History Channel'], [733, 'Discovery Channel'],
+    [734, 'TVE'], [99, 'TNE'], [68, 'EWTN'], [742, 'History 2'], [731, 'Love Nature'],
+    [739, 'National Geographic'], [756, 'Docu'], [73, 'Nat Geo Wild'], [72, 'Discovery'],
   ]],
-  ['Deportes Base (050-164)', [
-    [50, 'T13 En Vivo', false, 'Ocupa el dial en reemplazo de FOX News'],
-    [150, 'ESPN'],
-    [151, 'ESPN 2'],
-    [152, 'Teletrak TV'],
-    [153, 'ESPN 3'],
-    [154, 'ESPN 5'],
-    [155, 'ESPN 6'],
-    [156, 'GolTV'],
-    [157, 'TyC Sports'],
-    [159, 'CDO Básico (Canal del Deporte Olímpico)'],
-    [164, 'L1 Max Básico'],
+  ['Deportes', [
+    [854, 'TNT Sports'], [846, 'GolTV'], [847, 'ESPN'], [844, 'Golf Channel'],
+    [845, 'Red Bull TV'], [841, 'ESPN'], [843, 'ESPN 2'], [210, 'Turbo'], [842, 'ESPN 3'],
+    [840, 'ESPN 4'], [859, 'ESPN 5'], [862, 'ESPN 6'],
   ]],
-  ['Cine, Series y Variedades (200-399)', [
-    [208, 'FX'],
-    [210, 'TNT'],
-    [212, 'Space'],
-    [215, 'Cinecanal'],
-    [220, 'Universal Cinema'],
-    [221, 'Universal Comedy'],
-    [222, 'Universal Reality'],
-    [230, 'Kanal D Drama'],
-    [350, 'Discovery Channel'],
-    [352, 'Animal Planet'],
-    [355, 'Discovery Home & Health'],
+  ['Entretenimiento', [
+    [727, 'K-Nino'], [850, 'Comedy Central'], [749, 'Universal Channel'],
+    [736, 'Warner Channel'], [750, 'Food Network'], [315, 'Las Estrellas'], [747, 'E!'],
+    [744, 'TLC'], [717, 'VIA X'], [751, 'Más Chic'], [762, 'REC TV'], [209, 'HGTV'],
+    [716, 'Zona Latina'], [752, 'Glitz'], [746, 'H&H (Home & Health)'],
+    [766, 'Film & Arts'],
   ]],
-  ['Espejos en Alta Definición (700-860)', [
-    [705, 'TV+ HD'],
-    [706, 'La Red HD'],
-    [707, 'TVN HD'],
-    [709, 'Mega HD'],
-    [711, 'Chilevisión HD'],
-    [713, 'Canal 13 HD'],
-    [714, 'Canal 24 Horas HD'],
-    [715, 'CNN Chile HD'],
-    [716, 'Zona Latina HD'],
-    [717, 'Vía X HD'],
-    [718, 'Cartoon Network HD'],
-    [719, 'Nickelodeon HD', false, 'La guía de Santiago lo llama Kidoo HD en este mismo dial. Depende de la ciudad'],
-    [720, 'DreamWorks Channel HD'],
-    [722, 'Disney Channel HD'],
-    [723, 'Discovery Kids HD'],
-    [725, 'Cartoonito HD'],
-    [756, 'Docu HD'],
-    [771, 'TNT Novelas HD'],
-    [772, 'Golden Plus HD'],
-    [773, 'Atreseries HD'],
-    [774, 'Atrescine HD'],
-    [780, 'Cinecanal HD'],
-    [781, 'TNT HD'],
-    [782, 'Cinemax HD'],
-    [783, 'USA Network HD'],
-    [784, 'AMC HD'],
-    [785, 'Space HD'],
-    [787, 'Paramount Network HD'],
-    [788, 'Universal TV HD'],
-    [789, 'Studio Universal HD'],
-    [790, 'HBO HD'],
-    [791, 'HBO Family HD'],
-    [792, 'HBO Mundi HD'],
-    [793, 'HBO 2 HD'],
-    [794, 'HBO Signature HD'],
-    [795, 'HBO Plus HD'],
-    [796, 'HBO Xtreme HD'],
-    [797, 'HBO Pop HD'],
-    [798, 'Universal Premiere HD', false, 'Solo en VTR Play / d-BOX Smart'],
-    [799, 'Universal Comedy HD', false, 'Solo en VTR Play / d-BOX Smart'],
-    [800, 'Universal Cinema HD', false, 'Solo en VTR Play / d-BOX Smart'],
-    [801, 'Universal Crime HD', false, 'Solo en VTR Play / d-BOX Smart'],
-    [802, 'Universal Reality HD', false, 'Solo en VTR Play / d-BOX Smart'],
-    [840, 'ESPN 4 HD'],
-    [841, 'ESPN HD'],
-    [842, 'ESPN 3 HD'],
-    [843, 'ESPN 2 HD'],
-    [844, 'Golf Channel HD'],
-    [845, 'GolTV HD'],
-    [846, 'TyC Sports HD'],
-    [847, 'Teletrak TV HD'],
-    [854, 'TNT Sports HD'],
-    [855, 'TNT Sports Premium HD'],
-    [859, 'ESPN 5 HD'],
+  ['Infantil', [
+    [722, 'Disney Channel'], [719, 'KidsCo'], [720, 'Disney Junior'], [723, 'Nick Jr / Ok'],
+    [7, 'Disney Junior'], [725, 'Cartoonito'], [757, 'Boomerang / Tooncast'],
+    [718, 'Cartoon Network'], [254, 'Nick'], [251, 'Discovery Kids'],
   ]],
-]
-
-/** Plan TV Inicia:parrilla básica. Los rangos no se desglosan señal por señal. */
-const VTR_INICIA = [
-  [8, 'Disney Channel'],
-  [10, 'Discovery Kids'],
-  [12, 'Cartoon Network'],
-  { desde: 17, hasta: 22, canal: 'Televisión Abierta Chilena', nota: '017 La Red, 019 TVN, 020 Mega, 021 Chilevisión, 022 Canal 13' },
-  [14, 'Canal 24 Horas'],
-  [15, 'CNN Chile'],
-  [44, 'Rec TV'],
-  [47, 'Agricultura TV'],
-  [49, 'ESPN (Básico)'],
-  [50, 'T13 En Vivo'],
-  [52, 'Paramount Network'],
-  [113, 'NTV Chile'],
-  [152, 'Teletrak TV'],
-  [159, 'CDO Básico (Canal del Deporte Olímpico)'],
-  [208, 'FX'],
-  [210, 'TNT'],
-  [215, 'Cinecanal'],
-  [220, 'Universal Cinema'],
-  [350, 'Discovery Channel'],
-  [352, 'Animal Planet'],
-  [355, 'Discovery Home & Health'],
-  { desde: 705, hasta: 707, canal: 'Alta Definición Nacional', nota: '705 TV+ HD, 706 La Red HD, 707 TVN HD' },
-  [718, 'Cartoon Network HD'],
-  [722, 'Disney Channel HD'],
-  [780, 'Cinecanal HD'],
-  [781, 'TNT HD'],
-  [841, 'ESPN HD'],
-]
-
-/** Señales premium / a la carta, activables sobre cualquier grilla */
-const VTR_PREMIUM = [
-  [165, 'TNT Sports Premium (SD)', false, 'Fútbol chileno'],
-  [855, 'TNT Sports Premium (HD)', false, 'Fútbol chileno'],
-  [166, 'ESPN Premium (SD)'],
-  [860, 'ESPN Premium (HD)', false, 'ESPN Premium'],
-  { desde: 790, hasta: 797, canal: 'Paquete HBO Premium HD', detalle: true, nota: 'HBO HD, HBO 2, Family, Mundi, Pop, Xtreme, Plus, Signature' },
-  { desde: 501, hasta: 565, canal: 'Pack Adultos', detalle: false, nota: 'Playboy TV en el 501 y Venus en el 502. El resto del rango no está detallado por la fuente' },
-]
-
-/** Señales de autogestión, presentes en todos los planes */
-const VTR_INTERACTIVOS = [
-  [160, 'Cartelera Interactiva y Guía VOD'],
-  [891, 'Sucursal Virtual en Pantalla'],
+  ['Internacional', [
+    [825, 'Antena 3'], [820, '24 Horas'], [352, 'Deutsche Welle (DW)'], [353, 'TV5 Monde'],
+    [354, 'Rai Italia'],
+  ]],
+  ['Noticias', [
+    [740, 'CNN Chile'], [714, '24 Horas'], [715, 'CNN en Español'],
+    [830, 'CNN International / World News'], [738, 'T13 en vivo'], [71, 'CNN Chile'],
+    [351, 'CNN en Español'], [372, 'T13 en vivo'], [47, 'A+'],
+  ]],
 ]
 
 /**
- * Puntos donde la fuente se contradice o quedó desactualizada. No se elige un
- * ganador en silencio: el asistente debe mencionar la duda antes de confirmar.
+ * Diales SD de la grilla VTR.
  *
- * `resuelto: true` = ya se/localizó la explicación, se informa sin alarmar.
+ * La fuente declara 84 HD y 17 SD pero no marca la calidad por fila. En esta
+ * grilla el dial la define: los diales menores a 500 son SD, salvo el 497 (Sony
+ * Channel), que va en el bloque 4xx de packs premium y es HD. Con esa regla se
+ * obtienen los 17 SD que declara la fuente.
  */
-export const CONFLICTOS_VTR = [
-  {
-    senales: [11, 12, 14, 15],
-    detalle:
-      'Resuelto contra la grilla de Santiago publicada el 4 de octubre de 2026: 011 Cartoonito, 012 Cartoon Network, 014 Canal 24 Horas y 015 CNN Chile. TV Inicia usaba otra numeración y quedó alineado a la misma.',
-    resuelto: true,
-  },
-  {
-    senales: [705, 706, 707, 709, 711, 713, 714, 715],
-    detalle:
-      'El bloque HD nacional se corrigió contra fuentes coincidentes, entre ellas la propia página de VTR: 705 TV+ HD, 706 La Red HD, 707 TVN HD, 709 Mega HD, 711 Chilevisión HD, 713 Canal 13 HD, 714 Canal 24 Horas HD y 715 CNN Chile HD. El esquema 701 / 703 / 705 / 706 / 707 que circulaba no aparece en ninguna fuente consultada.',
-    resuelto: true,
-  },
-  {
-    senales: [9],
-    detalle:
-      'El 009 es Nickelodeon Chile. El nombre Kidoo corresponde al dial HD, no al SD.',
-    resuelto: true,
-  },
-  {
-    senales: [222, 25],
-    detalle:
-      'Resuelto: el 025 es MTV Chile y Universal Reality queda en el 222.',
-    resuelto: true,
-  },
-  {
-    senales: [26, 29],
-    detalle:
-      'Mega 2 y Mega Ficción vuelven a la parrilla en SD: se revirtió la orden de salida de marzo 2026. Sus espejos HD no están confirmados, porque el 711 es Chilevisión HD.',
-    resuelto: true,
-  },
-  {
-    senales: [719],
-    detalle:
-      'El 719 HD cambia de nombre según la ciudad: Kidoo HD en Santiago, Nickelodeon HD en Concepción y Chillán. El dial es el mismo. Se resuelve con el selector de ciudad.',
-    resuelto: true,
-  },
-  {
-    senales: [540, 541, 542],
-    detalle:
-      'Sala Adultos: 540 Playboy TV, 541 Sextreme, 542 Venus (orden extraído de la guía oficial de Chillán).',
-    resuelto: true,
-  },
-  {
-    senales: [558, 565],
-    detalle: '558 Caracol Internacional y 565 TV Globo Internacional figuran en la guía oficial.',
-    resuelto: true,
-  },
-  {
-    senales: [771, 772, 773, 774, 780, 781, 782, 783, 784, 785, 787, 788, 789, 840, 841, 842, 843, 844, 845, 846, 847, 854, 855, 859],
-    detalle:
-      'Bloque HD de series, cine y deportes corregido con la guía oficial de Chillán (incluye HBO HD 790-797 y Universal+ 798-802).',
-    resuelto: true,
-  },
-  {
-    senales: [843],
-    detalle:
-      'Dial conmutable: ESPN Extra HD en la parrilla básica y ESPN Premium HD en el pack premium ocupan la misma frecuencia. No es un error de la fuente.',
-    resuelto: true,
-  },
-  {
-    senales: [50],
-    detalle: 'T13 En Vivo ocupa el dial en reemplazo de FOX News. No hay que ofrecer FOX News.',
-    resuelto: true,
-  },
-  {
-    senales: [501, 502, 503, 540, 541, 542, 558, 565, 869],
-    detalle:
-      'Pack Adultos precisado según guía oficial de Chillán: 501 Playboy TV, 502 Venus, 503 Sextreme, 540 Sala Adultos: Playboy TV, 541 Sala Adultos: Sextreme, 542 Sala Adultos: Venus, 558 Caracol Internacional, 565 TV Globo Internacional y 869 Playboy TV HD. El resto del rango 501-565 no queda enumerado.',
-    resuelto: true,
-  },
+const DIALES_SD_VTR = new Set([
+  7, 47, 68, 71, 72, 73, 99, 209, 210, 251, 254, 315, 351, 352, 353, 354, 372,
+])
+
+/**
+ * GRILLA CLARO TV INICIA — página 39 del Plan Comercial.
+ * 77 canales (66 HD).
+ * Discovery Science se muestra solo como wordmark SCIENCE en el 528.
+ */
+const CLARO_TV_INICIA = [
+  [586, 'Warner Channel'], [587, 'Sony Channel'], [588, '13C'], [589, 'Comedy Central'],
+  [592, 'TNT HD'], [595, 'TCM'], [597, 'Film & Arts'], [598, 'Cinecanal'], [599, 'TCM'],
+  [602, 'Universal Channel'], [603, 'Studio Universal'], [611, 'Space'], [612, 'A&E'],
+  [613, 'AMC'], [615, 'I-Sat'], [632, 'ID (Investigation Discovery)'], [633, 'TNT Series'],
+  [634, 'Adult Swim'], [635, 'TNT'], [643, 'Corazón'], [645, 'TruTV'], [762, 'HBO'],
+  [520, 'Discovery Channel'], [526, 'Discovery Turbo'], [528, 'SCIENCE'],
+  [529, 'Discovery Home & Health'], [540, 'Animal Planet'], [543, 'Discovery Kids'],
+  [620, 'Warner Channel'], [621, 'Discovery'], [622, 'Discovery'], [625, '13C'],
+  [627, 'ESPN 4'], [473, 'ESPN 4'], [474, 'ESPN'], [475, 'ESPN 2'], [476, 'ESPN 3'],
+  [477, 'ESPN 5'], [479, 'ESPN 6'], [489, 'K-Nino'], [517, 'ESPN Extra'], [518, 'A+'],
+  [519, 'Warner Channel'], [521, 'H&H (Home & Health)'], [522, 'Food Network'],
+  [523, 'Discovery'], [524, '13C'], [527, '13C'], [616, 'TVN'], [618, 'REC TV'],
+  [631, 'HGTV'], [637, 'TLC'], [638, 'E!'], [639, 'Glitz'], [642, 'AMC'],
+  [646, 'Lifetime'], [647, '13C'], [648, 'VIA X'], [649, 'VIA X 2'], [650, 'Zona Latina'],
+  [651, 'Disney Channel'], [652, 'Disney Junior'], [502, 'Cartoon Network'],
+  [510, 'Tooncast'], [511, 'Cartoonito'], [512, 'Discovery Kids'], [513, 'Nick Jr'],
+  [515, 'KidsCo'], [533, 'T13'], [534, 'Mega'], [535, 'CNN Chile'], [536, 'CNN en Español'],
+  [537, 'CNN International'], [538, '24 Horas'], [539, 'DW'], [542, 'Canal 13'],
+  [641, 'ID (Investigation Discovery)'],
 ]
+
+/**
+ * GRILLA CLARO TV FULL / PREMIUM / PREMIUM II — Grilla oficial completa.
+ * 186 canales (53 HD según datos oficiales de Claro).
+ * Actualizado con lista oficial de Claro Chile (Octubre 2026).
+ * Incluye todos los canales de la guía oficial de Claro Chile.
+ */
+const CLARO_TV_FULL = [
+  [2, 'Discovery Kids'],
+  [4, 'Kiddo'],
+  [6, 'Disney Junior'],
+  [7, 'El canal del Payaso Plim Plim'],
+  [9, 'Disney Channel'],
+  [10, 'Cartoon Network'],
+  [11, 'ETC TV'],
+  [13, 'Cartoonito'],
+  [15, 'Mi Música Hits'],
+  [16, 'NTV'],
+  [502, 'Discovery Kids HD'],
+  [506, 'Disney Junior HD'],
+  [509, 'Disney Channel HD'],
+  [510, 'Cartoon Network HD'],
+  [511, 'ETC TV HD'],
+  [513, 'Cartoonito HD'],
+  [516, 'NTV HD'],
+  [519, 'Mega 2'],
+  [21, 'Discovery Home & Health'],
+  [22, 'Food Network'],
+  [23, 'El Gourmet'],
+  [128, 'Love Nature'],
+  [129, 'TLC'],
+  [131, 'HGTV'],
+  [521, 'Discovery Home & Health'],
+  [522, 'Food Network HD'],
+  [523, 'El Gourmet HD'],
+  [622, 'Love Nature HD'],
+  [631, 'HGTV HD'],
+  [28, 'Canal Claro'],
+  [30, 'Esne'],
+  [31, 'Enlace'],
+  [32, 'Cámara de Diputados TV'],
+  [35, 'CNN Internacional'],
+  [36, 'CNN En Español'],
+  [37, 'CNN Chile'],
+  [38, '24 Horas'],
+  [54, 'Mega Noticias'],
+  [109, 'KidOO'],
+  [118, 'REC TV'],
+  [119, 'Claro Cinema'],
+  [518, 'Vive'],
+  [647, 'Mega Ficción'],
+  [525, 'TV Senado'],
+  [527, '13 Realities'],
+  [528, 'ESNE'],
+  [529, 'T13 en Vivo'],
+  [533, 'CNN Internacional'],
+  [535, 'CNN En Español'],
+  [536, 'CNN Chile'],
+  [537, 'Bío Bío TV HD'],
+  [538, '24 Horas HD'],
+  [539, 'France 24 HD'],
+  [540, 'Cámara de Diputados TV'],
+  [542, 'Mega Noticias'],
+  [546, 'Marga Marga TV'],
+  [588, '13 Cultura'],
+  [588, '13 Teleseries'],
+  [616, 'TVN3'],
+  [618, 'REC TV'],
+  [648, 'Carolina TV'],
+  [657, 'MTV'],
+  [659, 'MTV 00s HD'],
+  [90, 'HBO'],
+  [91, 'Cinemax'],
+  [92, 'TNT'],
+  [93, 'Cinecanal'],
+  [94, 'A3 Series'],
+  [98, 'Cine Premium'],
+  [100, 'Star Channel'],
+  [101, 'FX'],
+  [102, 'Universal TV'],
+  [103, 'Studio Universal'],
+  [105, 'Warner'],
+  [111, 'Space'],
+  [112, 'TCM'],
+  [113, 'AMC'],
+  [115, 'USA Network'],
+  [134, 'TNT Novelas'],
+  [138, 'AMC Series'],
+  [142, 'Az Corazon'],
+  [143, 'Telemundo'],
+  [145, 'Zona Latina'],
+  [150, 'Via X'],
+  [151, 'HTV'],
+  [590, 'HBO HD'],
+  [591, 'Cinemax HD'],
+  [592, 'TNT HD'],
+  [593, 'Cinecanal HD'],
+  [595, 'Film and Art'],
+  [598, 'Star Channel HD'],
+  [600, 'FX HD'],
+  [601, 'Universal TV'],
+  [602, 'Studio Universal HD'],
+  [603, 'Warner HD'],
+  [605, 'Space HD'],
+  [599, 'TCM'],
+  [613, 'AMC HD'],
+  [615, 'USA Network HD'],
+  [612, 'A3 series HD'],
+  [642, 'AMC Series'],
+  [643, 'Telemundo HD'],
+  [649, 'Zona Latina'],
+  [650, 'Via X 2 HD'],
+  [652, 'HTV'],
+  [153, 'ClaroSports'],
+  [169, 'Discovery Turbo'],
+  [170, 'ESPN'],
+  [174, 'ESPN 2'],
+  [175, 'ESPN 3'],
+  [176, 'ESPN 5'],
+  [177, 'ESPN Premium'],
+  [178, 'ESPN 6'],
+  [179, 'TNT Sports'],
+  [189, 'TNT Sports Premium SD'],
+  [190, 'Teletrak'],
+  [197, 'HBO Family'],
+  [469, 'Claro Sports HD'],
+  [470, 'Discovery Turbo HD'],
+  [471, 'Teletrak HD'],
+  [473, 'ESPN 4'],
+  [474, 'ESPN HD'],
+  [475, 'ESPN 2 HD'],
+  [476, 'ESPN 3 HD'],
+  [477, 'ESPN 5 HD'],
+  [478, 'ESPN Premium HD'],
+  [479, 'ESPN 6 HD'],
+  [489, 'TNT Sports 3'],
+  [490, 'TNT Sports Premium HD'],
+  [491, 'TNT Sports Premium SD'],
+  [120, 'Discovery Channel'],
+  [121, 'Discovery Science'],
+  [122, 'Nat Geo'],
+  [123, 'Bío Bío TV'],
+  [124, 'ARTV'],
+  [126, '13C'],
+  [132, 'Investigation Discovery (ID)'],
+  [133, 'TNT Series'],
+  [134, 'Adult Swim'],
+  [135, 'E!'],
+  [620, 'Discovery Channel HD'],
+  [621, 'Discovery Science HD'],
+  [625, 'Nat Geo HD'],
+  [626, '13C HD'],
+  [632, 'Investigation Discovery (ID)'],
+  [633, 'TNT Series HD'],
+  [634, 'Adult Swim HD'],
+  [635, 'TNT Novelas HD'],
+  [637, 'TLC'],
+  [638, 'E!'],
+  [260, 'HBO Signature'],
+  [261, 'HBO 2'],
+  [262, 'HBO Plus'],
+  [263, 'HBO Pop'],
+  [265, 'HBO Xtreme'],
+  [266, 'Universal Premiere'],
+  [280, 'Universal Cinema'],
+  [282, 'Universal Reality'],
+  [283, 'Universal Comedy'],
+  [284, 'Universal Crime'],
+  [760, 'HBO family HD'],
+  [761, 'HBO Signature HD'],
+  [762, 'HBO 2 HD'],
+  [763, 'HBO POP HD'],
+  [765, 'HBO Mundi'],
+  [766, 'HBO xtreme HD'],
+  [767, 'HBO Mundi HD'],
+  [780, 'Universal Premiere'],
+  [782, 'Universal Cinema'],
+  [783, 'Universal Reality'],
+  [784, 'Universal Comedy'],
+  [785, 'Universal Crime'],
+  [300, 'Playboy'],
+  [301, 'Venus'],
+  [302, 'sextreme'],
+  [800, 'Playboy'],
+  [801, 'Venus'],
+  [802, 'sextreme'],
+  [512, 'Tevex'],
+  [527, '13 Realities'],
+  [543, 'UChile TV'],
+  [587, 'Kanal D'],
+  [639, '13 Pop'],
+  [641, 'Canal País'],
+  [586, 'Mega Ficción HD'],
+  [589, 'RCN Telenovelas'],
+]
+
+/**
+ * PACKS A LA CARTA (pago extra). Aparecen en la grilla del modal, fuera del
+ * conteo oficial de 77/74/101. Los números de canal solo se pintan donde la
+ * fuente los asigna al proveedor.
+ */
+const tilePack = (canal, extra = {}) => ({
+  n: extra.n ?? null,
+  hasta: extra.hasta,
+  canal,
+  hd: !!extra.hd,
+  retirado: false,
+  premium: true,
+  rango: extra.hasta != null,
+  detalle: false,
+  categoria: 'Packs a la carta',
+  nota: extra.nota,
+})
+
+export const PACKS_A_LA_CARTA = {
+  adulto: {
+    claro: true,
+    vtr: true,
+    canales: [
+      [301, 'Venus', false],
+      [302, 'Sextreme', false],
+      [305, 'Playboy', false],
+    ],
+  },
+  espnPremium: {
+    claro: true,
+    vtr: true,
+    canales: [
+      [473, 'ESPN 4', true],
+      [477, 'ESPN 5', true],
+      [478, 'ESPN Extra', true],
+      [479, 'ESPN 7', true],
+      [480, 'ESPN 6', true],
+    ],
+  },
+  tntSportsPremium: {
+    enClaro: true,
+    enVtr: true,
+    sinNumero: true,
+    dialesClaro: { sd: 190, hd: 490, precio: '$13.990', nota: 'También disponible como TNT Sports en HBO Max' },
+    dialesVtr: { sd: 165, hd: 855, precio: '$13.990' },
+  },
+  universalPlus: {
+    claro: true,
+    vtr: false,
+    rangos: [
+      [280, 285, false],
+      [780, 785, true],
+    ],
+  },
+}
+
+/**
+ * Packs a la carta agrupados para el modal: no van en la parrilla incluida,
+ * se ofrecen aparte (pago extra).
+ */
+export function packsALaCartaGrupos(clave) {
+  const k = String(clave || '').toLowerCase()
+  const esClaro = k.startsWith('claro')
+  const esVtr = k === 'vtr' || k.startsWith('vtr:')
+  if (!esClaro && !esVtr) return []
+
+  const tnt = esClaro ? PACKS_A_LA_CARTA.tntSportsPremium.dialesClaro : PACKS_A_LA_CARTA.tntSportsPremium.dialesVtr
+
+  const packs = [
+    {
+      id: 'adulto',
+      nombre: 'Pack Adulto',
+      precio: esClaro ? '$7.490' : null,
+      nota: 'Hotpack / Venus / Playboy.',
+      canales: PACKS_A_LA_CARTA.adulto.canales.map(([n, canal, hd]) =>
+        tilePack(canal, { n, hd, nota: 'Para contratar' }),
+      ),
+    },
+    {
+      id: 'espn-premium',
+      nombre: 'ESPN Premium',
+      precio: esClaro ? '$9.990' : null,
+      nota: 'ESPN 4, 5, Extra, 7, 6.',
+      canales: PACKS_A_LA_CARTA.espnPremium.canales.map(([n, canal, hd]) =>
+        tilePack(canal, { n, hd, nota: 'Para contratar' }),
+      ),
+    },
+    {
+      id: 'tnt-sports-premium',
+      nombre: 'TNT Sports Premium',
+      precio: esClaro ? tnt.precio : null,
+      nota: 'Fútbol premium.',
+      canales: [
+        tilePack('TNT Sports Premium', { n: tnt.sd, hd: false, nota: 'Para contratar' }),
+        tilePack('TNT Sports Premium', { n: tnt.hd, hd: true, nota: 'Para contratar' }),
+      ],
+    },
+  ]
+
+  if (esClaro) {
+    packs.push({
+      id: 'universal-plus',
+      nombre: 'Universal+',
+      precio: '$7.490',
+      nota: 'Universal Channel SD + HD.',
+      canales: PACKS_A_LA_CARTA.universalPlus.rangos.map(([desde, hasta, hd]) =>
+        tilePack('Universal+', { n: desde, hasta, hd, nota: hd ? 'Para contratar (HD)' : 'Para contratar (SD)' }),
+      ),
+    })
+  }
+
+  return packs
+}
+
+export function packsALaCartaDe(clave) {
+  return packsALaCartaGrupos(clave).flatMap((g) => g.canales)
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * ARMADO DE SEÑALES
+ * ──────────────────────────────────────────────────────────────────────────── */
 
 const hdDe = (nombre) => /\bHD\b/i.test(nombre)
 
@@ -296,8 +442,8 @@ const hdDe = (nombre) => /\bHD\b/i.test(nombre)
  *
  * En un rango, `detallado: true` significa que la fuente enumera su contenido
  * (HBO 790-797) y se puede expandir canal por canal. `false` significa que solo
- * delimita el rango (Pack Adultos 501-565, abiertos 012-023): expandirlo inventaría
- * señales, así que se muestra como una sola entrada.
+ * delimita el rango (Pack Adultos 501-565): expandirlo inventaría señales, así
+ * que se muestra como una sola entrada.
  */
 const aSenal = (categoria, item, premium = false) => {
   if (Array.isArray(item)) {
@@ -321,7 +467,6 @@ const aSenal = (categoria, item, premium = false) => {
 /** Bloque `[categoría, senales]` → lista de señales de esa categoría */
 const bloquea = ([categoria, senales]) => senales.map((s) => aSenal(categoria, s))
 
-
 /** Señales de una tabla de plan; los rangos cuentan como 1 entrada */
 const senalesDe = (tabla, plan) => tabla.map((item) => aSenal(plan, item, plan === 'Premium'))
 
@@ -334,20 +479,90 @@ const resumenSenales = (senales) => ({
   rangos: senales.filter((s) => s.rango).length,
 })
 
+/**
+ * Señal de la lista oficial: `{ n, canal, hd }`.
+ *
+ * `hd` es explícito porque la fuente no lo marca por fila. En VTR sale del dial
+ * (`DIALES_SD_VTR`); en Claro solo se marca lo que el propio nombre declara.
+ */
+const aOficial = (categoria, [n, canal], hd = false) => ({
+  n,
+  canal,
+  hd,
+  retirado: false,
+  premium: false,
+  rango: false,
+  detalle: true,
+  categoria,
+})
+
+/** Señales de la grilla VTR oficial, agrupadas por categoría de la fuente. */
+const senalesVtrOficiales = () =>
+  VTR_TV_PREMIUM.map(([categoria, filas]) => ({
+    categoria,
+    canales: filas.map(([n, canal]) => aOficial(categoria, [n, canal], !DIALES_SD_VTR.has(n))),
+  }))
+
+/** Señales de la grilla Claro oficial, en una sola categoría por plan. */
+const senalesClaroOficiales = (filas, categoria) => ({
+  categoria,
+  canales: filas.map(([n, canal]) => aOficial(categoria, [n, canal], hdDe(canal))),
+})
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * PLANES VTR
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+/** Señales premium / a la carta, activables sobre cualquier grilla */
+const VTR_PREMIUM = [
+  [165, 'TNT Sports Premium (SD)', false, 'Pack $13.990. El dial no se muestra en la grilla.'],
+  [855, 'TNT Sports Premium (HD)', false, 'Pack $13.990. El dial no se muestra en la grilla.'],
+  [166, 'ESPN Premium (SD)'],
+  [860, 'ESPN Premium (HD)', false, 'ESPN Premium'],
+  { desde: 501, hasta: 565, canal: 'Pack Adultos', detalle: false, nota: 'Hotpack / Venus / Playboy. En la grilla VTR no se muestran los diales 301, 302 y 305 (solo Claro).' },
+]
+
+/** Señales de autogestión, presentes en todos los planes */
+const VTR_INTERACTIVOS = [
+  [160, 'Cartelera Interactiva y Guía VOD'],
+  [891, 'Sucursal Virtual en Pantalla'],
+]
+
+/**
+ * Puntos donde la fuente se contradice o quedó desactualizada. No se elige un
+ * ganador en silencio: el asistente debe mencionar la duda antes de confirmar.
+ *
+ * `resuelto: true` = ya se/localizó la explicación, se informa sin alarmar.
+ */
+export const CONFLICTOS_VTR = [
+  {
+    senales: [822, 785],
+    detalle:
+      'La tabla oficial lista 102 señales sobre 100 diales: el 822 transmite dos señales (Telemundo Internacional y Art Cinema) y el 785 también (Space y TCM). Se listan todas; el plan declara 101 canales (84 HD y 17 SD).',
+    resuelto: true,
+  },
+  {
+    senales: [497],
+    detalle:
+      'El 497 es Sony Channel y va en HD: pertenece al bloque 4xx de packs premium de la grilla VTR. Los diales menores a 500 son SD.',
+    resuelto: true,
+  },
+  {
+    senales: [719],
+    detalle:
+      'El 719 es KidsCo en la grilla oficial de VTR TV Premium. El nombre anterior (Kidoo HD / Nickelodeon HD según la ciudad) venía de la fuente previa y ya no aplica.',
+    resuelto: true,
+  },
+]
+
 /** Grillas VTR por plan. `clave` = clave de `GUIA_CANALES` o clave de plan. */
 export const PLANES_VTR = {
-  'tv-inicia': {
-    plan: 'tv-inicia',
-    nombre: 'TV Inicia',
-    descripcion: 'Parrilla básica y económica: nacionales, infantiles esenciales, noticias y entretenimiento básico.',
-    canales: senalesDe(VTR_INICIA, 'TV Inicia'),
-  },
-  'tv-plus': {
-    plan: 'tv-plus',
-    nombre: 'TV Plus / TV Full',
+  'tv-premium': {
+    plan: 'tv-premium',
+    nombre: 'TV Premium',
     descripcion:
-      'Comercialmente TV Full, Plus o Stream TV Plus. Incluye la parrilla de TV Inicia y suma señales de cable: Discovery, ESPN, Space, Universal, Kanal D y los espejos HD.',
-    canales: VTR_BLOQUES.flatMap(bloquea),
+      'Grilla TV Premium de VTR (HFC/FTTH) del Plan Comercial de Octubre 2026: 101 canales únicos, 84 HD y 17 SD, con los packs de cable incluidos.',
+    canales: senalesVtrOficiales().flatMap((c) => c.canales),
   },
   premium: {
     plan: 'premium',
@@ -368,17 +583,11 @@ export const PLANES_VTR_LISTA = Object.keys(PLANES_VTR)
 
 export const planVtr = (clave) => PLANES_VTR[clave] || null
 
-/** Totales por plan: `{ 'tv-plus': { senales: 74, hd: 26, sd: 48, ... } }` */
+/** Totales por plan: `{ 'tv-premium': { senales: 100, hd: 83, sd: 17, ... } }` */
 export const TOTALES_PLANES_VTR = Object.fromEntries(
   PLANES_VTR_LISTA.map((k) => [k, resumenSenales(PLANES_VTR[k].canales)]),
 )
 
-/**
- * Señal de un número de canal VTR (`{ plan, ...senal }`).
- * Prioriza el número exacto sobre los rangos: el 018 es TV+ en TV Plus, aunque
- * el 12-23 de TV Inicia también lo cubra. `opciones.region` ajusta el nombre a
- * la ciudad cuando el dial cambia de nombre entre regiones.
- */
 /**
  * Ciudades con grilla propia. El selector de comuna es la única forma de
  * desdoblar los diales que VTR numera distinto por región.
@@ -394,12 +603,10 @@ export const REGION_VTR_POR_DEFECTO = 'santiago'
 
 /**
  * Diales cuyo nombre cambia según la ciudad: `{ 719: { santiago: 'Kidoo HD', ... } }`.
- * Solo se registra lo que una fuenteBrefmente distinguió; no se completan huecos
- * por intuición.
+ * Solo se registra lo que una fuente distinguió; no se completan huecos por
+ * intuición. La grilla oficial de Octubre 2026 no trae variantes regionales.
  */
-const VARIANTES_REGIONALES_VTR = {
-  719: { santiago: 'Kidoo HD', concepcion: 'Nickelodeon HD', chillan: 'Nickelodeon HD' },
-}
+const VARIANTES_REGIONALES_VTR = {}
 
 /** Nombre de una señal en la ciudad elegida, si la ciudad lo cambia. */
 export const nombreEnRegion = (senal, region) =>
@@ -426,7 +633,7 @@ export function senalVtr(numero, opciones = {}) {
 
 /** Señales retiradas de la circulación comercial. */
 export const senalesRetiradasVtr = () =>
-  PLANES_VTR['tv-plus'].canales.filter((s) => s.retirado).map((s) => ({ n: s.n, canal: s.canal }))
+  PLANES_VTR['tv-premium'].canales.filter((s) => s.retirado).map((s) => ({ n: s.n, canal: s.canal }))
 
 /** Resumen de la grilla VTR por plan para el asistente. */
 export function resumenPlanesVtr(limite = 0) {
@@ -445,131 +652,75 @@ export function resumenPlanesVtr(limite = 0) {
   return out.join('. ')
 }
 
-/** La grilla TV Plus alimenta la guía de VTR: es la más completa. */
-const GUIA_VTR = PLANES_VTR['tv-plus'].canales
+/* ────────────────────────────────────────────────────────────────────────────
+ * GUÍAS OFICIALES POR PROVEEDOR
+ * ──────────────────────────────────────────────────────────────────────────── */
 
-const GUIA_CLARO = [
-  ['Adultos/Premium', [
-    [300, 'Playboy', true],
-    [301, 'Venus', true],
-    [302, 'Sextreme', true],
-    [800, 'Playboy', true],
-    [801, 'Venus', true],
-    [802, 'Sextreme', true],
-  ]],
-  ['Cultura', [
-    [29, 'SBN'],
-    [30, 'Esne'],
-    [31, 'Enlace'],
-    [120, 'Animal Planet'],
-    [121, 'Discovery Channel'],
-    [122, 'Discovery Science'],
-    [123, 'Nat Geo'],
-    [124, 'History Channel'],
-    [25, 'H2'],
-  ]],
-  ['Deporte', [
-    [169, 'ClaroSports'],
-    [170, 'Discovery Turbo'],
-    [174, 'ESPN'],
-    [175, 'ESPN 2'],
-    [176, 'ESPN 3'],
-    [177, 'ESPN 4'],
-  ]],
-  ['Entretenimiento', [
-    [22, 'Food Network'],
-    [28, 'Canal Claro'],
-    [129, 'TLC'],
-    [131, 'HGTV'],
-  ]],
-  ['Hogar y Familia', [
-    [21, 'Home and Health'],
-    [23, 'El Gourmet'],
-  ]],
-  ['Infantiles', [
-    [2, 'Discovery Kids'],
-    [3, 'Baby TV'],
-    [5, 'Funbox'],
-    [6, 'Disney Jr'],
-  ]],
-  ['Música y Audio', [
-    [150, 'Zona Latina'],
-    [151, 'Via X'],
-    [153, 'HTV'],
-    [154, 'Much Music'],
-  ]],
-  ['Noticias', [
-    [35, 'CNN Internacional'],
-    [36, 'CNN En Español'],
-    [37, 'CNN Chile'],
-  ]],
-  ['Películas y Series', [
-    [90, 'HBO'],
-    [91, 'Cinemax'],
-    [92, 'TNT'],
-    [93, 'Cinecanal'],
-  ]],
-  ['Películas y Series/Premium', [
-    [280, 'Universal Premier', true],
-    [282, 'Universal Cinema', true],
-  ]],
-]
+/** La grilla TV Premium alimenta la guía de VTR: es la más completa. */
+const GUIA_VTR = PLANES_VTR['tv-premium'].canales
 
-/** Categorías que declaran contenido premium/adulto en la guía de Claro */
-const CATEGORIAS_PREMIUM = new Set(['Adultos/Premium', 'Películas y Series/Premium'])
+/**
+ * Conteo declarado por la fuente. La fuente entrega el total de la grilla, no
+ * la calidad señal por señal (salvo en VTR, donde el dial la define).
+ */
+const DECLARADO_VTR = { canales: 101, hd: 84, sd: 17 }
+const DECLARADO_CLARO_FULL = { canales: 186, hd: 53, sd: 133 }
+const DECLARADO_CLARO_INICIA = { canales: 77, hd: 66, sd: 11 }
 
-/** "[n, nombre, premium?]" → "{ n, canal, hd, premium, categoria }" */
-const aGuia = (categoria, [n, canal, premium]) => ({
-  n,
-  canal,
-  hd: /\bHD\b/i.test(canal),
-  premium: !!premium || CATEGORIAS_PREMIUM.has(categoria),
-  categoria,
-})
-
-const guiaDe = (proveedor, tabla) => {
-  const categorias = tabla.map(([categoria, filas]) => ({
-    categoria,
-    canales: filas.map((f) => aGuia(categoria, f)),
-  }))
-  return {
-    proveedor,
-    clave: proveedor.toLowerCase(),
-    categorias,
-    canales: categorias.flatMap((c) => c.canales),
-  }
-}
-
-/** Guía ya aplanada → mismo shape que `guiaDe`, agrupada por bloque/categoría */
-const guiaPlana = (proveedor, senales) => {
+/** Guía ya aplanada → mismo shape que `guiaDe`, agrupada por categoría */
+const guiaPlana = (proveedor, senales, extra = {}) => {
   const categorias = []
   for (const s of senales) {
     let c = categorias.find((x) => x.categoria === s.categoria)
     if (!c) categorias.push((c = { categoria: s.categoria, canales: [] }))
     c.canales.push({ ...s, premium: s.premium })
   }
-  return { proveedor, clave: proveedor.toLowerCase(), categorias, canales: senales }
+  return { proveedor, clave: proveedor.toLowerCase(), categorias, canales: senales, ...extra }
 }
 
-/** Guía de canales por proveedor: clave = `vtr` | `claro` */
+/** Guía de una sola categoría (las grillas de Claro llegan por plan) */
+const guiaCategoria = (proveedor, bloque, extra = {}) => ({
+  proveedor,
+  clave: extra.clave || proveedor.toLowerCase(),
+  categorias: [bloque],
+  canales: bloque.canales,
+  ...extra,
+})
+
+/** Guía de canales por proveedor: clave = `vtr` | `claro` | `claro:inicia` */
 export const GUIA_CANALES = {
-  vtr: guiaPlana('VTR', GUIA_VTR),
-  claro: guiaDe('Claro', GUIA_CLARO),
+  vtr: guiaPlana('VTR', GUIA_VTR, {
+    declarado: DECLARADO_VTR,
+    hdPorCanal: true,
+  }),
+  claro: guiaCategoria('Claro', senalesClaroOficiales(CLARO_TV_FULL, 'TV Full / Premium'), {
+    clave: 'claro',
+    declarado: DECLARADO_CLARO_FULL,
+    hdPorCanal: false,
+  }),
+  'claro:inicia': guiaCategoria('Claro', senalesClaroOficiales(CLARO_TV_INICIA, 'TV Inicia'), {
+    clave: 'claro:inicia',
+    declarado: DECLARADO_CLARO_INICIA,
+    hdPorCanal: false,
+  }),
 }
 
-export const PROVEEDORES_GUIA = Object.keys(GUIA_CANALES)
+/** Proveedores que entran en las búsquedas de canal. */
+export const PROVEEDORES_GUIA = ['vtr', 'claro']
 
 export const guia = (clave) => GUIA_CANALES[String(clave || '').toLowerCase()] || null
 
-/** Totales de la guía: `{ vtr: { canales: 74, hd: 26, ... } }` */
+/** Totales de la guía: `{ vtr: { canales: 101, hd: 84, ... } }` */
 export const TOTALES_GUIA = Object.fromEntries(
-  PROVEEDORES_GUIA.map((k) => [
+  Object.keys(GUIA_CANALES).map((k) => [
     k,
     {
-      canales: GUIA_CANALES[k].canales.length,
-      hd: GUIA_CANALES[k].canales.filter((c) => c.hd).length,
+      canales: GUIA_CANALES[k].declarado?.canales ?? GUIA_CANALES[k].canales.length,
+      hd: GUIA_CANALES[k].declarado?.hd ?? GUIA_CANALES[k].canales.filter((c) => c.hd).length,
+      sd: GUIA_CANALES[k].declarado?.sd ?? GUIA_CANALES[k].canales.filter((c) => !c.hd).length,
       premium: GUIA_CANALES[k].canales.filter((c) => c.premium).length,
       categorias: GUIA_CANALES[k].categorias.length,
+      listados: GUIA_CANALES[k].canales.length,
     },
   ]),
 )
@@ -631,187 +782,12 @@ export function resumenGuia(claveProveedor, limite = 0) {
   ].join(' ')
 }
 
-/**
- * Grillas de canales TV — fuente: imágenes de grilla del portal.
- *
- * · TV FULL: la imagen es la misma para VTR y Claro, salvo Claro Sports, que es
- *   exclusivo de Claro. Por eso la grilla se parte en una base común y la fila
- *   propia de cada proveedor.
- * · Claro TV INICIA (77 canales, 66 HD): grilla propia de Claro.
- *
- * Los mismos números cambian de señal entre la grilla TV FULL y la de TV Inicia.
- * TV PREMIUM no aparece en las imágenes: no se marca ningún canal como Premium
- * sin evidencia.
- *
- * Estas grillas son la lectura de la imagen del portal. Los números de canal que
- * ve el cliente están en `GUIA_CANALES`; el modal usa esa, no esta.
- *
- * `canal: null` = señal cuyo nombre no se pudo leer (se cuenta en `pendiente`).
- * Las señales que faltan para el conteo oficial se reportan como "por confirmar".
- */
+/* ────────────────────────────────────────────────────────────────────────────
+ * GRILLAS POR PAQUETE DE TV
+ * ──────────────────────────────────────────────────────────────────────────── */
 
-/** Señales que solo van en Claro. Nunca sumarlas a la grilla de VTR. */
-const EXCLUSIVAS_CLARO = [[469, 'Claro Sports']]
-
-const TV_FULL_COMUN = [
-  [470, 'TUBO'],
-  [471, 'TLC'],
-  [473, 'TNT'],
-  [474, 'Discovery'],
-  [475, 'Animal Planet'],
-  [476, 'History'],
-  [477, 'ESPN'],
-  [479, 'ESPN 2'],
-  [489, 'TNT Sports'],
-  [502, 'Discovery Kids'],
-  [506, 'Disney Junior'],
-  [509, 'Disney Channel'],
-  [510, 'Cartoon Network'],
-  [511, 'ETC'],
-  [513, 'Cartoonito'],
-  [515, 'Nickelodeon'],
-  [517, 'Kine'],
-  [518, 'Vive'],
-  [519, 'Mega 2'],
-  [521, 'Discovery Home & Health'],
-  [522, 'Food Network'],
-  [523, 'El Gourmet'],
-  [526, 'ARTV'],
-  [527, '13 Realities'],
-  [534, 'Bío Bío TV'],
-  [535, 'CNN International'],
-  [536, 'CNN en Español'],
-  [537, 'CNN Chile'],
-  [538, '24 Horas'],
-  [540, 'Cámara de Diputados TV'],
-  [542, 'Mega Noticias'],
-  [586, 'AMC'],
-  [587, 'Golden'],
-  [590, 'Cinecanal'],
-  [591, 'Cinemax'],
-  [592, 'TNT HD'],
-  [593, 'TNT Novelas'],
-  [599, 'TCM'],
-  [600, 'Star Channel'],
-  [601, 'FX'],
-  [602, 'Universal'],
-  [603, 'Studio Universal'],
-  [605, 'Warner'],
-  [611, 'Space'],
-  [612, 'A3Series'],
-  [613, 'Studio Universal'],
-  [615, 'USA'],
-  [620, 'Animal Planet'],
-  [621, 'Discovery Channel'],
-  [625, 'Love Nature'],
-  [627, '13C'],
-  [631, 'HGTV'],
-  [632, 'Investigation Discovery (ID)'],
-  [633, 'TNT'],
-  [635, 'TNT Series'],
-  [637, 'TLC'],
-  [638, 'E!'],
-  [640, 'TNT'],
-  [645, 'Cinemax'],
-  [649, 'Vía X'],
-  [650, 'Zona Latina'],
-  [651, 'Vía X+'],
-  [652, 'Zona Latina'],
-  [760, 'HBO Family'],
-  [761, 'HBO Signature'],
-  [762, 'HBO'],
-  [763, 'HBO Plus'],
-  [765, 'HBO Pop'],
-  [766, 'HBO Xtreme'],
-  [767, 'HBO Mundi'],
-]
-
-const CLARO_TV_INICIA = [
-  [470, 'TUBO'],
-  [473, 'ESPN 4'],
-  [474, 'ESPN'],
-  [475, 'ESPN 2'],
-  [476, 'ESPN 3'],
-  [477, 'ESPN 5'],
-  [480, 'ESPN 6'],
-  [489, 'TNT Sports 3'],
-  [502, 'Discovery Kids'],
-  [510, 'ESPN'],
-  [511, 'ESPN 2'],
-  [512, 'ESPN 3'],
-  [513, 'ESPN'],
-  [515, 'ESPN Extra'],
-  [518, 'Vive'],
-  [519, 'Mega 2'],
-  [520, 'ESPN 4'],
-  [521, 'Discovery Home & Health'],
-  [522, 'Food Network'],
-  [523, 'El Gourmet'],
-  [524, 'Cocina Viva'],
-  [526, 'Adrenalina Sports Network'],
-  [527, '13 Realities'],
-  [528, 'Azteca'],
-  [529, 'Pasiones'],
-  [533, 'T13 en Vivo'],
-  [534, 'Bío Bío TV'],
-  [535, 'CNN International'],
-  [536, 'CNN en Español'],
-  [537, 'CNN Chile'],
-  [538, '24 Horas'],
-  [539, 'France 24'],
-  [540, 'Discovery'],
-  [542, 'Mega Noticias'],
-  [543, 'Animal Planet'],
-  [586, 'ESPN'],
-  [587, 'ESPN 2'],
-  [588, 'ESPN 3'],
-  [589, 'ESPN 4'],
-  [592, 'TNT'],
-  [595, 'FX'],
-  [597, 'DHE'],
-  [598, 'De Película'],
-  [599, 'Cinecanal'],
-  [602, 'HBO'],
-  [603, 'HBO Plus'],
-  [611, 'Warner Channel'],
-  [613, 'Sony Channel'],
-  [615, 'CNN'],
-  [616, 'TVN3'],
-  [618, 'REC TV'],
-  [620, 'Animal Planet'],
-  [621, 'Discovery Channel'],
-  [622, 'Discovery Science'],
-  [625, 'Love Nature'],
-  [627, '13C'],
-  [631, 'HGTV'],
-  [632, 'Investigation Discovery (ID)'],
-  [633, 'Nickelodeon'],
-  [634, 'Disney Channel'],
-  [635, 'Disney Junior'],
-  [637, 'TLC'],
-  [638, 'E!'],
-  [639, 'Tevex'],
-  [640, 'CHV'],
-  [642, 'Univisión'],
-  [643, 'Cartoon Network'],
-  [645, 'Cartoonito'],
-  [646, null],
-  [647, 'Vía X'],
-  [648, 'Vía X+'],
-  [649, 'Vía X'],
-  [650, 'Golden Premier'],
-  [651, 'Golden Premier'],
-  [652, 'Telefe'],
-  [762, 'HBO'],
-]
-
-const aGrilla = (filas) => filas.map(([n, canal]) => ({ n, canal, pendiente: !canal }))
-
-/** Grilla de VTR TV Full: la base común, sin las señales exclusivas de Claro */
-const TV_FULL = TV_FULL_COMUN
-
-/** Grilla de Claro TV Full: la base común más las señales propias de Claro */
-const CLARO_TV_FULL = [...TV_FULL_COMUN, ...EXCLUSIVAS_CLARO]
+const aGrilla = (senales) =>
+  senales.map((s) => ({ n: s.n, canal: s.canal, pendiente: !s.canal }))
 
 /**
  * Grillas por fuente. `clave` = `${proveedor}:${paqueteTv}`
@@ -820,31 +796,29 @@ const CLARO_TV_FULL = [...TV_FULL_COMUN, ...EXCLUSIVAS_CLARO]
 export const GRILLAS_CANALES = {
   'vtr:full': {
     proveedor: 'VTR',
-    paquete: 'TV Full',
+    paquete: 'TV Premium',
     clave: 'vtr:full',
     guia: 'vtr',
-    // La imagen del portal declara 74 señales contando Claro Sports, que es de
-    // Claro: VTR no la lleva, así que su grilla es de 73. El conteo de HD viene
-    // de la imagen compartida y no se ajusta por esa fila.
-    conteo: { canales: 73, hd: 68 },
-    notaConteo: 'El conteo de la imagen incluye Claro Sports (exclusiva de Claro).',
-    canales: aGrilla(TV_FULL),
+    conteo: { ...DECLARADO_VTR },
+    notaConteo:
+      'La tabla oficial de TV Premium lista 102 señales sobre 100 diales: el 822 (Telemundo Internacional y Art Cinema) y el 785 (Space y TCM) transmiten dos señales cada uno.',
+    canales: aGrilla(GUIA_VTR),
   },
   'claro:full': {
     proveedor: 'Claro',
-    paquete: 'TV Full',
+    paquete: 'TV Full / Premium',
     clave: 'claro:full',
     guia: 'claro',
-    conteo: { canales: 74, hd: 68 },
-    canales: aGrilla(CLARO_TV_FULL),
+    conteo: { ...DECLARADO_CLARO_FULL },
+    canales: aGrilla(GUIA_CANALES.claro.canales),
   },
   'claro:inicia': {
     proveedor: 'Claro',
     paquete: 'TV Inicia',
     clave: 'claro:inicia',
-    guia: 'claro',
-    conteo: { canales: 77, hd: 66 },
-    canales: aGrilla(CLARO_TV_INICIA),
+    guia: 'claro:inicia',
+    conteo: { ...DECLARADO_CLARO_INICIA },
+    canales: aGrilla(GUIA_CANALES['claro:inicia'].canales),
   },
 }
 
@@ -875,25 +849,28 @@ export function resumenGrilla(clave, limite = 0) {
   return [
     `${g.proveedor} ${g.paquete}: ${g.conteo.canales} canales (${g.conteo.hd} HD).`,
     g.notaConteo || '',
-    `Grilla leída: ${g.canales.length} señales${pendientes ? `, ${pendientes} sin nombre legible` : ''}${noLeidas ? `, ${noLeidas} por confirmar` : ''}.`,
+    `Grilla conocida: ${g.canales.length} señales${pendientes ? `, ${pendientes} sin nombre legible` : ''}${noLeidas ? `, ${noLeidas} por confirmar` : ''}.`,
     `Canales: ${lista.map((c) => `${c.n} ${c.canal || 'sin nombre legible'}`).join(', ')}${limite > 0 && lista.length < g.canales.length ? ', …' : ''}`,
   ]
     .filter(Boolean)
     .join(' ')
 }
 
-/** Planes que se ven en la grilla del modal de VTR, en orden de dial */
-const PLANES_MODAL_VTR = ['tv-plus', 'premium', 'interactivos']
+/**
+ * Planes que se ven en la grilla del modal de VTR.
+ *
+ * La grilla oficial de TV Premium ya incluye los packs de cable, así que el modal
+ * muestra solo esa parrilla: los canales a la carta y los servicios interactivos
+ * se informan aparte, con su propio plan.
+ */
+const PLANES_MODAL_VTR = ['tv-premium']
 
 /**
  * Grilla del modal: guía oficial del proveedor con los números que el cliente
- * sintoniza. `claveProveedor` = `vtr` | `claro`.
+ * sintoniza. `claveProveedor` = `vtr` | `claro` | `claro:inicia`.
  *
  * No usa la lectura de la imagen del portal: esos números no son los del dial.
- * En VTR se suman los planes premium e interactivos; en Claro, la guía completa.
- * Los rangos cuyo contenido enumera la fuente (HBO 790-797) se expanden canal por
- * canal; los que solo delimitan un tramo (Pack Adultos 501-565) se muestran como
- * una entrada con su nota.
+ * Los conteos que se muestran son los declarados por la fuente.
  */
 export function grillaModal(claveProveedor, opciones = {}) {
   const { premium = true, region = null } = opciones
@@ -915,28 +892,41 @@ export function grillaModal(claveProveedor, opciones = {}) {
       }
       continue
     }
-    if (!c.rango) {
-      if (vistos.has(c.n)) continue
-      vistos.add(c.n)
+    if (!c.rango && c.n != null) {
+      // Un dial puede transmitir más de una señal (el 822 y el 785 en VTR), así
+      // que la identidad es el par número + nombre y no solo el número.
+      const id = `${c.n}::${c.canal}`
+      if (vistos.has(id)) continue
+      vistos.add(id)
     }
     senales.push(c)
   }
-  senales.sort((a, b) => a.n - b.n)
+  // Orden estable: las señales de un mismo dial conservan el orden de la fuente.
+  // Los packs sin dial (TNT Sports Premium, extras VTR) quedan al final.
+  senales.sort((a, b) => {
+    if (a.n == null && b.n == null) return 0
+    if (a.n == null) return 1
+    if (b.n == null) return -1
+    return a.n - b.n
+  })
 
   // Los diales que VTR numera distinto por ciudad se ajustan al final, cuando ya
   // se resolvió la deduplicación por número.
   const finales = g.clave === 'vtr' ? aplicarRegionVtr(senales, region) : senales
 
+  const declarado = g.declarado
   return {
     proveedor: g.proveedor,
     clave: g.clave,
     region,
     regiones: g.clave === 'vtr' ? REGIONES_VTR : [],
+    hdPorCanal: g.hdPorCanal !== false,
     senales: finales,
+    packsALaCarta: packsALaCartaGrupos(g.clave),
     conteo: {
-      canales: finales.length,
-      hd: finales.filter((s) => s.hd).length,
-      sd: finales.filter((s) => !s.hd).length,
+      canales: declarado?.canales ?? finales.length,
+      hd: declarado?.hd ?? finales.filter((s) => s.hd).length,
+      sd: declarado?.sd ?? finales.filter((s) => !s.hd).length,
       premium: finales.filter((s) => s.premium).length,
       retirados: finales.filter((s) => s.retirado).length,
     },

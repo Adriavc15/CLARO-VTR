@@ -11,6 +11,8 @@ import { Check, Loader2, Pencil, Plus, RefreshCw, Search, Trash2, Users, X } fro
  * - labelCampo, placeholder, requerido
  * - descripcion (string o JSX)
  * - Icono (componente lucide)
+ * - conLegajo: muestra y permite editar el legajo de cada elemento
+ * - labelLegajo, placeholderLegajo
  */
 export default function AdminListaNombres({
   db = null,
@@ -24,14 +26,19 @@ export default function AdminListaNombres({
   requerido,
   descripcion,
   Icono = Users,
+  conLegajo = false,
+  labelLegajo = 'RUT asesor',
+  placeholderLegajo = 'Ej. 60004133-9',
 }) {
   const [lista, setLista] = useState([])
   const [nombre, setNombre] = useState('')
+  const [legajo, setLegajo] = useState('')
   const [filtro, setFiltro] = useState('')
   const [guardando, setGuardando] = useState(false)
   const [restaurando, setRestaurando] = useState(false)
   const [editandoId, setEditandoId] = useState('')
   const [editandoNombre, setEditandoNombre] = useState('')
+  const [editandoLegajo, setEditandoLegajo] = useState('')
   const [guardandoEdicion, setGuardandoEdicion] = useState(false)
 
   const Sust = sustantivo.charAt(0).toUpperCase() + sustantivo.slice(1)
@@ -45,7 +52,9 @@ export default function AdminListaNombres({
   const filtrados = useMemo(() => {
     const t = store.claveNombre(filtro)
     if (!t) return lista
-    return lista.filter((a) => store.claveNombre(a.nombre).includes(t))
+    return lista.filter((a) =>
+      store.claveNombre(`${a.nombre} ${a.legajo || ''}`).includes(t)
+    )
   }, [lista, filtro, store])
 
   const handleAgregar = async (e) => {
@@ -57,12 +66,13 @@ export default function AdminListaNombres({
     }
     setGuardando(true)
     try {
-      const res = await store.agregar(db, limpio)
+      const res = await store.agregar(db, limpio, conLegajo ? legajo.trim() : '')
       if (res.duplicado) {
         toast(`Ese ${sustantivo} ya está en la lista`)
       } else {
         toast(res.cloud ? `${Sust} agregado ✅` : `${Sust} guardado en este equipo (sin nube)`)
         setNombre('')
+        setLegajo('')
       }
     } catch (err) {
       toast(err?.message || `No se pudo agregar el ${sustantivo}`)
@@ -84,11 +94,13 @@ export default function AdminListaNombres({
   const iniciarEdicion = (item) => {
     setEditandoId(item.id)
     setEditandoNombre(item.nombre)
+    setEditandoLegajo(item.legajo || '')
   }
 
   const cancelarEdicion = () => {
     setEditandoId('')
     setEditandoNombre('')
+    setEditandoLegajo('')
   }
 
   const handleGuardarEdicion = async (item) => {
@@ -97,13 +109,15 @@ export default function AdminListaNombres({
       toast(requerido)
       return
     }
-    if (store.claveNombre(limpio) === store.claveNombre(item.nombre)) {
+    const mismoNombre = store.claveNombre(limpio) === store.claveNombre(item.nombre)
+    const mismoLegajo = (editandoLegajo || '').trim() === (item.legajo || '')
+    if (mismoNombre && mismoLegajo) {
       cancelarEdicion()
       return
     }
     setGuardandoEdicion(true)
     try {
-      const res = await store.renombrar(db, item.id, limpio)
+      const res = await store.renombrar(db, item.id, limpio, conLegajo ? editandoLegajo.trim() : undefined)
       if (res.duplicado) {
         toast(`Ya existe otro ${sustantivo} con ese nombre`)
       } else {
@@ -155,7 +169,25 @@ export default function AdminListaNombres({
           </button>
         </div>
 
-        <form onSubmit={handleAgregar} className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 items-end">
+        <form
+          onSubmit={handleAgregar}
+          className={`grid grid-cols-1 gap-3 items-end ${
+            conLegajo ? 'sm:grid-cols-[150px_1fr_auto]' : 'sm:grid-cols-[1fr_auto]'
+          }`}
+        >
+          {conLegajo && (
+            <label className="block">
+              <span className="block text-xs font-bold uppercase text-gray-600 dark:text-gray-300 mb-1">
+                {labelLegajo}
+              </span>
+              <input
+                value={legajo}
+                onChange={(e) => setLegajo(e.target.value)}
+                placeholder={placeholderLegajo}
+                className={inputBase}
+              />
+            </label>
+          )}
           <label className="block">
             <span className="block text-xs font-bold uppercase text-gray-600 dark:text-gray-300 mb-1">
               {labelCampo} <span className="text-red-500">*</span>
@@ -210,6 +242,22 @@ export default function AdminListaNombres({
                 >
                   {enEdicion ? (
                     <>
+                      {conLegajo && (
+                        <input
+                          type="text"
+                          value={editandoLegajo}
+                          onChange={(e) => setEditandoLegajo(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              handleGuardarEdicion(a)
+                            }
+                            if (e.key === 'Escape') cancelarEdicion()
+                          }}
+                          placeholder={placeholderLegajo}
+                          className="w-32 shrink-0 rounded-lg border border-emerald-400 dark:border-emerald-500 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                        />
+                      )}
                       <input
                         type="text"
                         value={editandoNombre}
@@ -247,7 +295,14 @@ export default function AdminListaNombres({
                     </>
                   ) : (
                     <>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 min-w-0 truncate">{a.nombre}</p>
+                      <div className="min-w-0 flex items-center gap-2">
+                        {conLegajo && a.legajo && (
+                          <span className="shrink-0 rounded-md bg-teal-50 dark:bg-teal-900/30 px-2 py-0.5 text-[11px] font-bold text-teal-700 dark:text-teal-300 tabular-nums">
+                            {a.legajo}
+                          </span>
+                        )}
+                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 min-w-0 truncate">{a.nombre}</p>
+                      </div>
                       <div className="flex items-center gap-1 shrink-0">
                         <button
                           type="button"

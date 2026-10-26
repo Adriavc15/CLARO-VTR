@@ -2,7 +2,7 @@
   "name": "ANDes_VTR_AI_Knowledge_Base",
   "version": "1.0.0",
   "language": "es",
-  "generated_at": "2026-09-19",
+  "generated_at": "2026-10-22",
   "purpose": "Base de conocimiento y dataset inicial para un asistente interno de soporte Andes/VTR.",
   "rules": [
     "Responder usando primero la información recuperada desde esta base.",
@@ -61,10 +61,10 @@
     {
       "id": "KB-0001",
       "categoria": "planes",
-      "subcategoria": "Internet FTTH",
+      "subcategoria": "Internet HFC/FTTH",
       "intent": "consulta_plan",
       "titulo": "Fibra 600 Megas",
-      "respuesta": "Fibra 600 Megas: precio normal $21.990; precio promo $14.990. Nombre en Andes: Fibra Hogar Residencial 0226F.",
+      "respuesta": "Fibra 600 Megas: precio normal $21.990; precio promo $14.990. Red: Fibra Óptica (FTTH). Nombre en Andes: Fibra Hogar Residencial 0226F.",
       "preguntas": [
         "precio de Fibra 600 Megas",
         "cuanto cuesta Fibra 600 Megas",
@@ -73,23 +73,24 @@
         "Fibra 600 Megas precio normal y promo",
         "qué plan es Fibra 600 Megas"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 600 Megas",
         "andes": "Fibra Hogar Residencial 0226F",
         "normal": "$21.990",
-        "promo": "$14.990"
+        "promo": "$14.990",
+        "red": "FTTH"
       },
       "fuente_dato": "portal/app"
     },
     {
       "id": "KB-0002",
       "categoria": "planes",
-      "subcategoria": "Internet FTTH",
+      "subcategoria": "Internet HFC/FTTH",
       "intent": "consulta_plan",
       "titulo": "Fibra 800 Megas",
-      "respuesta": "Fibra 800 Megas: precio normal $23.990; precio promo $15.990. Nombre en Andes: Fibra Avanzado Residencial 0226F.",
+      "respuesta": "Fibra 800 Megas: precio normal $23.990; precio promo $15.990. Red: Fibra Óptica (FTTH). Nombre en Andes: Fibra Avanzado Residencial 0226F.",
       "preguntas": [
         "precio de Fibra 800 Megas",
         "cuanto cuesta Fibra 800 Megas",
@@ -98,23 +99,24 @@
         "Fibra 800 Megas precio normal y promo",
         "qué plan es Fibra 800 Megas"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 800 Megas",
         "andes": "Fibra Avanzado Residencial 0226F",
         "normal": "$23.990",
-        "promo": "$15.990"
+        "promo": "$15.990",
+        "red": "FTTH"
       },
       "fuente_dato": "portal/app"
     },
     {
       "id": "KB-0003",
       "categoria": "planes",
-      "subcategoria": "Internet FTTH",
+      "subcategoria": "Internet HFC/FTTH",
       "intent": "consulta_plan",
       "titulo": "Fibra 940 Megas",
-      "respuesta": "Fibra 940 Megas: precio normal $29.990; precio promo $19.990. Nombre en Andes: Fibra Experto Residencial 0226F.",
+      "respuesta": "Fibra 940 Megas: precio normal $29.990; precio promo $19.990. Red: Fibra Óptica (FTTH). Nombre en Andes: Fibra Experto Residencial 0226F.",
       "preguntas": [
         "precio de Fibra 940 Megas",
         "cuanto cuesta Fibra 940 Megas",
@@ -123,13 +125,14 @@
         "Fibra 940 Megas precio normal y promo",
         "qué plan es Fibra 940 Megas"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 940 Megas",
         "andes": "Fibra Experto Residencial 0226F",
         "normal": "$29.990",
-        "promo": "$19.990"
+        "promo": "$19.990",
+        "red": "FTTH"
       },
       "fuente_dato": "portal/app"
     },
@@ -139,7 +142,7 @@
       "subcategoria": "Internet + Streaming",
       "intent": "consulta_plan",
       "titulo": "Fibra 600 Megas + Disney+",
-      "respuesta": "Fibra 600 Megas + Disney+: precio normal $29.990; precio promo $19.990. Nombre en Andes: Fibra Hogar Stream Residencial 1225F.",
+      "respuesta": "Fibra 600 Megas + Disney+: precio normal $29.990; precio promo $19.990. Red: Fibra Óptica (FTTH). Nombre en Andes: Fibra Hogar Stream Residencial 1225F. Streaming incluido: Disney+.",
       "preguntas": [
         "precio de Fibra 600 Megas + Disney+",
         "cuanto cuesta Fibra 600 Megas + Disney+",
@@ -148,13 +151,14 @@
         "Fibra 600 Megas + Disney+ precio normal y promo",
         "qué plan es Fibra 600 Megas + Disney+"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 600 Megas + Disney+",
         "andes": "Fibra Hogar Stream Residencial 1225F",
         "normal": "$29.990",
         "promo": "$19.990",
+        "red": "FTTH",
         "tags": [
           "Disney+"
         ],
@@ -170,7 +174,7 @@
       "subcategoria": "Internet + Streaming",
       "intent": "consulta_plan",
       "titulo": "Fibra 600 Megas + Netflix",
-      "respuesta": "Fibra 600 Megas + Netflix: precio normal $29.990; precio promo $19.990. Nombre en Andes: Fibra Hogar Stream 3 N0726F.",
+      "respuesta": "Fibra 600 Megas + Netflix: precio normal $29.990; precio promo $19.990. Red: Fibra Óptica (FTTH). Nombre en Andes: Fibra Hogar Stream 3 N0726F. Streaming incluido: Netflix.",
       "preguntas": [
         "precio de Fibra 600 Megas + Netflix",
         "cuanto cuesta Fibra 600 Megas + Netflix",
@@ -179,13 +183,14 @@
         "Fibra 600 Megas + Netflix precio normal y promo",
         "qué plan es Fibra 600 Megas + Netflix"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 600 Megas + Netflix",
         "andes": "Fibra Hogar Stream 3 N0726F",
         "normal": "$29.990",
         "promo": "$19.990",
+        "red": "FTTH",
         "tags": [
           "Netflix"
         ],
@@ -201,7 +206,7 @@
       "subcategoria": "Internet + Streaming",
       "intent": "consulta_plan",
       "titulo": "Fibra 800 Megas + Disney+",
-      "respuesta": "Fibra 800 Megas + Disney+: precio normal $31.990; precio promo $20.990. Nombre en Andes: Fibra Avanzado Stream Residencial 1225F.",
+      "respuesta": "Fibra 800 Megas + Disney+: precio normal $31.990; precio promo $20.990. Red: Fibra Óptica (FTTH). Nombre en Andes: Fibra Avanzado Stream Residencial 1225F. Streaming incluido: Disney+.",
       "preguntas": [
         "precio de Fibra 800 Megas + Disney+",
         "cuanto cuesta Fibra 800 Megas + Disney+",
@@ -210,13 +215,14 @@
         "Fibra 800 Megas + Disney+ precio normal y promo",
         "qué plan es Fibra 800 Megas + Disney+"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 800 Megas + Disney+",
         "andes": "Fibra Avanzado Stream Residencial 1225F",
         "normal": "$31.990",
         "promo": "$20.990",
+        "red": "FTTH",
         "tags": [
           "Disney+"
         ],
@@ -232,7 +238,7 @@
       "subcategoria": "Internet + Streaming",
       "intent": "consulta_plan",
       "titulo": "Fibra 800 Megas + Netflix",
-      "respuesta": "Fibra 800 Megas + Netflix: precio normal $31.990; precio promo $20.990. Nombre en Andes: Fibra Avanzado Stream 3 N0726F.",
+      "respuesta": "Fibra 800 Megas + Netflix: precio normal $31.990; precio promo $20.990. Red: Fibra Óptica (FTTH). Nombre en Andes: Fibra Avanzado Stream 3 N0726F. Streaming incluido: Netflix.",
       "preguntas": [
         "precio de Fibra 800 Megas + Netflix",
         "cuanto cuesta Fibra 800 Megas + Netflix",
@@ -241,13 +247,14 @@
         "Fibra 800 Megas + Netflix precio normal y promo",
         "qué plan es Fibra 800 Megas + Netflix"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 800 Megas + Netflix",
         "andes": "Fibra Avanzado Stream 3 N0726F",
         "normal": "$31.990",
         "promo": "$20.990",
+        "red": "FTTH",
         "tags": [
           "Netflix"
         ],
@@ -263,7 +270,7 @@
       "subcategoria": "Internet + Streaming",
       "intent": "consulta_plan",
       "titulo": "Fibra 940 Megas + Disney+",
-      "respuesta": "Fibra 940 Megas + Disney+: precio normal $37.990; precio promo $24.990. Nombre en Andes: Fibra Experto Stream Residencial 1225F.",
+      "respuesta": "Fibra 940 Megas + Disney+: precio normal $37.990; precio promo $24.990. Red: Fibra Óptica (FTTH). Nombre en Andes: Fibra Experto Stream Residencial 1225F. Streaming incluido: Disney+.",
       "preguntas": [
         "precio de Fibra 940 Megas + Disney+",
         "cuanto cuesta Fibra 940 Megas + Disney+",
@@ -272,13 +279,14 @@
         "Fibra 940 Megas + Disney+ precio normal y promo",
         "qué plan es Fibra 940 Megas + Disney+"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 940 Megas + Disney+",
         "andes": "Fibra Experto Stream Residencial 1225F",
         "normal": "$37.990",
         "promo": "$24.990",
+        "red": "FTTH",
         "tags": [
           "Disney+"
         ],
@@ -294,7 +302,7 @@
       "subcategoria": "Internet + Streaming",
       "intent": "consulta_plan",
       "titulo": "Fibra 940 Megas + Netflix",
-      "respuesta": "Fibra 940 Megas + Netflix: precio normal $37.990; precio promo $24.990. Nombre en Andes: Fibra Experto Stream 3 N0724F.",
+      "respuesta": "Fibra 940 Megas + Netflix: precio normal $37.990; precio promo $24.990. Red: Fibra Óptica (FTTH). Nombre en Andes: Fibra Experto Stream 3 N0724F. Streaming incluido: Netflix.",
       "preguntas": [
         "precio de Fibra 940 Megas + Netflix",
         "cuanto cuesta Fibra 940 Megas + Netflix",
@@ -303,13 +311,14 @@
         "Fibra 940 Megas + Netflix precio normal y promo",
         "qué plan es Fibra 940 Megas + Netflix"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 940 Megas + Netflix",
         "andes": "Fibra Experto Stream 3 N0724F",
         "normal": "$37.990",
         "promo": "$24.990",
+        "red": "FTTH",
         "tags": [
           "Netflix"
         ],
@@ -320,178 +329,12 @@
       "fuente_dato": "portal/app"
     },
     {
-      "id": "KB-0010",
-      "categoria": "planes",
-      "subcategoria": "TV",
-      "intent": "consulta_plan",
-      "titulo": "Stream TV Inicia",
-      "respuesta": "Stream TV Inicia: precio normal None; precio promo None. Nombre en Andes: TV Inicia Residencial 0325hd.",
-      "preguntas": [
-        "precio de Stream TV Inicia",
-        "cuanto cuesta Stream TV Inicia",
-        "cuánto sale Stream TV Inicia",
-        "valor Stream TV Inicia",
-        "Stream TV Inicia precio normal y promo",
-        "qué plan es Stream TV Inicia"
-      ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
-      "plan": {
-        "comercial": "Stream TV Inicia",
-        "andes": "TV Inicia Residencial 0325hd",
-        "normal": null,
-        "promo": null
-      },
-      "fuente_dato": "portal/app"
-    },
-    {
-      "id": "KB-0011",
-      "categoria": "planes",
-      "subcategoria": "TV",
-      "intent": "consulta_plan",
-      "titulo": "Stream TV Plus",
-      "respuesta": "Stream TV Plus: precio normal $22.990; precio promo $22.990. Nombre en Andes: Stream TV Plus 0324hd.",
-      "preguntas": [
-        "precio de Stream TV Plus",
-        "cuanto cuesta Stream TV Plus",
-        "cuánto sale Stream TV Plus",
-        "valor Stream TV Plus",
-        "Stream TV Plus precio normal y promo",
-        "qué plan es Stream TV Plus"
-      ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
-      "plan": {
-        "comercial": "Stream TV Plus",
-        "andes": "Stream TV Plus 0324hd",
-        "normal": "$22.990",
-        "promo": "$22.990"
-      },
-      "fuente_dato": "portal/app"
-    },
-    {
-      "id": "KB-0012",
-      "categoria": "planes",
-      "subcategoria": "TV",
-      "intent": "consulta_plan",
-      "titulo": "Stream TV Premium I",
-      "respuesta": "Stream TV Premium I: precio normal $28.990; precio promo $28.990. Nombre en Andes: Stream TV Premium 0226F.",
-      "preguntas": [
-        "precio de Stream TV Premium I",
-        "cuanto cuesta Stream TV Premium I",
-        "cuánto sale Stream TV Premium I",
-        "valor Stream TV Premium I",
-        "Stream TV Premium I precio normal y promo",
-        "qué plan es Stream TV Premium I"
-      ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
-      "plan": {
-        "comercial": "Stream TV Premium I",
-        "andes": "Stream TV Premium 0226F",
-        "normal": "$28.990",
-        "promo": "$28.990",
-        "tags": [
-          "Disney+"
-        ],
-        "streams": [
-          "/stream/disney.png",
-          "/stream/hbo-max.png",
-          "/stream/prime-video.png",
-          "/stream/atresplayer.png",
-          "/stream/universal.png",
-          "/stream/cindie.png",
-          "/stream/riivi.png",
-          "/stream/teatrix.png"
-        ]
-      },
-      "fuente_dato": "portal/app"
-    },
-    {
-      "id": "KB-0013",
-      "categoria": "planes",
-      "subcategoria": "TV",
-      "intent": "consulta_plan",
-      "titulo": "Stream TV Premium Residencial 2",
-      "respuesta": "Stream TV Premium Residencial 2: precio normal $28.990; precio promo $28.990. Nombre en Andes: TV Premium 2 Residencial N0726F.",
-      "preguntas": [
-        "precio de Stream TV Premium Residencial 2",
-        "cuanto cuesta Stream TV Premium Residencial 2",
-        "cuánto sale Stream TV Premium Residencial 2",
-        "valor Stream TV Premium Residencial 2",
-        "Stream TV Premium Residencial 2 precio normal y promo",
-        "qué plan es Stream TV Premium Residencial 2"
-      ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
-      "plan": {
-        "comercial": "Stream TV Premium Residencial 2",
-        "andes": "TV Premium 2 Residencial N0726F",
-        "normal": "$28.990",
-        "promo": "$28.990",
-        "tags": [
-          "Netflix"
-        ],
-        "streams": [
-          "/stream/netflix.png",
-          "/stream/hbo-max.png",
-          "/stream/prime-video.png",
-          "/stream/atresplayer.png",
-          "/stream/universal.png",
-          "/stream/cindie.png",
-          "/stream/riivi.png",
-          "/stream/teatrix.png"
-        ]
-      },
-      "fuente_dato": "portal/app"
-    },
-    {
-      "id": "KB-0014",
-      "categoria": "planes",
-      "subcategoria": "TV",
-      "intent": "consulta_plan",
-      "titulo": "Stream TV Premium Residencial 3",
-      "respuesta": "Stream TV Premium Residencial 3: precio normal $33.990; precio promo $33.990. Nombre en Andes: TV Premium 3 Residencial N0726F.",
-      "preguntas": [
-        "precio de Stream TV Premium Residencial 3",
-        "cuanto cuesta Stream TV Premium Residencial 3",
-        "cuánto sale Stream TV Premium Residencial 3",
-        "valor Stream TV Premium Residencial 3",
-        "Stream TV Premium Residencial 3 precio normal y promo",
-        "qué plan es Stream TV Premium Residencial 3"
-      ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
-      "plan": {
-        "comercial": "Stream TV Premium Residencial 3",
-        "andes": "TV Premium 3 Residencial N0726F",
-        "normal": "$33.990",
-        "promo": "$33.990",
-        "tags": [
-          "Disney+",
-          "Netflix"
-        ],
-        "streams": [
-          "/stream/disney.png",
-          "/stream/netflix.png",
-          "/stream/hbo-max.png",
-          "/stream/prime-video.png",
-          "/stream/atresplayer.png",
-          "/stream/universal.png",
-          "/stream/cindie.png",
-          "/stream/riivi.png",
-          "/stream/teatrix.png"
-        ]
-      },
-      "fuente_dato": "portal/app"
-    },
-    {
       "id": "KB-0015",
       "categoria": "planes",
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 600 + TV Inicia",
-      "respuesta": "Fibra 600 + TV Inicia: precio normal $41.990; precio promo $41.990. Nombre en Andes: 2P Fibra Hogar mas TV Inicia 0224F.",
+      "respuesta": "Fibra 600 + TV Inicia: precio normal $41.990; precio promo $41.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Hogar mas TV Inicia 0224F. Streaming incluido: HBO Max, Prime Video, Universal+.",
       "preguntas": [
         "precio de Fibra 600 + TV Inicia",
         "cuanto cuesta Fibra 600 + TV Inicia",
@@ -500,13 +343,24 @@
         "Fibra 600 + TV Inicia precio normal y promo",
         "qué plan es Fibra 600 + TV Inicia"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 600 + TV Inicia",
         "andes": "2P Fibra Hogar mas TV Inicia 0224F",
         "normal": "$41.990",
-        "promo": "$41.990"
+        "promo": "$41.990",
+        "red": "FTTH",
+        "tags": [
+          "HBO Max",
+          "Prime Video",
+          "Universal+"
+        ],
+        "streams": [
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/universal.png"
+        ]
       },
       "fuente_dato": "portal/app"
     },
@@ -516,7 +370,7 @@
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 600 + TV Plus",
-      "respuesta": "Fibra 600 + TV Plus: precio normal $41.990; precio promo $30.990. Nombre en Andes: 2P Fibra Hogar mas Stream TV Plus 0225F.",
+      "respuesta": "Fibra 600 + TV Plus: precio normal $41.990; precio promo $30.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Hogar mas Stream TV Plus 0225F. Streaming incluido: HBO Max, Prime Video, Universal+.",
       "preguntas": [
         "precio de Fibra 600 + TV Plus",
         "cuanto cuesta Fibra 600 + TV Plus",
@@ -525,13 +379,24 @@
         "Fibra 600 + TV Plus precio normal y promo",
         "qué plan es Fibra 600 + TV Plus"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 600 + TV Plus",
         "andes": "2P Fibra Hogar mas Stream TV Plus 0225F",
         "normal": "$41.990",
-        "promo": "$30.990"
+        "promo": "$30.990",
+        "red": "FTTH",
+        "tags": [
+          "HBO Max",
+          "Prime Video",
+          "Universal+"
+        ],
+        "streams": [
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/universal.png"
+        ]
       },
       "fuente_dato": "portal/app"
     },
@@ -541,7 +406,7 @@
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 600 + TV Premium I",
-      "respuesta": "Fibra 600 + TV Premium I: precio normal $46.990; precio promo $29.990. Nombre en Andes: 2P Fibra Hogar mas Stream TV Premium 0225F.",
+      "respuesta": "Fibra 600 + TV Premium I: precio normal $46.990; precio promo $29.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Hogar mas Stream TV Premium 0225F. Streaming incluido: Disney+, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 600 + TV Premium I",
         "cuanto cuesta Fibra 600 + TV Premium I",
@@ -550,13 +415,14 @@
         "Fibra 600 + TV Premium I precio normal y promo",
         "qué plan es Fibra 600 + TV Premium I"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 600 + TV Premium I",
         "andes": "2P Fibra Hogar mas Stream TV Premium 0225F",
         "normal": "$46.990",
         "promo": "$29.990",
+        "red": "FTTH",
         "tags": [
           "Disney+"
         ],
@@ -579,7 +445,7 @@
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 600 + TV Premium II",
-      "respuesta": "Fibra 600 + TV Premium II: precio normal $46.990; precio promo $29.990. Nombre en Andes: 2P Fibra Hogar mas TV Premium 2 Residencial N0726F.",
+      "respuesta": "Fibra 600 + TV Premium II: precio normal $46.990; precio promo $29.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Hogar mas TV Premium 2 Residencial N0726F. Streaming incluido: Netflix, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 600 + TV Premium II",
         "cuanto cuesta Fibra 600 + TV Premium II",
@@ -588,13 +454,14 @@
         "Fibra 600 + TV Premium II precio normal y promo",
         "qué plan es Fibra 600 + TV Premium II"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 600 + TV Premium II",
         "andes": "2P Fibra Hogar mas TV Premium 2 Residencial N0726F",
         "normal": "$46.990",
         "promo": "$29.990",
+        "red": "FTTH",
         "tags": [
           "Netflix"
         ],
@@ -617,7 +484,7 @@
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 600 + TV Full",
-      "respuesta": "Fibra 600 + TV Full: precio normal $51.990; precio promo $37.990. Nombre en Andes: 2P Fibra Hogar mas TV Premium 3 Residencial N0726F.",
+      "respuesta": "Fibra 600 + TV Full: precio normal $51.990; precio promo $37.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Hogar mas TV Premium 3 Residencial N0726F. Streaming incluido: Disney+, Netflix, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 600 + TV Full",
         "cuanto cuesta Fibra 600 + TV Full",
@@ -626,13 +493,14 @@
         "Fibra 600 + TV Full precio normal y promo",
         "qué plan es Fibra 600 + TV Full"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 600 + TV Full",
         "andes": "2P Fibra Hogar mas TV Premium 3 Residencial N0726F",
         "normal": "$51.990",
         "promo": "$37.990",
+        "red": "FTTH",
         "tags": [
           "Disney+",
           "Netflix"
@@ -657,7 +525,7 @@
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 800 + TV Inicia",
-      "respuesta": "Fibra 800 + TV Inicia: precio normal $42.990; precio promo $42.990. Nombre en Andes: 2P Fibra Avanzado mas TV Inicia 0224F.",
+      "respuesta": "Fibra 800 + TV Inicia: precio normal $42.990; precio promo $42.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Avanzado mas TV Inicia 0224F. Streaming incluido: HBO Max, Prime Video, Universal+.",
       "preguntas": [
         "precio de Fibra 800 + TV Inicia",
         "cuanto cuesta Fibra 800 + TV Inicia",
@@ -666,13 +534,24 @@
         "Fibra 800 + TV Inicia precio normal y promo",
         "qué plan es Fibra 800 + TV Inicia"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 800 + TV Inicia",
         "andes": "2P Fibra Avanzado mas TV Inicia 0224F",
         "normal": "$42.990",
-        "promo": "$42.990"
+        "promo": "$42.990",
+        "red": "FTTH",
+        "tags": [
+          "HBO Max",
+          "Prime Video",
+          "Universal+"
+        ],
+        "streams": [
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/universal.png"
+        ]
       },
       "fuente_dato": "portal/app"
     },
@@ -682,7 +561,7 @@
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 800 + TV Plus",
-      "respuesta": "Fibra 800 + TV Plus: precio normal $42.990; precio promo $31.990. Nombre en Andes: 2P Fibra Avanzado mas Stream TV Plus 0225F.",
+      "respuesta": "Fibra 800 + TV Plus: precio normal $42.990; precio promo $31.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Avanzado mas Stream TV Plus 0225F. Streaming incluido: HBO Max, Prime Video, Universal+.",
       "preguntas": [
         "precio de Fibra 800 + TV Plus",
         "cuanto cuesta Fibra 800 + TV Plus",
@@ -691,13 +570,24 @@
         "Fibra 800 + TV Plus precio normal y promo",
         "qué plan es Fibra 800 + TV Plus"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 800 + TV Plus",
         "andes": "2P Fibra Avanzado mas Stream TV Plus 0225F",
         "normal": "$42.990",
-        "promo": "$31.990"
+        "promo": "$31.990",
+        "red": "FTTH",
+        "tags": [
+          "HBO Max",
+          "Prime Video",
+          "Universal+"
+        ],
+        "streams": [
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/universal.png"
+        ]
       },
       "fuente_dato": "portal/app"
     },
@@ -707,7 +597,7 @@
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 800 + TV Premium I",
-      "respuesta": "Fibra 800 + TV Premium I: precio normal $47.990; precio promo $30.990. Nombre en Andes: 2P Fibra Avanzado mas Stream TV Premium 0225F.",
+      "respuesta": "Fibra 800 + TV Premium I: precio normal $47.990; precio promo $30.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Avanzado mas Stream TV Premium 0225F. Streaming incluido: Disney+, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 800 + TV Premium I",
         "cuanto cuesta Fibra 800 + TV Premium I",
@@ -716,13 +606,14 @@
         "Fibra 800 + TV Premium I precio normal y promo",
         "qué plan es Fibra 800 + TV Premium I"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 800 + TV Premium I",
         "andes": "2P Fibra Avanzado mas Stream TV Premium 0225F",
         "normal": "$47.990",
         "promo": "$30.990",
+        "red": "FTTH",
         "tags": [
           "Disney+"
         ],
@@ -745,7 +636,7 @@
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 800 + TV Premium II",
-      "respuesta": "Fibra 800 + TV Premium II: precio normal $47.990; precio promo $30.990. Nombre en Andes: 2P Fibra Avanzado mas TV Premium 2 Residencial N0726F.",
+      "respuesta": "Fibra 800 + TV Premium II: precio normal $47.990; precio promo $30.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Avanzado mas TV Premium 2 Residencial N0726F. Streaming incluido: Netflix, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 800 + TV Premium II",
         "cuanto cuesta Fibra 800 + TV Premium II",
@@ -754,13 +645,14 @@
         "Fibra 800 + TV Premium II precio normal y promo",
         "qué plan es Fibra 800 + TV Premium II"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 800 + TV Premium II",
         "andes": "2P Fibra Avanzado mas TV Premium 2 Residencial N0726F",
         "normal": "$47.990",
         "promo": "$30.990",
+        "red": "FTTH",
         "tags": [
           "Netflix"
         ],
@@ -783,7 +675,7 @@
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 800 + TV Full",
-      "respuesta": "Fibra 800 + TV Full: precio normal $52.990; precio promo $38.990. Nombre en Andes: 2P Fibra Avanzado mas TV Premium 3 Residencial N0726F.",
+      "respuesta": "Fibra 800 + TV Full: precio normal $52.990; precio promo $38.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Avanzado mas TV Premium 3 Residencial N0726F. Streaming incluido: Disney+, Netflix, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 800 + TV Full",
         "cuanto cuesta Fibra 800 + TV Full",
@@ -792,13 +684,14 @@
         "Fibra 800 + TV Full precio normal y promo",
         "qué plan es Fibra 800 + TV Full"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 800 + TV Full",
         "andes": "2P Fibra Avanzado mas TV Premium 3 Residencial N0726F",
         "normal": "$52.990",
         "promo": "$38.990",
+        "red": "FTTH",
         "tags": [
           "Disney+",
           "Netflix"
@@ -823,7 +716,7 @@
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 940 + TV Inicia",
-      "respuesta": "Fibra 940 + TV Inicia: precio normal $47.990; precio promo $47.990. Nombre en Andes: 2P Fibra Experto mas TV Inicia 0226F.",
+      "respuesta": "Fibra 940 + TV Inicia: precio normal $47.990; precio promo $47.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Experto mas TV Inicia 0226F. Streaming incluido: HBO Max, Prime Video, Universal+.",
       "preguntas": [
         "precio de Fibra 940 + TV Inicia",
         "cuanto cuesta Fibra 940 + TV Inicia",
@@ -832,13 +725,24 @@
         "Fibra 940 + TV Inicia precio normal y promo",
         "qué plan es Fibra 940 + TV Inicia"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 940 + TV Inicia",
         "andes": "2P Fibra Experto mas TV Inicia 0226F",
         "normal": "$47.990",
-        "promo": "$47.990"
+        "promo": "$47.990",
+        "red": "FTTH",
+        "tags": [
+          "HBO Max",
+          "Prime Video",
+          "Universal+"
+        ],
+        "streams": [
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/universal.png"
+        ]
       },
       "fuente_dato": "portal/app"
     },
@@ -848,7 +752,7 @@
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 940 + TV Plus",
-      "respuesta": "Fibra 940 + TV Plus: precio normal $47.990; precio promo $35.990. Nombre en Andes: 2P Fibra Experto mas Stream TV Plus 0225F.",
+      "respuesta": "Fibra 940 + TV Plus: precio normal $47.990; precio promo $35.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Experto mas Stream TV Plus 0225F. Streaming incluido: HBO Max, Prime Video, Universal+.",
       "preguntas": [
         "precio de Fibra 940 + TV Plus",
         "cuanto cuesta Fibra 940 + TV Plus",
@@ -857,13 +761,24 @@
         "Fibra 940 + TV Plus precio normal y promo",
         "qué plan es Fibra 940 + TV Plus"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 940 + TV Plus",
         "andes": "2P Fibra Experto mas Stream TV Plus 0225F",
         "normal": "$47.990",
-        "promo": "$35.990"
+        "promo": "$35.990",
+        "red": "FTTH",
+        "tags": [
+          "HBO Max",
+          "Prime Video",
+          "Universal+"
+        ],
+        "streams": [
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/universal.png"
+        ]
       },
       "fuente_dato": "portal/app"
     },
@@ -873,7 +788,7 @@
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 940 + TV Premium I",
-      "respuesta": "Fibra 940 + TV Premium I: precio normal $52.990; precio promo $34.990. Nombre en Andes: 2P Fibra Experto mas Stream TV Premium 0225F.",
+      "respuesta": "Fibra 940 + TV Premium I: precio normal $52.990; precio promo $34.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Experto mas Stream TV Premium 0225F. Streaming incluido: Disney+, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 940 + TV Premium I",
         "cuanto cuesta Fibra 940 + TV Premium I",
@@ -882,13 +797,14 @@
         "Fibra 940 + TV Premium I precio normal y promo",
         "qué plan es Fibra 940 + TV Premium I"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 940 + TV Premium I",
         "andes": "2P Fibra Experto mas Stream TV Premium 0225F",
         "normal": "$52.990",
         "promo": "$34.990",
+        "red": "FTTH",
         "tags": [
           "Disney+"
         ],
@@ -911,7 +827,7 @@
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 940 + TV Premium II",
-      "respuesta": "Fibra 940 + TV Premium II: precio normal $52.990; precio promo $34.990. Nombre en Andes: 2P Fibra Experto mas TV Premium 2 Residencial N0726F.",
+      "respuesta": "Fibra 940 + TV Premium II: precio normal $52.990; precio promo $34.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Experto mas TV Premium 2 Residencial N0726F. Streaming incluido: Netflix, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 940 + TV Premium II",
         "cuanto cuesta Fibra 940 + TV Premium II",
@@ -920,13 +836,14 @@
         "Fibra 940 + TV Premium II precio normal y promo",
         "qué plan es Fibra 940 + TV Premium II"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 940 + TV Premium II",
         "andes": "2P Fibra Experto mas TV Premium 2 Residencial N0726F",
         "normal": "$52.990",
         "promo": "$34.990",
+        "red": "FTTH",
         "tags": [
           "Netflix"
         ],
@@ -949,7 +866,7 @@
       "subcategoria": "Internet + TV",
       "intent": "consulta_plan",
       "titulo": "Fibra 940 + TV Full",
-      "respuesta": "Fibra 940 + TV Full: precio normal $57.990; precio promo $42.990. Nombre en Andes: 2P Fibra Experto mas TV Premium 3 Residencial N0726F.",
+      "respuesta": "Fibra 940 + TV Full: precio normal $57.990; precio promo $42.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Experto mas TV Premium 3 Residencial N0726F. Streaming incluido: Disney+, Netflix, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 940 + TV Full",
         "cuanto cuesta Fibra 940 + TV Full",
@@ -958,13 +875,14 @@
         "Fibra 940 + TV Full precio normal y promo",
         "qué plan es Fibra 940 + TV Full"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 940 + TV Full",
         "andes": "2P Fibra Experto mas TV Premium 3 Residencial N0726F",
         "normal": "$57.990",
         "promo": "$42.990",
+        "red": "FTTH",
         "tags": [
           "Disney+",
           "Netflix"
@@ -989,7 +907,7 @@
       "subcategoria": "Internet + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 600 + Telefonía",
-      "respuesta": "Fibra 600 + Telefonía: precio normal $23.990; precio promo $23.990. Nombre en Andes: 2P Fibra Hogar mas Fono 0226F.",
+      "respuesta": "Fibra 600 + Telefonía: precio normal $23.990; precio promo $23.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Hogar mas Fono 0226F.",
       "preguntas": [
         "precio de Fibra 600 + Telefonía",
         "cuanto cuesta Fibra 600 + Telefonía",
@@ -998,13 +916,14 @@
         "Fibra 600 + Telefonía precio normal y promo",
         "qué plan es Fibra 600 + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
-        "plan": "Fibra 600 + Telefonía",
+        "comercial": "Fibra 600 + Telefonía",
         "andes": "2P Fibra Hogar mas Fono 0226F",
         "normal": "$23.990",
-        "promo": "$23.990"
+        "promo": "$23.990",
+        "red": "FTTH"
       },
       "fuente_dato": "portal/app"
     },
@@ -1014,7 +933,7 @@
       "subcategoria": "Internet + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 800 + Telefonía",
-      "respuesta": "Fibra 800 + Telefonía: precio normal $26.990; precio promo $26.990. Nombre en Andes: 2P Fibra Avanzado mas Fono 0226F.",
+      "respuesta": "Fibra 800 + Telefonía: precio normal $26.990; precio promo $26.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Avanzado mas Fono 0226F.",
       "preguntas": [
         "precio de Fibra 800 + Telefonía",
         "cuanto cuesta Fibra 800 + Telefonía",
@@ -1023,13 +942,14 @@
         "Fibra 800 + Telefonía precio normal y promo",
         "qué plan es Fibra 800 + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
-        "plan": "Fibra 800 + Telefonía",
+        "comercial": "Fibra 800 + Telefonía",
         "andes": "2P Fibra Avanzado mas Fono 0226F",
         "normal": "$26.990",
-        "promo": "$26.990"
+        "promo": "$26.990",
+        "red": "FTTH"
       },
       "fuente_dato": "portal/app"
     },
@@ -1039,7 +959,7 @@
       "subcategoria": "Internet + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 940 + Telefonía",
-      "respuesta": "Fibra 940 + Telefonía: precio normal $35.990; precio promo $35.990. Nombre en Andes: 2P Fibra Experto mas Fono 0226F.",
+      "respuesta": "Fibra 940 + Telefonía: precio normal $35.990; precio promo $35.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 2P Fibra Experto mas Fono 0226F.",
       "preguntas": [
         "precio de Fibra 940 + Telefonía",
         "cuanto cuesta Fibra 940 + Telefonía",
@@ -1048,13 +968,14 @@
         "Fibra 940 + Telefonía precio normal y promo",
         "qué plan es Fibra 940 + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
-        "plan": "Fibra 940 + Telefonía",
+        "comercial": "Fibra 940 + Telefonía",
         "andes": "2P Fibra Experto mas Fono 0226F",
         "normal": "$35.990",
-        "promo": "$35.990"
+        "promo": "$35.990",
+        "red": "FTTH"
       },
       "fuente_dato": "portal/app"
     },
@@ -1064,7 +985,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 600 + TV Inicia + Telefonía",
-      "respuesta": "Fibra 600 + TV Inicia + Telefonía: precio normal $46.990; precio promo $46.990. Nombre en Andes: 3P Fibra Hogar mas TV Inicia 0224F.",
+      "respuesta": "Fibra 600 + TV Inicia + Telefonía: precio normal $46.990; precio promo $46.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Hogar mas TV Inicia 0224F. Streaming incluido: HBO Max, Prime Video, Universal+.",
       "preguntas": [
         "precio de Fibra 600 + TV Inicia + Telefonía",
         "cuanto cuesta Fibra 600 + TV Inicia + Telefonía",
@@ -1073,13 +994,24 @@
         "Fibra 600 + TV Inicia + Telefonía precio normal y promo",
         "qué plan es Fibra 600 + TV Inicia + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 600 + TV Inicia + Telefonía",
         "andes": "3P Fibra Hogar mas TV Inicia 0224F",
         "normal": "$46.990",
-        "promo": "$46.990"
+        "promo": "$46.990",
+        "red": "FTTH",
+        "tags": [
+          "HBO Max",
+          "Prime Video",
+          "Universal+"
+        ],
+        "streams": [
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/universal.png"
+        ]
       },
       "fuente_dato": "portal/app"
     },
@@ -1089,7 +1021,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 600 + TV Plus + Telefonía",
-      "respuesta": "Fibra 600 + TV Plus + Telefonía: precio normal $46.990; precio promo $35.990. Nombre en Andes: 3P Fibra Hogar mas Stream TV Plus 0225F.",
+      "respuesta": "Fibra 600 + TV Plus + Telefonía: precio normal $46.990; precio promo $35.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Hogar mas Stream TV Plus 0225F. Streaming incluido: HBO Max, Prime Video, Universal+.",
       "preguntas": [
         "precio de Fibra 600 + TV Plus + Telefonía",
         "cuanto cuesta Fibra 600 + TV Plus + Telefonía",
@@ -1098,13 +1030,24 @@
         "Fibra 600 + TV Plus + Telefonía precio normal y promo",
         "qué plan es Fibra 600 + TV Plus + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 600 + TV Plus + Telefonía",
         "andes": "3P Fibra Hogar mas Stream TV Plus 0225F",
         "normal": "$46.990",
-        "promo": "$35.990"
+        "promo": "$35.990",
+        "red": "FTTH",
+        "tags": [
+          "HBO Max",
+          "Prime Video",
+          "Universal+"
+        ],
+        "streams": [
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/universal.png"
+        ]
       },
       "fuente_dato": "portal/app"
     },
@@ -1114,7 +1057,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 600 + TV Premium I + Telefonía",
-      "respuesta": "Fibra 600 + TV Premium I + Telefonía: precio normal $51.990; precio promo $36.990. Nombre en Andes: 3P Fibra Hogar mas Stream TV Premium 0225F.",
+      "respuesta": "Fibra 600 + TV Premium I + Telefonía: precio normal $51.990; precio promo $36.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Hogar mas Stream TV Premium 0225F. Streaming incluido: Disney+, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 600 + TV Premium I + Telefonía",
         "cuanto cuesta Fibra 600 + TV Premium I + Telefonía",
@@ -1123,13 +1066,14 @@
         "Fibra 600 + TV Premium I + Telefonía precio normal y promo",
         "qué plan es Fibra 600 + TV Premium I + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 600 + TV Premium I + Telefonía",
         "andes": "3P Fibra Hogar mas Stream TV Premium 0225F",
         "normal": "$51.990",
         "promo": "$36.990",
+        "red": "FTTH",
         "tags": [
           "Disney+"
         ],
@@ -1152,7 +1096,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 600 + TV Premium II + Telefonía",
-      "respuesta": "Fibra 600 + TV Premium II + Telefonía: precio normal $51.990; precio promo $36.990. Nombre en Andes: 3P Fibra Hogar mas TV Premium 2 Residencial N0726F.",
+      "respuesta": "Fibra 600 + TV Premium II + Telefonía: precio normal $51.990; precio promo $36.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Hogar mas TV Premium 2 Residencial N0726F. Streaming incluido: Netflix, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 600 + TV Premium II + Telefonía",
         "cuanto cuesta Fibra 600 + TV Premium II + Telefonía",
@@ -1161,13 +1105,14 @@
         "Fibra 600 + TV Premium II + Telefonía precio normal y promo",
         "qué plan es Fibra 600 + TV Premium II + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 600 + TV Premium II + Telefonía",
         "andes": "3P Fibra Hogar mas TV Premium 2 Residencial N0726F",
         "normal": "$51.990",
         "promo": "$36.990",
+        "red": "FTTH",
         "tags": [
           "Netflix"
         ],
@@ -1190,7 +1135,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 600 + TV Full + Telefonía",
-      "respuesta": "Fibra 600 + TV Full + Telefonía: precio normal $56.990; precio promo $44.990. Nombre en Andes: 3P Fibra Hogar mas TV Premium 3 Residencial N0726F.",
+      "respuesta": "Fibra 600 + TV Full + Telefonía: precio normal $56.990; precio promo $42.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Hogar mas TV Premium 3 Residencial N0726F. Streaming incluido: Disney+, Netflix, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 600 + TV Full + Telefonía",
         "cuanto cuesta Fibra 600 + TV Full + Telefonía",
@@ -1199,13 +1144,14 @@
         "Fibra 600 + TV Full + Telefonía precio normal y promo",
         "qué plan es Fibra 600 + TV Full + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 600 + TV Full + Telefonía",
         "andes": "3P Fibra Hogar mas TV Premium 3 Residencial N0726F",
         "normal": "$56.990",
-        "promo": "$44.990",
+        "promo": "$42.990",
+        "red": "FTTH",
         "tags": [
           "Disney+",
           "Netflix"
@@ -1230,7 +1176,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 800 + TV Inicia + Telefonía",
-      "respuesta": "Fibra 800 + TV Inicia + Telefonía: precio normal $47.990; precio promo $47.990. Nombre en Andes: 3P Fibra Avanzado mas TV Inicia 0224F.",
+      "respuesta": "Fibra 800 + TV Inicia + Telefonía: precio normal $47.990; precio promo $47.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Avanzado mas TV Inicia 0224F. Streaming incluido: HBO Max, Prime Video, Universal+.",
       "preguntas": [
         "precio de Fibra 800 + TV Inicia + Telefonía",
         "cuanto cuesta Fibra 800 + TV Inicia + Telefonía",
@@ -1239,13 +1185,24 @@
         "Fibra 800 + TV Inicia + Telefonía precio normal y promo",
         "qué plan es Fibra 800 + TV Inicia + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 800 + TV Inicia + Telefonía",
         "andes": "3P Fibra Avanzado mas TV Inicia 0224F",
         "normal": "$47.990",
-        "promo": "$47.990"
+        "promo": "$47.990",
+        "red": "FTTH",
+        "tags": [
+          "HBO Max",
+          "Prime Video",
+          "Universal+"
+        ],
+        "streams": [
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/universal.png"
+        ]
       },
       "fuente_dato": "portal/app"
     },
@@ -1255,7 +1212,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 800 + TV Plus + Telefonía",
-      "respuesta": "Fibra 800 + TV Plus + Telefonía: precio normal $47.990; precio promo $36.990. Nombre en Andes: 3P Fibra Avanzado mas Stream TV Plus 0225F.",
+      "respuesta": "Fibra 800 + TV Plus + Telefonía: precio normal $47.990; precio promo $36.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Avanzado mas Stream TV Plus 0225F. Streaming incluido: HBO Max, Prime Video, Universal+.",
       "preguntas": [
         "precio de Fibra 800 + TV Plus + Telefonía",
         "cuanto cuesta Fibra 800 + TV Plus + Telefonía",
@@ -1264,13 +1221,24 @@
         "Fibra 800 + TV Plus + Telefonía precio normal y promo",
         "qué plan es Fibra 800 + TV Plus + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 800 + TV Plus + Telefonía",
         "andes": "3P Fibra Avanzado mas Stream TV Plus 0225F",
         "normal": "$47.990",
-        "promo": "$36.990"
+        "promo": "$36.990",
+        "red": "FTTH",
+        "tags": [
+          "HBO Max",
+          "Prime Video",
+          "Universal+"
+        ],
+        "streams": [
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/universal.png"
+        ]
       },
       "fuente_dato": "portal/app"
     },
@@ -1280,7 +1248,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 800 + TV Premium I + Telefonía",
-      "respuesta": "Fibra 800 + TV Premium I + Telefonía: precio normal $53.990; precio promo $37.990. Nombre en Andes: 3P Fibra Avanzado mas Stream TV Premium 0225F.",
+      "respuesta": "Fibra 800 + TV Premium I + Telefonía: precio normal $53.990; precio promo $38.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Avanzado mas Stream TV Premium 0225F. Streaming incluido: Disney+, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 800 + TV Premium I + Telefonía",
         "cuanto cuesta Fibra 800 + TV Premium I + Telefonía",
@@ -1289,13 +1257,14 @@
         "Fibra 800 + TV Premium I + Telefonía precio normal y promo",
         "qué plan es Fibra 800 + TV Premium I + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 800 + TV Premium I + Telefonía",
         "andes": "3P Fibra Avanzado mas Stream TV Premium 0225F",
         "normal": "$53.990",
-        "promo": "$37.990",
+        "promo": "$38.990",
+        "red": "FTTH",
         "tags": [
           "Disney+"
         ],
@@ -1318,7 +1287,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 800 + TV Premium II + Telefonía",
-      "respuesta": "Fibra 800 + TV Premium II + Telefonía: precio normal $53.990; precio promo $37.990. Nombre en Andes: 3P Fibra Avanzado mas TV Premium 2 Residencial N0726F.",
+      "respuesta": "Fibra 800 + TV Premium II + Telefonía: precio normal $53.990; precio promo $38.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Avanzado mas TV Premium 2 Residencial N0726F. Streaming incluido: Netflix, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 800 + TV Premium II + Telefonía",
         "cuanto cuesta Fibra 800 + TV Premium II + Telefonía",
@@ -1327,13 +1296,14 @@
         "Fibra 800 + TV Premium II + Telefonía precio normal y promo",
         "qué plan es Fibra 800 + TV Premium II + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 800 + TV Premium II + Telefonía",
         "andes": "3P Fibra Avanzado mas TV Premium 2 Residencial N0726F",
         "normal": "$53.990",
-        "promo": "$37.990",
+        "promo": "$38.990",
+        "red": "FTTH",
         "tags": [
           "Netflix"
         ],
@@ -1356,7 +1326,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 800 + TV Full + Telefonía",
-      "respuesta": "Fibra 800 + TV Full + Telefonía: precio normal $58.990; precio promo $45.990. Nombre en Andes: 3P Fibra Avanzado mas TV Premium 3 Residencial N0726F.",
+      "respuesta": "Fibra 800 + TV Full + Telefonía: precio normal $58.990; precio promo $44.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Avanzado mas TV Premium 3 Residencial N0726F. Streaming incluido: Disney+, Netflix, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 800 + TV Full + Telefonía",
         "cuanto cuesta Fibra 800 + TV Full + Telefonía",
@@ -1365,13 +1335,14 @@
         "Fibra 800 + TV Full + Telefonía precio normal y promo",
         "qué plan es Fibra 800 + TV Full + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 800 + TV Full + Telefonía",
         "andes": "3P Fibra Avanzado mas TV Premium 3 Residencial N0726F",
         "normal": "$58.990",
-        "promo": "$45.990",
+        "promo": "$44.990",
+        "red": "FTTH",
         "tags": [
           "Disney+",
           "Netflix"
@@ -1396,7 +1367,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 940 + TV Inicia + Telefonía",
-      "respuesta": "Fibra 940 + TV Inicia + Telefonía: precio normal $52.990; precio promo $52.990. Nombre en Andes: 3P Fibra Experto mas TV Inicia 0224F.",
+      "respuesta": "Fibra 940 + TV Inicia + Telefonía: precio normal $52.990; precio promo $52.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Experto mas TV Inicia 0224F. Streaming incluido: HBO Max, Prime Video, Universal+.",
       "preguntas": [
         "precio de Fibra 940 + TV Inicia + Telefonía",
         "cuanto cuesta Fibra 940 + TV Inicia + Telefonía",
@@ -1405,13 +1376,24 @@
         "Fibra 940 + TV Inicia + Telefonía precio normal y promo",
         "qué plan es Fibra 940 + TV Inicia + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 940 + TV Inicia + Telefonía",
         "andes": "3P Fibra Experto mas TV Inicia 0224F",
         "normal": "$52.990",
-        "promo": "$52.990"
+        "promo": "$52.990",
+        "red": "FTTH",
+        "tags": [
+          "HBO Max",
+          "Prime Video",
+          "Universal+"
+        ],
+        "streams": [
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/universal.png"
+        ]
       },
       "fuente_dato": "portal/app"
     },
@@ -1421,7 +1403,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 940 + TV Plus + Telefonía",
-      "respuesta": "Fibra 940 + TV Plus + Telefonía: precio normal $52.990; precio promo $40.990. Nombre en Andes: 3P Fibra Experto mas Stream TV Plus 0225F.",
+      "respuesta": "Fibra 940 + TV Plus + Telefonía: precio normal $52.990; precio promo $40.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Experto mas Stream TV Plus 0225F. Streaming incluido: HBO Max, Prime Video, Universal+.",
       "preguntas": [
         "precio de Fibra 940 + TV Plus + Telefonía",
         "cuanto cuesta Fibra 940 + TV Plus + Telefonía",
@@ -1430,13 +1412,24 @@
         "Fibra 940 + TV Plus + Telefonía precio normal y promo",
         "qué plan es Fibra 940 + TV Plus + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 940 + TV Plus + Telefonía",
         "andes": "3P Fibra Experto mas Stream TV Plus 0225F",
         "normal": "$52.990",
-        "promo": "$40.990"
+        "promo": "$40.990",
+        "red": "FTTH",
+        "tags": [
+          "HBO Max",
+          "Prime Video",
+          "Universal+"
+        ],
+        "streams": [
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/universal.png"
+        ]
       },
       "fuente_dato": "portal/app"
     },
@@ -1446,7 +1439,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 940 + TV Premium I + Telefonía",
-      "respuesta": "Fibra 940 + TV Premium I + Telefonía: precio normal $58.990; precio promo $40.990. Nombre en Andes: 3P Fibra Experto mas Stream TV Premium 0225F.",
+      "respuesta": "Fibra 940 + TV Premium I + Telefonía: precio normal $58.990; precio promo $41.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Experto mas Stream TV Premium 0225F. Streaming incluido: Disney+, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 940 + TV Premium I + Telefonía",
         "cuanto cuesta Fibra 940 + TV Premium I + Telefonía",
@@ -1455,13 +1448,14 @@
         "Fibra 940 + TV Premium I + Telefonía precio normal y promo",
         "qué plan es Fibra 940 + TV Premium I + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 940 + TV Premium I + Telefonía",
         "andes": "3P Fibra Experto mas Stream TV Premium 0225F",
         "normal": "$58.990",
-        "promo": "$40.990",
+        "promo": "$41.990",
+        "red": "FTTH",
         "tags": [
           "Disney+"
         ],
@@ -1484,7 +1478,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 940 + TV Premium II + Telefonía",
-      "respuesta": "Fibra 940 + TV Premium II + Telefonía: precio normal $58.990; precio promo $40.990. Nombre en Andes: 3P Fibra Experto mas TV Premium 2 Residencial N0726F.",
+      "respuesta": "Fibra 940 + TV Premium II + Telefonía: precio normal $58.990; precio promo $41.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Experto mas TV Premium 2 Residencial N0726F. Streaming incluido: Netflix, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 940 + TV Premium II + Telefonía",
         "cuanto cuesta Fibra 940 + TV Premium II + Telefonía",
@@ -1493,13 +1487,14 @@
         "Fibra 940 + TV Premium II + Telefonía precio normal y promo",
         "qué plan es Fibra 940 + TV Premium II + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 940 + TV Premium II + Telefonía",
         "andes": "3P Fibra Experto mas TV Premium 2 Residencial N0726F",
         "normal": "$58.990",
-        "promo": "$40.990",
+        "promo": "$41.990",
+        "red": "FTTH",
         "tags": [
           "Netflix"
         ],
@@ -1522,7 +1517,7 @@
       "subcategoria": "Internet + TV + Telefonía",
       "intent": "consulta_plan",
       "titulo": "Fibra 940 + TV Full + Telefonía",
-      "respuesta": "Fibra 940 + TV Full + Telefonía: precio normal $63.990; precio promo $48.990. Nombre en Andes: 3P Fibra Experto mas TV Premium 3 Residencial N0726F.",
+      "respuesta": "Fibra 940 + TV Full + Telefonía: precio normal $63.990; precio promo $48.990. Red: Fibra Óptica (FTTH). Nombre en Andes: 3P Fibra Experto mas TV Premium 3 Residencial N0726F. Streaming incluido: Disney+, Netflix, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix.",
       "preguntas": [
         "precio de Fibra 940 + TV Full + Telefonía",
         "cuanto cuesta Fibra 940 + TV Full + Telefonía",
@@ -1531,13 +1526,14 @@
         "Fibra 940 + TV Full + Telefonía precio normal y promo",
         "qué plan es Fibra 940 + TV Full + Telefonía"
       ],
-      "source": "Pasted text(1).txt: líneas 1082-1146",
-      "version": "2026-09",
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
       "plan": {
         "comercial": "Fibra 940 + TV Full + Telefonía",
         "andes": "3P Fibra Experto mas TV Premium 3 Residencial N0726F",
         "normal": "$63.990",
         "promo": "$48.990",
+        "red": "FTTH",
         "tags": [
           "Disney+",
           "Netflix"
@@ -1802,7 +1798,7 @@
       "subcategoria": "canales fuera de grilla Inicia",
       "intent": "consulta_canales",
       "titulo": "Pack HBO",
-      "respuesta": "Canales asociados al pack HBO: HBO, HBO Family, HBO Mundi, HBO Signature, HBO Plus, HBO Xtreme, HBO Pop.",
+      "respuesta": "Canales asociados al pack HBO: HBO, HBO Family, HBO Mundi, HBO Signature, HBO Plus, HBO Pop. HBO Xtreme ya no forma parte de la grilla.",
       "preguntas": [
         "qué canales tiene el pack HBO",
         "canales HBO",
@@ -1818,7 +1814,7 @@
       "subcategoria": "canales fuera de grilla Inicia",
       "intent": "consulta_canales",
       "titulo": "Pack Discovery",
-      "respuesta": "Canales asociados al pack Discovery: Discovery Science, Discovery World, Discovery Theater.",
+      "respuesta": "Discovery World y Discovery Theater ya no están en la grilla de VTR ni de Claro. En Claro queda SCIENCE (logo) en el canal 528 de TV Inicia y en el 626 de TV Full / Premium. No está en VTR.",
       "preguntas": [
         "qué canales tiene el pack Discovery",
         "canales Discovery",
@@ -1834,7 +1830,7 @@
       "subcategoria": "canales fuera de grilla Inicia",
       "intent": "consulta_canales",
       "titulo": "Pack Otros canales",
-      "respuesta": "Canales asociados al pack Otros canales: Paramount, Comedy Central, Universal, Studio Universal, USA, Entertainment Television, Dreamworks, Warner, Telemundo, MTV, Cinemax.",
+      "respuesta": "Canales asociados al pack Otros canales: Comedy Central, Universal, Studio Universal, Warner, Telemundo, Cinemax. Paramount, USA, Entertainment Television, Dreamworks y MTV ya no forman parte de la grilla.",
       "preguntas": [
         "qué canales tiene el pack Otros canales",
         "canales Otros canales",
@@ -2333,7 +2329,7 @@
       "subcategoria": "VTR Hogar",
       "intent": "contacto_vtr_hogar",
       "titulo": "Canales de contacto VTR Hogar",
-      "respuesta": "El material indica para VTR Hogar: 600 800 9000 o 2 2310 0200. Buzón de Voz: 600 310 2000.",
+      "respuesta": "El material indica para VTR Hogar: 600 800 9000 o 2 2310 0200. Buzón de Voz: 600 310 2000. Número de VTR PyME: 600 800 9009.",
       "preguntas": [
         "teléfono vtr hogar",
         "cómo llamar a vtr",
@@ -2779,34 +2775,7 @@
       "documento_fecha": "15/09/2026",
       "chunk_part": 1
     },
-    {
-      "id": "KB-0108",
-      "categoria": "retención",
-      "subcategoria": "Plan de Retención N1 VTR",
-      "intent": "fuente_pdf_retencion",
-      "titulo": "Plan de Retención N1 VTR — página 2, bloque 1",
-      "respuesta": "Planes Cable VTR\n\n                                                               Planes TV\n\n     Plan TV                     TV Inicia                       TV Plus                 TV Premium\n\n  Plataformas de           con ADS\n\n    Streaming\n\n                           74 únicos (57 en HD)            101 únicos (82 en HD)      101 únicos (82 en HD)\n     Canales         Sin canales HBO, Discovery o ESPN     Incluye canales HBO.       Incluye canales HBO.\n\n Velocidades HFC                                                   Hogar\n\n Velocidades Fibra                                       Hogar – Avanzado – Experto",
-      "preguntas": [],
-      "source": "20260915_100430 - [ID 1006] - 20260915_Plan_de_Retención_VTR_N1(1).pdf: página 2",
-      "version": "2026-09",
-      "fuente_dato": "PDF",
-      "documento_fecha": "15/09/2026",
-      "chunk_part": 1
-    },
-    {
-      "id": "KB-0109",
-      "categoria": "retención",
-      "subcategoria": "Plan de Retención N1 VTR",
-      "intent": "fuente_pdf_retencion",
-      "titulo": "Plan de Retención N1 VTR — página 3, bloque 1",
-      "respuesta": "Planes Cable VTR\n\n                                                   Planes TV\n\n     Plan TV           TV Premium 2                                       TV Full / (Premium 3)\n\n  Plataformas de\n    Streaming\n\n                     101 únicos (82 en HD)                                 101 únicos (82 en HD)\n     Canales         Incluye canales HBO.                                  Incluye canales HBO.\n\n Velocidades HFC                                       Hogar\n\n Velocidades Fibra                           Hogar – Avanzado – Experto",
-      "preguntas": [],
-      "source": "20260915_100430 - [ID 1006] - 20260915_Plan_de_Retención_VTR_N1(1).pdf: página 3",
-      "version": "2026-09",
-      "fuente_dato": "PDF",
-      "documento_fecha": "15/09/2026",
-      "chunk_part": 1
-    },
+
     {
       "id": "KB-0110",
       "categoria": "retención",
@@ -4262,6 +4231,415 @@
       "version": "2026-09",
       "fuente_dato": "PDF",
       "documento_fecha": "15/09/2026"
+    },
+    {
+      "id": "KB-0219",
+      "categoria": "planes",
+      "subcategoria": "Internet HFC/FTTH",
+      "intent": "consulta_plan",
+      "titulo": "Internet 500 Megas",
+      "respuesta": "Internet 500 Megas: precio normal $21.990; precio promo $14.990. Red: HFC. Nombre en Andes: Internet Hogar 0425. Aviso: Nombre Andes referencial (Octubre 2026): validar en Andes antes de copiar a APEX.",
+      "preguntas": [
+        "precio de Internet 500 Megas",
+        "cuanto cuesta Internet 500 Megas",
+        "cuánto sale Internet 500 Megas",
+        "valor Internet 500 Megas",
+        "Internet 500 Megas precio normal y promo",
+        "qué plan es Internet 500 Megas"
+      ],
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
+      "plan": {
+        "comercial": "Internet 500 Megas",
+        "andes": "Internet Hogar 0425",
+        "normal": "$21.990",
+        "promo": "$14.990",
+        "red": "HFC"
+      },
+      "fuente_dato": "portal/app"
+    },
+    {
+      "id": "KB-0220",
+      "categoria": "planes",
+      "subcategoria": "Internet + Streaming",
+      "intent": "consulta_plan",
+      "titulo": "Internet 500 Megas + Disney+",
+      "respuesta": "Internet 500 Megas + Disney+: precio normal $29.990; precio promo $19.990. Red: HFC. Nombre en Andes: Internet Hogar Stream 1225. Streaming incluido: Disney+. Aviso: Nombre Andes referencial (Octubre 2026): validar en Andes antes de copiar a APEX.",
+      "preguntas": [
+        "precio de Internet 500 Megas + Disney+",
+        "cuanto cuesta Internet 500 Megas + Disney+",
+        "cuánto sale Internet 500 Megas + Disney+",
+        "valor Internet 500 Megas + Disney+",
+        "Internet 500 Megas + Disney+ precio normal y promo",
+        "qué plan es Internet 500 Megas + Disney+"
+      ],
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
+      "plan": {
+        "comercial": "Internet 500 Megas + Disney+",
+        "andes": "Internet Hogar Stream 1225",
+        "normal": "$29.990",
+        "promo": "$19.990",
+        "red": "HFC",
+        "tags": [
+          "Disney+"
+        ],
+        "streams": [
+          "/stream/disney.png"
+        ]
+      },
+      "fuente_dato": "portal/app"
+    },
+    {
+      "id": "KB-0221",
+      "categoria": "planes",
+      "subcategoria": "Internet + Streaming",
+      "intent": "consulta_plan",
+      "titulo": "Internet 500 Megas + Netflix",
+      "respuesta": "Internet 500 Megas + Netflix: precio normal $29.990; precio promo $19.990. Red: HFC. Nombre en Andes: Internet Hogar Stream 3 N0726. Streaming incluido: Netflix. Aviso: Nombre Andes referencial (Octubre 2026): validar en Andes antes de copiar a APEX.",
+      "preguntas": [
+        "precio de Internet 500 Megas + Netflix",
+        "cuanto cuesta Internet 500 Megas + Netflix",
+        "cuánto sale Internet 500 Megas + Netflix",
+        "valor Internet 500 Megas + Netflix",
+        "Internet 500 Megas + Netflix precio normal y promo",
+        "qué plan es Internet 500 Megas + Netflix"
+      ],
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
+      "plan": {
+        "comercial": "Internet 500 Megas + Netflix",
+        "andes": "Internet Hogar Stream 3 N0726",
+        "normal": "$29.990",
+        "promo": "$19.990",
+        "red": "HFC",
+        "tags": [
+          "Netflix"
+        ],
+        "streams": [
+          "/stream/netflix.png"
+        ]
+      },
+      "fuente_dato": "portal/app"
+    },
+    {
+      "id": "KB-0222",
+      "categoria": "planes",
+      "subcategoria": "Telefonía",
+      "intent": "consulta_plan",
+      "titulo": "Telefonía",
+      "respuesta": "Telefonía: precio normal $12.990. Aviso: El plan comercial de Octubre 2026 no informa el nombre Andes: validar en Andes antes de copiar a APEX.",
+      "preguntas": [
+        "precio de Telefonía",
+        "cuanto cuesta Telefonía",
+        "cuánto sale Telefonía",
+        "valor Telefonía",
+        "Telefonía precio normal y promo",
+        "qué plan es Telefonía"
+      ],
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
+      "plan": {
+        "comercial": "Telefonía",
+        "andes": "",
+        "normal": "$12.990",
+        "promo": ""
+      },
+      "fuente_dato": "portal/app"
+    },
+    {
+      "id": "KB-0223",
+      "categoria": "planes",
+      "subcategoria": "Internet + TV",
+      "intent": "consulta_plan",
+      "titulo": "Internet 500 + TV Inicia",
+      "respuesta": "Internet 500 + TV Inicia: precio normal $41.990. Red: HFC. Nombre en Andes: 2P Internet Hogar mas TV Inicia 0225hd. Streaming incluido: HBO Max, Prime Video, Universal+. Aviso: Nombre Andes referencial (Octubre 2026): validar en Andes antes de copiar a APEX.",
+      "preguntas": [
+        "precio de Internet 500 + TV Inicia",
+        "cuanto cuesta Internet 500 + TV Inicia",
+        "cuánto sale Internet 500 + TV Inicia",
+        "valor Internet 500 + TV Inicia",
+        "Internet 500 + TV Inicia precio normal y promo",
+        "qué plan es Internet 500 + TV Inicia"
+      ],
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
+      "plan": {
+        "comercial": "Internet 500 + TV Inicia",
+        "andes": "2P Internet Hogar mas TV Inicia 0225hd",
+        "normal": "$41.990",
+        "promo": "",
+        "red": "HFC",
+        "tags": [
+          "HBO Max",
+          "Prime Video",
+          "Universal+"
+        ],
+        "streams": [
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/universal.png"
+        ]
+      },
+      "fuente_dato": "portal/app"
+    },
+    {
+      "id": "KB-0224",
+      "categoria": "planes",
+      "subcategoria": "Internet + TV",
+      "intent": "consulta_plan",
+      "titulo": "Internet 500 + TV Premium",
+      "respuesta": "Internet 500 + TV Premium: precio normal $46.990; precio promo $29.990. Red: HFC. Nombre en Andes: 2P Internet Hogar mas TV Premium 0225hd. Streaming incluido: Disney+, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix. Aviso: Nombre Andes referencial (Octubre 2026): validar en Andes antes de copiar a APEX.",
+      "preguntas": [
+        "precio de Internet 500 + TV Premium",
+        "cuanto cuesta Internet 500 + TV Premium",
+        "cuánto sale Internet 500 + TV Premium",
+        "valor Internet 500 + TV Premium",
+        "Internet 500 + TV Premium precio normal y promo",
+        "qué plan es Internet 500 + TV Premium"
+      ],
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
+      "plan": {
+        "comercial": "Internet 500 + TV Premium",
+        "andes": "2P Internet Hogar mas TV Premium 0225hd",
+        "normal": "$46.990",
+        "promo": "$29.990",
+        "red": "HFC",
+        "tags": [
+          "Disney+"
+        ],
+        "streams": [
+          "/stream/disney.png",
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/atresplayer.png",
+          "/stream/universal.png",
+          "/stream/cindie.png",
+          "/stream/riivi.png",
+          "/stream/teatrix.png"
+        ]
+      },
+      "fuente_dato": "portal/app"
+    },
+    {
+      "id": "KB-0225",
+      "categoria": "planes",
+      "subcategoria": "Internet + Telefonía",
+      "intent": "consulta_plan",
+      "titulo": "Internet 500 + Telefonía",
+      "respuesta": "Internet 500 + Telefonía: precio normal $23.990. Red: HFC. Nombre en Andes: 2P Internet Hogar mas Fono 0225. Aviso: Nombre Andes referencial (Octubre 2026): validar en Andes antes de copiar a APEX.",
+      "preguntas": [
+        "precio de Internet 500 + Telefonía",
+        "cuanto cuesta Internet 500 + Telefonía",
+        "cuánto sale Internet 500 + Telefonía",
+        "valor Internet 500 + Telefonía",
+        "Internet 500 + Telefonía precio normal y promo",
+        "qué plan es Internet 500 + Telefonía"
+      ],
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
+      "plan": {
+        "comercial": "Internet 500 + Telefonía",
+        "andes": "2P Internet Hogar mas Fono 0225",
+        "normal": "$23.990",
+        "promo": "",
+        "red": "HFC"
+      },
+      "fuente_dato": "portal/app"
+    },
+    {
+      "id": "KB-0226",
+      "categoria": "planes",
+      "subcategoria": "Internet + Telefonía",
+      "intent": "consulta_plan",
+      "titulo": "TV Premium + Telefonía",
+      "respuesta": "TV Premium + Telefonía: precio normal $38.990. Nombre en Andes: 2P TV Premium mas Telefonia 0225. Streaming incluido: Disney+, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix. Aviso: Nombre Andes referencial (Octubre 2026): validar en Andes antes de copiar a APEX.",
+      "preguntas": [
+        "precio de TV Premium + Telefonía",
+        "cuanto cuesta TV Premium + Telefonía",
+        "cuánto sale TV Premium + Telefonía",
+        "valor TV Premium + Telefonía",
+        "TV Premium + Telefonía precio normal y promo",
+        "qué plan es TV Premium + Telefonía"
+      ],
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
+      "plan": {
+        "comercial": "TV Premium + Telefonía",
+        "andes": "2P TV Premium mas Telefonia 0225",
+        "normal": "$38.990",
+        "promo": "",
+        "tags": [
+          "Disney+"
+        ],
+        "streams": [
+          "/stream/disney.png",
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/atresplayer.png",
+          "/stream/universal.png",
+          "/stream/cindie.png",
+          "/stream/riivi.png",
+          "/stream/teatrix.png"
+        ]
+      },
+      "fuente_dato": "portal/app"
+    },
+    {
+      "id": "KB-0227",
+      "categoria": "planes",
+      "subcategoria": "Internet + TV + Telefonía",
+      "intent": "consulta_plan",
+      "titulo": "Internet 500 + TV Inicia + Fono",
+      "respuesta": "Internet 500 + TV Inicia + Fono: precio normal $46.990. Red: HFC. Nombre en Andes: 3P Internet Hogar mas TV Inicia 0225hd. Streaming incluido: HBO Max, Prime Video, Universal+. Aviso: Nombre Andes referencial (Octubre 2026): validar en Andes antes de copiar a APEX.",
+      "preguntas": [
+        "precio de Internet 500 + TV Inicia + Fono",
+        "cuanto cuesta Internet 500 + TV Inicia + Fono",
+        "cuánto sale Internet 500 + TV Inicia + Fono",
+        "valor Internet 500 + TV Inicia + Fono",
+        "Internet 500 + TV Inicia + Fono precio normal y promo",
+        "qué plan es Internet 500 + TV Inicia + Fono"
+      ],
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
+      "plan": {
+        "comercial": "Internet 500 + TV Inicia + Fono",
+        "andes": "3P Internet Hogar mas TV Inicia 0225hd",
+        "normal": "$46.990",
+        "promo": "",
+        "red": "HFC",
+        "tags": [
+          "HBO Max",
+          "Prime Video",
+          "Universal+"
+        ],
+        "streams": [
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/universal.png"
+        ]
+      },
+      "fuente_dato": "portal/app"
+    },
+    {
+      "id": "KB-0228",
+      "categoria": "planes",
+      "subcategoria": "Internet + TV + Telefonía",
+      "intent": "consulta_plan",
+      "titulo": "Internet 500 + TV Premium + Fono",
+      "respuesta": "Internet 500 + TV Premium + Fono: precio normal $51.990; precio promo $36.990. Red: HFC. Nombre en Andes: 3P Internet Hogar mas TV Premium 0225hd. Streaming incluido: Disney+, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix. Aviso: Nombre Andes referencial (Octubre 2026): validar en Andes antes de copiar a APEX.",
+      "preguntas": [
+        "precio de Internet 500 + TV Premium + Fono",
+        "cuanto cuesta Internet 500 + TV Premium + Fono",
+        "cuánto sale Internet 500 + TV Premium + Fono",
+        "valor Internet 500 + TV Premium + Fono",
+        "Internet 500 + TV Premium + Fono precio normal y promo",
+        "qué plan es Internet 500 + TV Premium + Fono"
+      ],
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
+      "plan": {
+        "comercial": "Internet 500 + TV Premium + Fono",
+        "andes": "3P Internet Hogar mas TV Premium 0225hd",
+        "normal": "$51.990",
+        "promo": "$36.990",
+        "red": "HFC",
+        "tags": [
+          "Disney+"
+        ],
+        "streams": [
+          "/stream/disney.png",
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/atresplayer.png",
+          "/stream/universal.png",
+          "/stream/cindie.png",
+          "/stream/riivi.png",
+          "/stream/teatrix.png"
+        ]
+      },
+      "fuente_dato": "portal/app"
+    },
+    {
+      "id": "KB-0229",
+      "categoria": "planes",
+      "subcategoria": "Internet + TV + Telefonía",
+      "intent": "consulta_plan",
+      "titulo": "Internet 500 + TV Premium II + Fono",
+      "respuesta": "Internet 500 + TV Premium II + Fono: precio normal $51.990; precio promo $36.990. Red: HFC. Nombre en Andes: 3P Internet Hogar mas TV Premium 2 N0726. Streaming incluido: Netflix, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix. Aviso: Nombre Andes referencial (Octubre 2026): validar en Andes antes de copiar a APEX.",
+      "preguntas": [
+        "precio de Internet 500 + TV Premium II + Fono",
+        "cuanto cuesta Internet 500 + TV Premium II + Fono",
+        "cuánto sale Internet 500 + TV Premium II + Fono",
+        "valor Internet 500 + TV Premium II + Fono",
+        "Internet 500 + TV Premium II + Fono precio normal y promo",
+        "qué plan es Internet 500 + TV Premium II + Fono"
+      ],
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
+      "plan": {
+        "comercial": "Internet 500 + TV Premium II + Fono",
+        "andes": "3P Internet Hogar mas TV Premium 2 N0726",
+        "normal": "$51.990",
+        "promo": "$36.990",
+        "red": "HFC",
+        "tags": [
+          "Netflix"
+        ],
+        "streams": [
+          "/stream/netflix.png",
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/atresplayer.png",
+          "/stream/universal.png",
+          "/stream/cindie.png",
+          "/stream/riivi.png",
+          "/stream/teatrix.png"
+        ]
+      },
+      "fuente_dato": "portal/app"
+    },
+    {
+      "id": "KB-0230",
+      "categoria": "planes",
+      "subcategoria": "Internet + TV + Telefonía",
+      "intent": "consulta_plan",
+      "titulo": "Internet 500 + TV Full + Fono",
+      "respuesta": "Internet 500 + TV Full + Fono: precio normal $56.990; precio promo $44.990. Red: HFC. Nombre en Andes: 3P Internet Hogar mas TV Premium 3 N0726. Streaming incluido: Disney+, Netflix, HBO Max, Prime Video, Atresplayer, Universal+, Cindie, Riivi, Teatrix. Aviso: Nombre Andes referencial (Octubre 2026): validar en Andes antes de copiar a APEX.",
+      "preguntas": [
+        "precio de Internet 500 + TV Full + Fono",
+        "cuanto cuesta Internet 500 + TV Full + Fono",
+        "cuánto sale Internet 500 + TV Full + Fono",
+        "valor Internet 500 + TV Full + Fono",
+        "Internet 500 + TV Full + Fono precio normal y promo",
+        "qué plan es Internet 500 + TV Full + Fono"
+      ],
+      "source": "Plan Comercial ClaroVTR Hogar — Octubre 2026 (V04)",
+      "version": "2026-10",
+      "plan": {
+        "comercial": "Internet 500 + TV Full + Fono",
+        "andes": "3P Internet Hogar mas TV Premium 3 N0726",
+        "normal": "$56.990",
+        "promo": "$44.990",
+        "red": "HFC",
+        "tags": [
+          "Disney+",
+          "Netflix"
+        ],
+        "streams": [
+          "/stream/disney.png",
+          "/stream/netflix.png",
+          "/stream/hbo-max.png",
+          "/stream/prime-video.png",
+          "/stream/atresplayer.png",
+          "/stream/universal.png",
+          "/stream/cindie.png",
+          "/stream/riivi.png",
+          "/stream/teatrix.png"
+        ]
+      },
+      "fuente_dato": "portal/app"
     }
   ],
   "training_examples": [
@@ -4531,7 +4909,7 @@
       "input": "número de vtr hogar",
       "intent": "contacto_vtr_hogar",
       "categoria": "contactos",
-      "answer": "El material indica 600 800 9000 o 2 2310 0200 para VTR Hogar.",
+      "answer": "El material indica 600 800 9000 o 2 2310 0200 para VTR Hogar. Número de VTR PyME: 600 800 9009.",
       "source": "Pasted text(1).txt: 4754-4761",
       "tags": []
     },

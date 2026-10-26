@@ -69,7 +69,8 @@ export interface QuickActionButtonProps {
 
 // Modal Somos Clave
 export interface ModalSomosClaveProps {
-  firebaseApp: any
+  item: any
+  firebaseApp?: any
   oculto?: boolean
   onCerrar: () => void
   userAvatarUrl?: string

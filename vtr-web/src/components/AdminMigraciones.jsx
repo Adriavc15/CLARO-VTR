@@ -83,10 +83,11 @@ function rankingAsesoresDe(items) {
   const map = new Map()
   for (const m of items || []) {
     const nombre = String(m.asesor || '').trim().replace(/\s+/g, ' ')
-    const k = normNombre(nombre) || 'sin asesor'
+    const nombreLimpio = nombre.replace(/\s*-\s*LEGAJO\s+.+$/i, '').trim()
+    const k = normNombre(nombreLimpio) || 'sin asesor'
     const prev = map.get(k)
     if (prev) prev.valor += 1
-    else map.set(k, { key: nombre || 'Sin asesor', valor: 1 })
+    else map.set(k, { key: nombreLimpio || 'Sin asesor', valor: 1 })
   }
   return [...map.values()].sort((a, b) => b.valor - a.valor)
 }
@@ -470,55 +471,33 @@ function TendenciaDias({ items }) {
         {ticks.map((val) => {
           const yVal = y(val)
           return (
-            <g key={val}>
-              <line
-                x1={padL}
-                x2={W - padR}
-                y1={yVal}
-                y2={yVal}
-                stroke="currentColor"
-                className="text-gray-200 dark:text-gray-700/60"
-                strokeWidth="1"
-                strokeDasharray="4 4"
-                vectorEffect="non-scaling-stroke"
-              />
-              <text
-                x={padL - 6}
-                y={yVal + 3}
-                textAnchor="end"
-                className="fill-gray-400 dark:fill-gray-500 font-medium"
-                style={{ fontSize: 10 }}
-              >
-                {val}
-              </text>
-            </g>
+            <line
+              key={val}
+              x1={padL}
+              x2={W - padR}
+              y1={yVal}
+              y2={yVal}
+              stroke="currentColor"
+              className="text-gray-200 dark:text-gray-700/60"
+              strokeWidth="1"
+              strokeDasharray="4 4"
+              vectorEffect="non-scaling-stroke"
+            />
           )
         })}
 
-        {/* Áreas y líneas por estado */}
+        {/* Áreas por estado (sin líneas) */}
         {seriesData.map((s, i) => {
           const pts = s.pts
           const areaPath = `${s.linePath} L ${pts[n - 1].x} ${baseY} L ${pts[0].x} ${baseY} Z`
           return (
-            <g key={s.key}>
-              <path
-                d={areaPath}
-                fill={`url(#gradTendencia${i})`}
-                className="mfa-fade"
-                style={{ animationDelay: `${i * 100}ms` }}
-              />
-              <path
-                className="mfa-draw"
-                pathLength="1"
-                d={s.linePath}
-                fill="none"
-                stroke={s.color}
-                strokeWidth="2"
-                strokeLinecap="round"
-                vectorEffect="non-scaling-stroke"
-                style={{ animationDelay: `${i * 100 + 200}ms` }}
-              />
-            </g>
+            <path
+              key={s.key}
+              d={areaPath}
+              fill={`url(#gradTendencia${i})`}
+              className="mfa-fade"
+              style={{ animationDelay: `${i * 100}ms` }}
+            />
           )
         })}
 
@@ -574,10 +553,25 @@ function TendenciaDias({ items }) {
         )}
       </div>
 
+      {/* Números del eje Y en HTML (sin distorsión) */}
+      <div className="absolute left-0 top-4 bottom-6 w-12 pointer-events-none select-none overflow-visible flex flex-col justify-between py-0">
+        {ticks.map((val) => {
+          const yVal = y(val)
+          return (
+            <span
+              key={val}
+              style={{ top: `${(yVal / H) * 100}%` }}
+              className="absolute text-[10px] font-medium text-gray-400 dark:text-gray-500"
+            >
+              {val}
+            </span>
+          )
+        })}
+      </div>
+
       {/* Fechas en el eje inferior en HTML (tipografía nítida y bien espaciada) */}
       <div className="absolute bottom-0 left-0 right-0 h-6 pointer-events-none select-none overflow-visible px-8">
         {seriesData[0].pts.map((p, i) => {
-          if (i % 4 !== 0 && i !== n - 1) return null
           const esHover = hoveredIdx === i
           return (
             <span
@@ -855,9 +849,9 @@ export default function AdminMigraciones({ db = null, onToast, esUsuario = false
     const arr = [...map.entries()]
       .map(([key, valor]) => ({ key, valor }))
       .sort((a, b) => b.valor - a.valor)
-    return arr.map((d, i) => ({
+    return arr.map((d) => ({
       ...d,
-      color: COLOR_ESTADO[d.key] || COLOR_ESTADO_FALLBACK[i % COLOR_ESTADO_FALLBACK.length],
+      color: COLOR_ESTADO[d.key] || COLORS[Math.floor(Math.random() * COLORS.length)],
     }))
   }, [filtrados])
 
@@ -909,12 +903,9 @@ export default function AdminMigraciones({ db = null, onToast, esUsuario = false
   )
 
   const tituloPanel = (Icon, texto, sub) => (
-    <div className="flex items-center gap-2 mb-4">
-      <Icon size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
-      <div>
-        <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100">{texto}</h4>
-        {sub && <p className="text-[11px] text-gray-400 dark:text-gray-500">{sub}</p>}
-      </div>
+    <div className="text-center mb-4">
+      <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100">{texto}</h4>
+      {sub && <p className="text-[11px] text-gray-400 dark:text-gray-500">{sub}</p>}
     </div>
   )
 
@@ -1110,10 +1101,11 @@ export default function AdminMigraciones({ db = null, onToast, esUsuario = false
       <Card>
         {tituloPanel(Wallet, 'Últimas migraciones', `${filtrados.length} registros en el filtro actual`)}
         <div className="overflow-x-auto">
-          <table className="w-full text-xs border-collapse min-w-[960px]">
+          <table className="w-full text-xs border-collapse min-w-[1040px]">
             <thead>
               <tr className="bg-gray-50 dark:bg-gray-900/40 border-b border-gray-200 dark:border-gray-700">
                 {[
+                  'RUT asesor',
                   'Fecha ingreso',
                   'Asesor',
                   'Supervisor',
@@ -1133,18 +1125,21 @@ export default function AdminMigraciones({ db = null, onToast, esUsuario = false
             <tbody>
               {filtrados.length === 0 && (
                 <tr>
-                  <td colSpan={esUsuario ? 8 : 9} className="text-center text-gray-400 dark:text-gray-500 py-8">
+                  <td colSpan={esUsuario ? 9 : 10} className="text-center text-gray-400 dark:text-gray-500 py-8">
                     Sin migraciones en el filtro actual
                   </td>
                 </tr>
               )}
-              {filtrados.map((m) => (
+              {filtrados.map((m) => {
+                const asesorLimpio = m.asesor ? String(m.asesor).replace(/\s*-\s*LEGAJO\s+.+$/i, '').trim() : m.asesor
+                return (
                 <tr
                   key={m.id}
                   className="border-b border-gray-100 dark:border-gray-700/60 hover:bg-gray-50 dark:hover:bg-gray-700/30"
                 >
+                  <td className="py-2 px-2 whitespace-nowrap text-gray-600 dark:text-gray-300 tabular-nums">{m.legajoAsesor || '—'}</td>
                   <td className="py-2 px-2 whitespace-nowrap text-gray-800 dark:text-gray-100">{m.fechaIngreso || '—'}</td>
-                  <td className="py-2 px-2 whitespace-nowrap text-gray-800 dark:text-gray-100">{m.asesor || '—'}</td>
+                  <td className="py-2 px-2 whitespace-nowrap text-gray-800 dark:text-gray-100 font-medium">{asesorLimpio || '—'}</td>
                   <td className="py-2 px-2 whitespace-nowrap text-gray-600 dark:text-gray-300">{m.supervisor || '—'}</td>
                   <td className="py-2 px-2 whitespace-nowrap text-gray-600 dark:text-gray-300">{m.rutCliente || '—'}</td>
                   <td className="py-2 px-2 whitespace-nowrap text-gray-600 dark:text-gray-300">{m.nPedido || '—'}</td>
@@ -1174,14 +1169,18 @@ export default function AdminMigraciones({ db = null, onToast, esUsuario = false
                       )}
                     </div>
                   </td>
-                  <td className="py-2 px-2 align-top">
+                  <td className="py-2 px-2">
                     {m.detalleError ? (
-                      <span
-                        title={m.detalleError}
-                        className="inline-block text-[11px] text-gray-700 dark:text-gray-200 max-w-[260px] truncate font-medium bg-gray-50 dark:bg-gray-900/40 px-2 py-0.5 rounded-md border border-gray-200 dark:border-gray-700"
-                      >
-                        {m.detalleError}
-                      </span>
+                      <div className="group relative inline-block max-w-[260px]">
+                        <span className="block truncate text-[11px] font-medium text-gray-600 dark:text-gray-300 cursor-help border-b border-dotted border-gray-400 dark:border-gray-500 pb-0.5">
+                          {m.detalleError}
+                        </span>
+                        <div className="absolute left-0 bottom-full mb-2 w-72 bg-gray-900 dark:bg-gray-950 text-white text-xs rounded-lg p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                          <div className="font-medium mb-1 text-gray-300">Motivo / Tipificación:</div>
+                          <div className="text-gray-100">{m.detalleError}</div>
+                          <div className="absolute left-4 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-950"></div>
+                        </div>
+                      </div>
                     ) : (
                       <span className="text-gray-300 dark:text-gray-600">—</span>
                     )}
@@ -1202,7 +1201,8 @@ export default function AdminMigraciones({ db = null, onToast, esUsuario = false
                     </td>
                   )}
                 </tr>
-              ))}
+                )
+              })}
             </tbody>
           </table>
         </div>

@@ -11,12 +11,12 @@ import { crearListaNombres } from './listaNombresStore'
 
 /** Lista base que se muestra mientras no haya una lista administrada. */
 export const SUPERVISORES_SEED = [
-  'Sol Gonzales',
-  'Harold Tejada',
-  'Enmanuel Mota',
-  'Gean Mendoza',
-  'Zarela Rojas',
-  'Elisa Ripalda',
+  'SOL GONZALES',
+  'HAROLD TEJADA',
+  'ENMANUEL MOTA',
+  'GEAN MENDOZA',
+  'ZARELA ROJAS',
+  'ELISA RIPALDA',
 ]
 
 const store = crearListaNombres({
@@ -24,6 +24,7 @@ const store = crearListaNombres({
   lsKey: 'vtr-supervisores:local',
   seed: SUPERVISORES_SEED,
   etiqueta: 'nombre del supervisor',
+  mayusculas: true,
 })
 
 export const normalizarSupervisor = store.normalizarNombre

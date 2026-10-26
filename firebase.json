@@ -28,7 +28,8 @@
     "providers": {
       "anonymous": false,
       "emailPassword": true,
-      "google": true
+      "google": true,
+      "microsoft": true
     }
   },
   "hosting": {

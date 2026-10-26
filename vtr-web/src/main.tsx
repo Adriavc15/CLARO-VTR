@@ -6,6 +6,7 @@ const App = lazy(() => import('./App.tsx'))
 const AdminPage = lazy(() => import('./AdminPage.tsx'))
 const JuegosPage = lazy(() => import('./juegos/JuegosPage.jsx'))
 const FormulariosPage = lazy(() => import('./FormulariosPage.tsx'))
+const VentasIslaPage = lazy(() => import('./VentasIslaPage.tsx'))
 
 const path = typeof window !== 'undefined' ? window.location.pathname.replace(/\/+$/, '') || '/' : '/'
 const hash = typeof window !== 'undefined' ? window.location.hash : ''
@@ -15,6 +16,7 @@ const hashLower = hash.toLowerCase()
 const isAdminRoute = pathLower === '/admin' || hashLower === '#admin'
 const isJuegoRoute = pathLower === '/juego' || pathLower.startsWith('/juego/') || hashLower === '#juego'
 const isFormulariosRoute = pathLower === '/formularios' || hashLower === '#formularios'
+const isVentasIslaRoute = pathLower === '/ventas isla' || pathLower === '/ventasisla' || hashLower === '#ventasisla'
 
 function Cargando() {
   return (
@@ -32,6 +34,7 @@ function Pagina() {
   if (isAdminRoute) return <AdminPage />
   if (isJuegoRoute) return <JuegosPage />
   if (isFormulariosRoute) return <FormulariosPage />
+  if (isVentasIslaRoute) return <VentasIslaPage />
   return <App />
 }
 

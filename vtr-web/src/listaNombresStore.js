@@ -6,14 +6,16 @@
  * base (seed) definida en el código mientras no haya nada administrado.
  */
 
-export function crearListaNombres({ coleccion, lsKey, seed = [], etiqueta = 'nombre' }) {
+export function crearListaNombres({ coleccion, lsKey, seed = [], etiqueta = 'nombre', mayusculas = false }) {
   const FS_COLLECTION = coleccion
   const LS_KEY = lsKey
   const SEED = seed
+  const MAYUSCULAS = mayusculas
 
   /** Deja el nombre sin espacios dobles ni extremos. */
   function normalizarNombre(nombre) {
-    return String(nombre || '').trim().replace(/\s+/g, ' ')
+    const limpio = String(nombre || '').trim().replace(/\s+/g, ' ')
+    return MAYUSCULAS ? limpio.toUpperCase() : limpio
   }
 
   /** Clave para comparar/duplicar (sin tildes, sin mayúsculas, sin espacios extra). */
@@ -35,7 +37,18 @@ export function crearListaNombres({ coleccion, lsKey, seed = [], etiqueta = 'nom
   function sanear(a) {
     const nombre = normalizarNombre(a?.nombre ?? a)
     if (!nombre) return null
-    return { id: String(a?.id || idDe(nombre)), nombre, creado: String(a?.creado || '') }
+    // Si el elemento no trae legajo, se completa desde la lista base por nombre.
+    let legajo = String(a?.legajo || '').trim()
+    if (!legajo) {
+      const base = SEED.find((s) => claveNombre(s?.nombre ?? s) === claveNombre(nombre))
+      legajo = String(base?.legajo || '').trim()
+    }
+    return {
+      id: String(a?.id || idDe(nombre)),
+      nombre,
+      legajo,
+      creado: String(a?.creado || ''),
+    }
   }
 
   function ordenar(lista) {
@@ -82,7 +95,12 @@ export function crearListaNombres({ coleccion, lsKey, seed = [], etiqueta = 'nom
       if (!s) continue
       const k = claveNombre(s.nombre)
       const prev = mapa.get(k)
-      mapa.set(k, prev ? { ...prev, ...s, id: prev.id || s.id } : s)
+      mapa.set(
+        k,
+        prev
+          ? { ...prev, ...s, id: prev.id || s.id, legajo: s.legajo || prev.legajo || '' }
+          : s
+      )
     }
     return ordenar([...mapa.values()])
   }
@@ -108,7 +126,12 @@ export function crearListaNombres({ coleccion, lsKey, seed = [], etiqueta = 'nom
     if (!clean) throw new Error(`Nombre de ${etiqueta} inválido`)
     await setDoc(
       doc(db, FS_COLLECTION, clean.id),
-      { nombre: clean.nombre, creado: clean.creado || new Date().toISOString(), actualizado: new Date().toISOString() },
+      {
+        nombre: clean.nombre,
+        ...(clean.legajo ? { legajo: clean.legajo } : {}),
+        creado: clean.creado || new Date().toISOString(),
+        actualizado: new Date().toISOString(),
+      },
       { merge: true }
     )
     return true
@@ -197,9 +220,13 @@ export function crearListaNombres({ coleccion, lsKey, seed = [], etiqueta = 'nom
       const remotos = await leerFirestore(db)
       const idsRemotos = new Set(remotos.map((r) => r.id))
       const idsLocales = new Set(listaLocal.map((a) => a.id))
-      const pendientes = listaLocal.filter((a) => !idsRemotos.has(a.id))
+      const porId = new Map(remotos.map((r) => [r.id, r]))
+      const porEscribir = listaLocal.filter((a) => {
+        const remoto = porId.get(a.id)
+        return !idsRemotos.has(a.id) || (remoto?.legajo || '') !== (a.legajo || '')
+      })
       const sobrantes = remotos.filter((r) => !idsLocales.has(r.id))
-      await Promise.all(pendientes.map((a) => escribirFirestore(db, a).catch(() => false)))
+      await Promise.all(porEscribir.map((a) => escribirFirestore(db, a).catch(() => false)))
       await Promise.all(sobrantes.map((r) => eliminarFirestore(db, r.id).catch(() => false)))
       return true
     } catch (err) {
@@ -209,8 +236,8 @@ export function crearListaNombres({ coleccion, lsKey, seed = [], etiqueta = 'nom
   }
 
   /** Agrega un nombre. Evita duplicados (sin tildes ni mayúsculas). */
-  async function agregar(db, nombre) {
-    const clean = sanear({ nombre })
+  async function agregar(db, nombre, legajo = '') {
+    const clean = sanear({ nombre, legajo })
     if (!clean) throw new Error(`Ingresa el ${etiqueta}`)
 
     const actuales = await listar(db)
@@ -226,12 +253,12 @@ export function crearListaNombres({ coleccion, lsKey, seed = [], etiqueta = 'nom
   }
 
   /** Renombra un nombre existente (nube + local). */
-  async function renombrar(db, id, nombre) {
-    const clean = sanear({ nombre })
-    if (!clean) throw new Error(`Ingresa el ${etiqueta}`)
-
+  async function renombrar(db, id, nombre, legajo = undefined) {
     const actuales = await listar(db)
     const actual = actuales.find((a) => a.id === id) || { id }
+    const clean = sanear({ nombre, legajo: legajo === undefined ? actual.legajo : legajo })
+    if (!clean) throw new Error(`Ingresa el ${etiqueta}`)
+
     const resto = actuales.filter((a) => a.id !== id)
 
     if (resto.some((a) => claveNombre(a.nombre) === claveNombre(clean.nombre))) {
@@ -241,6 +268,7 @@ export function crearListaNombres({ coleccion, lsKey, seed = [], etiqueta = 'nom
     const actualizado = {
       id: idDe(clean.nombre),
       nombre: clean.nombre,
+      legajo: clean.legajo,
       creado: actual.creado || new Date().toISOString(),
     }
     const local = combinar(resto, [actualizado])

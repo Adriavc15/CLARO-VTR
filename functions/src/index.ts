@@ -1,6 +1,7 @@
 import {initializeApp} from "firebase-admin/app";
 import {FieldValue, getFirestore} from "firebase-admin/firestore";
 import {setGlobalOptions} from "firebase-functions";
+import {defineSecret} from "firebase-functions/params";
 import {onRequest} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 import {getAuth} from "firebase-admin/auth";
@@ -9,8 +10,8 @@ initializeApp();
 
 setGlobalOptions({maxInstances: 10});
 
-// API key de imgbb desde variable de entorno
-const IMGBB_API_KEY = process.env.IMGBB_API_KEY || "";
+// API key de imgbb desde Cloud Secret Manager
+const IMGBB_API_KEY = defineSecret("IMGBB_API_KEY");
 
 const CARPETA_COMUNICADOS_ID = "1zFW47MKDJArZ4jiKa1tw-4dezVJ673QM";
 const FUNCION_URL = "https://us-central1-vtrclaroo-3c572.cloudfunctions.net/comunicados";
@@ -231,7 +232,7 @@ export const fastTargets = onRequest({cors: true}, async (req, res) => {
  * Requiere autenticación de Firebase.
  */
 export const subirImagen = onRequest(
-  {cors: true},
+  {cors: true, secrets: [IMGBB_API_KEY]},
   async (req, res) => {
     try {
       // Verificar autenticación
@@ -265,8 +266,9 @@ export const subirImagen = onRequest(
         return;
       }
 
-      // Subir a imgbb con la API key del servidor (env)
-      if (!IMGBB_API_KEY) {
+      // Subir a imgbb con la API key de Cloud Secret Manager
+      const API_KEY = IMGBB_API_KEY.value();
+      if (!API_KEY) {
         res.status(500).json({
           ok: false,
           error: "API key no configurada en servidor",
@@ -275,7 +277,7 @@ export const subirImagen = onRequest(
       }
 
       const body = new FormData();
-      body.append("key", IMGBB_API_KEY);
+      body.append("key", API_KEY);
       body.append("image", image);
       if (name) body.append("name", String(name).slice(0, 80));
 

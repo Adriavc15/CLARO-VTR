@@ -18,6 +18,7 @@ const repo = path.resolve(root, '..')
 const ragPath = path.resolve(repo, 'somosclave-contenidos-rag.json')
 const outPath = path.join(root, 'public', 'somosclave-contenidos.json')
 const assetsRoot = path.join(root, 'public', 'sc-assets')
+const htmlsDir = path.join(repo, 'Somos Clave HTMLs')
 
 const SECTION_RE =
   /\b(OBJETIVO|ALCANCE|CONSIDERACIONES IMPORTANTES(?: SOBRE [^¿.]{0,80})?|IMPORTANTES EN LA ATENCIÓN|MATRIZ DE ATENCIÓN[^¿.]{0,80}|VERIFICACIONES PREVIAS|GESTIÓN|REGISTRA|INFORMA|INDAGA|DEBES SABER|POLÍTICAS DE LA ATENCIÓN|INTRODUCCIÓN|PASO A PASO[^¿.]{0,60}|CALL CENTER VOZ Y NO VOZ|N1 COMERCIAL|SUCURSALES|SIN INTERNET|INTERNET DEGRADADO|OTROS INCONVENIENTES)\b/gi
@@ -27,10 +28,46 @@ const IMG_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp
 /** Siempre apunta imgs a /sc-assets/{id}/archivo (si hay id) */
 function stripHtml(html, { assetBase = '' } = {}) {
   let out = String(html || '')
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    // Remover scripts
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    // Remover estilos inline pero mantener classes para diseño
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    // Remover eventos onclick y on*
     .replace(/on\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
     .replace(/javascript:/gi, '')
+
+  // Remover elementos de navegación y UI del portal
+  const selectorsToRemove = [
+    // Menú de navegación lateral
+    /<ul class="collapsible collapsible-accordion"[^>]*>[\s\S]*?<\/ul>/gi,
+    // He leído y comprendo
+    /<label[^>]*>He leído y comprendo[\s\S]*?<\/label>/gi,
+    /<div[^>]*>He leído y comprendo[\s\S]*?<\/div>/gi,
+    // Menú de usuario
+    /<div[^>]*class="user-menu"[\s\S]*?<\/div>/gi,
+    /<div[^>]*class="menu"[^>]*>[\s\S]*?<\/div>/gi,
+    // Footer
+    /<footer[^>]*>[\s\S]*?<\/footer>/gi,
+    // Header/navbar
+    /<header[^>]*>[\s\S]*?<\/header>/gi,
+    /<div[^>]*class="navbar"[\s\S]*?<\/div>/gi,
+    /<div[^>]*class="nav-wrapper"[\s\S]*?<\/div>/gi,
+    // Breadcrumbs
+    /<div[^>]*class="breadcrumb"[\s\S]*?<\/div>/gi,
+    // Botones de acción de la UI
+    /<button[^>]*>Cerrar sesión<\/button>/gi,
+    /<button[^>]*>Cambiar a CLARO<\/button>/gi,
+    // Iconos de materialize no deseados
+    /<i class="material-icons">[^<]*<\/i>\s*(?:home|menu|arrow_drop_down|receipt|folder_special|add_circle_outline|record_voice_over|expand_more|expand_less)<\/i>/gi,
+  ]
+
+  for (const selector of selectorsToRemove) {
+    out = out.replace(selector, '')
+  }
+
+  // Remover enlaces a localhost y enlaces vacíos de navegación
+  out = out.replace(/href="http:\/\/localhost:[^"]*"/gi, 'href="#"')
+  out = out.replace(/href="#!"?/gi, 'href="#"')
 
   if (assetBase) {
     out = out.replace(/src=(["'])(?:\.\/)?[^"']*_files\/([^"']+)\1/gi, `src=$1${assetBase}/$2$1`)
@@ -107,18 +144,44 @@ function filesDirForHtml(htmlPath) {
 function extractFaqHtmlFromFile(filePath) {
   if (!fs.existsSync(filePath)) return null
   const html = fs.readFileSync(filePath, 'utf8')
+  
+  // Extraer ID del nombre del archivo primero
+  const fileName = path.basename(filePath, '.html')
+  const idMatch = fileName.match(/(\d+)$/)
+  const idFromFileName = idMatch?.[1]
+  
+  // Extraer solo el contenido del FAQ (div con id="faq-content")
   const start = html.search(/id=["']faq-content["']/i)
   if (start < 0) return null
-  const endUseful = html.search(/Respuestas que otros encontraron útiles/i)
-  let chunk = html.slice(start, endUseful > start ? endUseful : undefined)
+  
+  // Buscar el final del contenido útil
+  const endSelectors = [
+    /Respuestas que otros encontraron útiles/i,
+    /<div class="rating"/i,
+    /<footer/i,
+    /¿Te resultó útil\?/i,
+  ]
+  
+  let endPos = -1
+  for (const selector of endSelectors) {
+    const match = html.match(selector)
+    if (match && match.index > start) {
+      endPos = match.index
+      break
+    }
+  }
+  
+  let chunk = html.slice(start, endPos > start ? endPos : undefined)
   const gt = chunk.indexOf('>')
   if (gt >= 0) chunk = chunk.slice(gt + 1)
-  chunk = chunk.replace(/<div class="rating"[\s\S]*$/i, '')
-  const idMatch =
+  
+  const urlMatch =
     html.match(/saved from url=\([^)]*\)https?:\/\/[^/]+\/respuesta\.php\?q=([a-z0-9_-]+)\/(\d+)/i) ||
     html.match(/respuesta\.php\?q=([a-z0-9_-]+)\/(\d+)/i)
   const title = (html.match(/id=["']faq-title["'][^>]*>([\s\S]*?)<\/b>/i) || [])[1] || ''
-  const id = idMatch?.[2]
+  const id = idFromFileName || urlMatch?.[2]
+  const categoriaPath = urlMatch?.[1] || 'actualizado'
+  
   const filesDir = filesDirForHtml(filePath)
   let copied = 0
   // Siempre reescribir a /sc-assets/{id}/… para poder soltar PNGs después
@@ -127,11 +190,15 @@ function extractFaqHtmlFromFile(filePath) {
     fs.mkdirSync(path.join(assetsRoot, String(id)), { recursive: true })
     if (filesDir) copied = copyAssetFolder(filesDir, path.join(assetsRoot, String(id)))
   }
+  
+  // Limpiar el HTML pero mantener la estructura de desplegables
+  const htmlClean = stripHtml(chunk, { assetBase })
+  
   return {
     id,
-    categoriaPath: idMatch?.[1],
+    categoriaPath,
     nombre: title.replace(/<[^>]+>/g, '').trim(),
-    html: stripHtml(chunk, { assetBase }),
+    html: htmlClean,
     texto: htmlToStructuredText(chunk),
     assetsCopied: copied,
     filesDir,
@@ -143,6 +210,15 @@ const localHtmlFiles = [
   path.join(repo, 'Somos Clave _ Portal Privado cambio titular.html'),
   path.join(repo, 'Inconvenientes Internet FTTH - HFC.html'),
 ]
+
+// Agregar todos los HTMLs del directorio Somos Clave HTMLs
+if (fs.existsSync(htmlsDir)) {
+  const htmlFiles = fs.readdirSync(htmlsDir).filter(f => f.endsWith('.html'))
+  for (const f of htmlFiles) {
+    localHtmlFiles.push(path.join(htmlsDir, f))
+  }
+  console.log(`HTMLs adicionales de directorio: ${htmlFiles.length}`)
+}
 
 const byId = new Map()
 

@@ -5,12 +5,10 @@
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
-import { createRequire } from 'module'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
 const repoRoot = path.resolve(root, '..')
-const require = createRequire(import.meta.url)
 
 const { extraerIdsDesdeHtml, normalizarIdClave, COL_IDS_CLAVE } = await import(
   pathToFileURL(path.join(root, 'src/asistente/idsClaveLive.js')).href
@@ -20,6 +18,7 @@ const htmlPath = path.join(repoRoot, 'Somos Clave _ Portal Privado.html')
 const dumpPath = path.join(root, 'src/asistente/somosClaveDump.json')
 const homeFaqsPath = path.join(root, 'src/asistente/_homeFaqs.json')
 const livePath = path.join(root, 'src/asistente/_liveArticles.json')
+const idsToFetchPath = path.join(__dirname, '_ids-to-fetch.json')
 const outSeed = path.join(root, 'src/asistente/idsClaveSeed.js')
 const outJson = path.join(root, 'src/asistente/idsClaveExtraidos.json')
 
@@ -103,6 +102,26 @@ for (const p of [homeFaqsPath, livePath]) {
   }
 }
 
+// 2.5) IDs desde _ids-to-fetch.json
+if (fs.existsSync(idsToFetchPath)) {
+  const idsToFetch = JSON.parse(fs.readFileSync(idsToFetchPath, 'utf8'))
+  for (const a of idsToFetch) {
+    if (!/^\d+$/.test(String(a.id || ''))) continue
+    upsert(
+      {
+        id: a.id,
+        nombre: a.nombre || `Artículo ${a.id}`,
+        enlace: `https://somosclave.cl/respuesta.php?q=${a.cat || 'actualizado'}/${a.id}`,
+        categoriaPath: a.cat || 'actualizado',
+        categoria: catUi(a.cat, null),
+        fuente: 'ids-to-fetch',
+      },
+      1
+    )
+  }
+  console.log('Desde _ids-to-fetch.json:', idsToFetch.length)
+}
+
 // 3) HTML guardado de https://somosclave.cl (logueado)
 if (fs.existsSync(htmlPath)) {
   const html = fs.readFileSync(htmlPath, 'utf8')
@@ -136,11 +155,12 @@ fs.writeFileSync(
 console.log('Seed →', outSeed)
 
 // Subir a Firestore con Admin SDK
-const admin = require(path.join(repoRoot, 'functions/node_modules/firebase-admin'))
-if (!admin.apps.length) {
+import admin from 'firebase-admin'
+import { getFirestore } from 'firebase-admin/firestore'
+if (!admin.getApps().length) {
   admin.initializeApp({ projectId: 'vtrclaroo-3c572' })
 }
-const db = admin.firestore()
+const db = getFirestore()
 const CHUNK = 400
 let written = 0
 for (let i = 0; i < ids.length; i += CHUNK) {

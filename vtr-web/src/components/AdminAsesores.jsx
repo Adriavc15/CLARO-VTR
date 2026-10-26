@@ -32,13 +32,17 @@ export default function AdminAsesores(props) {
       plural="asesores"
       sustantivo="asesor"
       labelCampo="Nombre y apellido del asesor"
-      placeholder="Ej. Juan Francisco Alburqueque Cadenas"
+      placeholder="Ej. CASTILLO SIALER NANCY LEONOR"
       requerido="Ingresa el nombre y apellido del asesor"
       Icono={UserPlus}
+      conLegajo
+      labelLegajo="Legajo"
+      placeholderLegajo="Ej. 60004133-9"
       descripcion={
         <>
-          Nombres que aparecen en el selector <strong>«Nombre y apellido del asesor»</strong> del formulario de
-          migraciones. Agrega, edita o quita asesores y quedan disponibles de inmediato.
+          Asesores que aparecen en los formularios internos. Cada uno tiene su{' '}
+          <strong>legajo</strong> (ID interno) y su nombre en <strong>MAYÚSCULAS</strong>; el selector muestra
+          ambos. Agrega, edita o quita asesores y quedan disponibles de inmediato.
         </>
       }
     />

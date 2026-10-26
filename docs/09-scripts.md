@@ -39,7 +39,39 @@ Configuración de credenciales Inbenta en `scripts/_inbenta_knowledge.js` (**no 
 | `fixMojibake.mjs` | Repara texto con codificación UTF-8/Windows-1252 mal decodificada |
 | `verificar-respuestas-match.mjs` | Verifica que FAQ/SC/KB casen con las respuestas locales |
 
-## D. Seeding y mantenimiento de Firestore
+## D. Catálogo de planes (Excel → seeds → KB)
+
+| Script | Función |
+|---|---|
+| `importarPlanesXlsx.mjs` | Lee el Excel del plan comercial (`.xlsx` sin dependencias), vuelca las hojas, imprime las tablas de planes de Claro/VTR y las contrasta con el catálogo de la web (`planesSeed.js` + `planesClaro.js`): altas, precios distintos y planes que solo están en el catálogo |
+| `syncKbPlanes.mjs` | Regenera los ítems de `categoria: "planes"` de la base de conocimiento Andes/VTR (`src/asistente/data/andes_vtr_ia_knowledge_base.json`) a partir de `planesSeed.js` |
+
+```bash
+cd vtr-web
+npm run importar:planes            # analiza el .xlsx de la raíz del repo
+npm run importar:planes -- "..\ClaroVTR_Planes_Hogar_Octubre_2026 (2).xlsx"
+node scripts/importarPlanesXlsx.mjs --json planes.json   # vuelca todo a JSON
+npm run sync:kb-planes             # sincroniza la KB (usar --check para solo revisar)
+```
+
+Notas:
+
+- El importador **no escribe** en el código: sirve para verificar que los seeds
+  `vtr-web/src/asistente/planesSeed.js` (VTR) y `vtr-web/src/asistente/planesClaro.js`
+  (Claro) estén al día con el Excel. Los cambios se aplican a mano en esos seeds.
+- El Excel es un **subconjunto** del catálogo: el diagnosticar lista los planes que
+  están en la web y no aparecen en el Excel (cable, legacy, etc.).
+- El plan VTR de 1P solo telefonía no trae nombre Andes en el plan comercial: el seed
+  lo deja vacío y lo marca con `nota`.
+- Los seeds VTR llevan el campo `red` (`'HFC'`, `'FTTH'` o vacío): es lo que separa los
+  grupos de la sección Planes entre HFC y Fibra Óptica (FTTH), y el importador lo usa
+  en el diagnóstico.
+- Los packs de streaming de Claro (`planesClaro.js`) incluyen TVN Play, OndaMedia y
+  Storytel como plataformas exclusivas de Claro (el Excel solo lista las dos primeras).
+- `syncKbPlanes.mjs` deja la KB alineada con el seed VTR. Después hay que publicar la
+  base en el admin para actualizar la colección `conocimiento_portal`.
+
+## E. Seeding y mantenimiento de Firestore
 
 | Script | Función |
 |---|---|
@@ -49,7 +81,7 @@ Configuración de credenciales Inbenta en `scripts/_inbenta_knowledge.js` (**no 
 
 > Estos scripts usan la configuración de Firebase embebida (proyecto `vtrclaroo-3c572`).
 
-## E. Utilidades
+## F. Utilidades
 
 | Script | Función |
 |---|---|
@@ -63,6 +95,8 @@ Configuración de credenciales Inbenta en `scripts/_inbenta_knowledge.js` (**no 
 | `build` | `vite build` |
 | `preview` | `vite preview` |
 | `extraer:sucursales` | `node src/asistente/extraerSucursales.mjs` |
+| `importar:planes` | `node scripts/importarPlanesXlsx.mjs` (análisis del Excel de planes) |
+| `sync:kb-planes` | `node scripts/syncKbPlanes.mjs` (KB de planes ← seed VTR) |
 
 ## Archivos de datos intermedios
 

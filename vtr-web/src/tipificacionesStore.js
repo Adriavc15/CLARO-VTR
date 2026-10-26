@@ -105,6 +105,18 @@ function sanitizeRegistro(registro) {
   if (!clean || typeof clean !== 'object') return null
   if (!clean.id) clean.id = uid()
   if (!clean.campos || typeof clean.campos !== 'object') clean.campos = {}
+
+  // Normalizar nombres a mayúsculas (para consistencia con asesores/migraciones)
+  if (clean.campos?.asesor) {
+    clean.campos.asesor = String(clean.campos.asesor).trim().toUpperCase()
+  }
+  if (clean.campos?.supervisor) {
+    clean.campos.supervisor = String(clean.campos.supervisor).trim().toUpperCase()
+  }
+  if (clean.campos?.rutAsesor) {
+    clean.campos.rutAsesor = String(clean.campos.rutAsesor).trim().toUpperCase()
+  }
+
   clean.texto = String(clean.texto || '')
   clean.tipo = String(clean.tipo || '')
   clean.tipoLabel = String(clean.tipoLabel || clean.tipo || '')

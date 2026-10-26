@@ -2,8 +2,8 @@
  * Packs de canales cable ("extras") + logos por canal.
  *
  * Estos canales NO son parte de la grilla base: vienen como packs adicionales
- * (Deportes/ESPN, HBO, Discovery y Otros). Se muestran en la ficha del plan y
- * dentro de la grilla del paquete de TV que corresponde.
+ * (Deportes/ESPN, HBO y Otros). Se muestran en la ficha del plan y dentro de
+ * la grilla del paquete de TV que corresponde.
  */
 
 // Canales que sí tienen logo en /public
@@ -16,15 +16,17 @@ const CANAL_LOGOS = {
   'Fox Sports 3 (ESPN 6)': '/espn.png',
   'Fox Sports': '/espn.png',
   'ESPN Premium': '/espn.png',
+  'TNT Sports': '/tntsports.png',
+  'TNT Sports Premium': '/tntsports.png',
   HBO: '/stream/hbo-max.png',
   'HBO 2': '/stream/hbo-max.png',
   'HBO Family': '/stream/hbo-max.png',
   'HBO Mundi': '/stream/hbo-max.png',
   'HBO Signature': '/stream/hbo-max.png',
   'HBO Plus': '/stream/hbo-max.png',
-  'HBO Xtreme': '/stream/hbo-max.png',
   'HBO Pop': '/stream/hbo-max.png',
   Cinemax: '/cinemax.png',
+  SCIENCE: '/DiscoveryScience.png',
   'Discovery Science': '/DiscoveryScience.png',
   'Discovery World': '/DiscoveryWorld.png',
   'Discovery Theater': '/DiscoveryTheater.png',
@@ -33,6 +35,7 @@ const CANAL_LOGOS = {
   'Discovery Kids': '/DiscoveryWorld.png',
   'Discovery Home & Health': '/DiscoveryWorld.png',
   Universal: '/stream/universal.png',
+  'Universal+': '/stream/universal.png',
   'Universal TV': '/stream/universal.png',
   'Studio Universal': '/studiouniversal.png',
   USA: '/usa.png',
@@ -75,20 +78,33 @@ export const CABLE_PACKS = [
     id: 'hbo',
     name: 'HBO',
     img: '/stream/hbo-max.png',
-    items: ['HBO', 'HBO Family', 'HBO Mundi', 'HBO Signature', 'HBO Plus', 'HBO Xtreme', 'HBO Pop'],
-  },
-  {
-    id: 'discovery',
-    name: 'Discovery',
-    img: '/DiscoveryWorld.png',
-    items: ['Discovery Science', 'Discovery World', 'Discovery Theater'],
+    items: ['HBO', 'HBO Family', 'HBO Mundi', 'HBO Signature', 'HBO Plus', 'HBO Pop'],
   },
   {
     id: 'otros',
     name: 'Otros canales',
-    img: '/Paramount.png',
-    items: ['Paramount', 'Comedy Central', 'Universal', 'Studio Universal', 'USA', 'Entertainment Television', 'Dreamworks', 'Warner', 'Telemundo', 'MTV', 'Cinemax'],
+    img: '/Warner.png',
+    items: ['Comedy Central', 'Universal', 'Studio Universal', 'Warner', 'Telemundo', 'Cinemax'],
   },
+]
+
+/**
+ * Señales que ya no van en la grilla de VTR ni de Claro (packs ni extras).
+ * SCIENCE queda solo en Claro (528 TV Inicia / 626 TV Full), no como extra.
+ */
+export const CANALES_FUERA_GRILLA = [
+  'HBO Xtreme',
+  'Discovery Science',
+  'Discovery World',
+  'Discovery Theater',
+  'Theater',
+  'World',
+  'Paramount',
+  'USA',
+  'USA Network',
+  'Entertainment Television',
+  'Dreamworks',
+  'MTV',
 ]
 
 /**

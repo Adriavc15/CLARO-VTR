@@ -1,0 +1,522 @@
+[
+  {
+    "src": "/portal/cl/recursos_tema_evo/assets/internal/logo-claro-musica.svg",
+    "alt": "Claro Música",
+    "className": "ico-headphones ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 4130,
+    "height": 720
+  },
+  {
+    "src": "/portal/cl/recursos_tema_evo/assets/internal/logo-claro-video.svg",
+    "alt": "Claro Video",
+    "className": "ico-play-circle ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 3835,
+    "height": 720
+  },
+  {
+    "src": "/portal/cl/recursos_tema_evo/assets/vector/logo-claro-rojo.svg",
+    "alt": "Logo Claro",
+    "className": null,
+    "parentClass": "logo",
+    "width": 300,
+    "height": 108
+  },
+  {
+    "src": "/portal/cl/recursos_tema_evo/assets/internal/logo-claro-bco.svg",
+    "alt": "Claro",
+    "className": null,
+    "parentClass": "logoMov",
+    "width": 300,
+    "height": 108
+  },
+  {
+    "src": "/portal/cl/recursos_tema_evo/assets/internal/logo-claro-musica.svg",
+    "alt": "Claro Música",
+    "className": "lazyload",
+    "parentClass": "",
+    "width": 4130,
+    "height": 720
+  },
+  {
+    "src": "/portal/cl/recursos_tema_evo/assets/internal/logo-claro-video.svg",
+    "alt": "Claro Video",
+    "className": "lazyload",
+    "parentClass": "",
+    "width": 3835,
+    "height": 720
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685486036233-discovery-kids.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1773346337205-kiddo.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 72,
+    "height": 77
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685486457291-disney-junior.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1744908130669-PLIN_PLIN.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 72,
+    "height": 72
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1756322263421-disney-new.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685486654005-cartoon-network.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685486688392-etc.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685486719547-cartoonito.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1744908039210-MiMusicaHits.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 72,
+    "height": 72
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1686771896970-NTV_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685486816433-home&health.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685486839266-FOOD.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1687297408028-eg_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 48,
+    "height": 48
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1687297480244-ctv_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 48,
+    "height": 48
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1715029169557-1711574892263-ESNE-logo_azul.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 1508,
+    "height": 1508
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1686772359246-enlace_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685486971101-diputados.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685487017917-cnn3.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685487031993-cnn2.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685487043079-cnn-chile.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685487055457-24.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1686773102712-mega_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1686773463414-hbo_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685487263492-cinemax.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685487288594-TNT.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1713824095303-Logo_CINECANAL.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 939,
+    "height": 501
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1773343439633-A3_Series.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 72,
+    "height": 72
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1744906917439-Cine_Premium.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 72,
+    "height": 72
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1687298219839-sc_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 48,
+    "height": 48
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1713824368415-Logo_FX.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 1001,
+    "height": 940
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1686774167959-universal_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1686774485797-studio_universal_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685544611232-wb.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1712162002379-Vive-48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 48,
+    "height": 48
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1712167710065-13_festivales.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 580,
+    "height": 288
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1715012702416-Kidoo_Logo-copia.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 347,
+    "height": 347
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685544739601-space.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685544767763-tcm.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1711575650546-USA_2022_LOGO-01.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 8000,
+    "height": 4500
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1686774867812-rec_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1687298737657-cn_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 48,
+    "height": 48
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1686775439534-d_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1686774985451-DS_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1687298924680-ng_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 48,
+    "height": 48
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685544970831-artv.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685544986431-13c.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1738954160806-love_nature.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 1600,
+    "height": 637
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685545033669-hgtv.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1711665842201-Discovery_ID_Hero_GradientPos.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 972,
+    "height": 794
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1686775564331-tnt_s_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1711576039863-TNT_NOVELAS_LogoHorizontal_Black.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685545220654-E.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1773343740418-AMCSeries.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 175,
+    "height": 166
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1687299824360-tm_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 48,
+    "height": 48
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1685545322861-zona-latina.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_contenido/1686783120153-vx_48x48.png",
+    "alt": "",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "",
+    "width": 64,
+    "height": 64
+  },
+  {
+    "src": "/portal/cl/recursos_tema_evo/assets/vector/logo-claro-blanco.svg",
+    "alt": "Claro",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "btnClaroAmericaM ",
+    "width": 82,
+    "height": 30
+  },
+  {
+    "src": "/portal/cl/recursos_tema/assets/vector/logo-amx-bco.svg",
+    "alt": "America Movil",
+    "className": " ls-is-cached lazyloaded",
+    "parentClass": "btnClaroAmericaM AmericaM",
+    "width": 300,
+    "height": 85
+  },
+  {
+    "src": "https://bat.bing.com/action/0?ti=97057268&Ver=2&mid=8a0581ad-d52e-49d0-8ae8-bdddbddcb6f4&bo=1&sid=62fadf90cde511f1a7f80565d8c023ba&vid=62fb0570cde511f1b44cb7950954f9c5&vids=0&msclkid=N&uach=pv%3D19.0.0&pi=918639831&lg=es-ES&sw=1280&sh=720&sc=24&nwd=1&tl=Guia%20de%20canales%20%7C%20Claro%20Chile&p=https%3A%2F%2Fwww.clarochile.cl%2Fpersonas%2Fservicios%2Fservicios-hogar%2Ftelevision%2Fguia-de-canales%2F&r=&lt=98&evt=pageLoad&sv=2&cdb=AQAS&rn=67615",
+    "alt": "",
+    "className": null,
+    "parentClass": "",
+    "width": 0,
+    "height": 0
+  }
+]

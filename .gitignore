@@ -104,9 +104,21 @@ PS5reborn_saVantCZ/
 *.gba
 *.nds
 
+# --- Archivos de prueba/debug temporales ---
+vtr-web/test-adc.mjs
+vtr-web/test-adc2.mjs
+vtr-web/test-cred.mjs
+
+# --- Configuración de Firebase (contiene apiKey embebida) ---
+vtr-web/firebase.config.json
+
 # --- Archivos con credenciales / secretos reales ---
 CLARO VTR CHILE ENLACES ID *.md
 vtr-web/scripts/_inbenta_knowledge.js
+# Claves de cuenta de servicio de Firebase (Admin SDK): NUNCA subir
+**/serviceAccountKey*.json
+**/*firebase-adminsdk*.json
+**/*-adminsdk-*.json
 
 # --- Basura del sistema operativo ---
 Thumbs.db
